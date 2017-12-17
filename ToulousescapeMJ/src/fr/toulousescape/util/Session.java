@@ -21,6 +21,8 @@ public class Session {
 	
 	private List<String> indices;
 	
+	private String gm;
+	
 	public Session() {
 		indices = new ArrayList<>();
 	}
@@ -108,5 +110,30 @@ public class Session {
 		}
 		
 		return indicesList;
+	}
+	
+	public String getAllIndicesAsHTML()
+	{
+		String indicesList = "<html>Indices : ";
+		
+		for(String i : indices)
+		{
+			indicesList+= "<br>" + i;
+		}
+		indicesList += "</html>";
+		return indicesList;
+	}
+	
+	public List<String> getIndices()
+	{
+		return indices;
+	}
+
+	public String getGm() {
+		return gm;
+	}
+
+	public void setGm(String gm) {
+		this.gm = gm;
 	}
 }

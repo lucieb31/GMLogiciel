@@ -145,11 +145,14 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				session.setRemainingTime(chrono.getCurrentTime());
 				session.setTimeSpent(timeSpent);
 				chrono.stop();
-				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				JOptionPane.showMessageDialog(stopButton.getParent(),
-						"Date : " + dateFormat.format(session.getDate()) + " Temps restant : "
-								+ session.getRemainingTime() + "s Temps passé : " + formatTime(session.getTimeSpent())
-								+ " Nombre d'indice : " + session.getIndiceCount() + " \n" + session.getAllIndices());
+				
+				StopSessionDialog dialog = new StopSessionDialog(getParent(), session);
+				dialog.openDialog();
+//				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				JOptionPane.showMessageDialog(stopButton.getParent(),
+//						"Date : " + dateFormat.format(session.getDate()) + " Temps restant : "
+//								+ session.getRemainingTime() + "s Temps passé : " + formatTime(session.getTimeSpent())
+//								+ " Nombre d'indice : " + session.getIndiceCount() + " \n" + session.getAllIndices());
 
 				// Reset all
 				session.clearAllIndices();
