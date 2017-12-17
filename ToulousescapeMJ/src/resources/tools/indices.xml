@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<indices>
+	<salle nom="L'atelier du musicien">
+		<indice desc="indice 1">
+			<text>Le fond de l'armoir est étrange !!!</text>
+		</indice>
+		<indice desc="indice 2">
+			<text>Les poussins sont colorés</text>
+		</indice>
+		<indice desc="indice 3">
+			<text>Le code est faux</text>
+		</indice>
+		<indice desc="Métronome">
+			<img>src\\fr\\toulousescape\\resources\\P1010562.jpg</img>
+		</indice>
+	</salle>
+	<salle nom="Le mystère de la Dame Rouge">
+		<indice desc="Métronome">
+			<img>src\\fr\\toulousescape\\resources\\P1010562.jpg</img>
+		</indice>
+	</salle>
+</indices>
