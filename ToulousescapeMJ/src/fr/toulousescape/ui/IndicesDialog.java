@@ -1,6 +1,5 @@
 package fr.toulousescape.ui;
 
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -32,6 +31,7 @@ public class IndicesDialog extends JDialog {
 	
 	private Map<JTextField, JTextField> indicesTextToAdd;
 	private Map<JTextField, JTextField> indicesImgToAdd;
+	private Map<JTextField, JTextField> indicesSonToAdd;
 	
 	private Map<Indice, JCheckBox> allIndiceCheckbox;
 	private Map<Indice, JTextField[]> allIndiceTextField;
@@ -88,7 +88,7 @@ public class IndicesDialog extends JDialog {
 				if (indicesImgToAdd.isEmpty())
 				{
 					JOptionPane.showMessageDialog(addPanel,
-							"Attention pour les indices images vérifier bien que le nom soit le bon.\nPlacer les images dans le dossier src\\resources\\");
+							"Attention pour les indices images vérifiez bien que le nom soit le bon.\nPlacer les images dans le dossier src\\resources\\");
 				}
 				JPanel textIndicePanel = new JPanel();
 				GridLayout layout = new GridLayout(2, 2);
@@ -116,6 +116,43 @@ public class IndicesDialog extends JDialog {
 		});
 		addPanel.add(addImageButton);
 		
+		JButton addSonButton = new JButton("Son");
+		addSonButton.setToolTipText("Ajouter un indice avec du son");
+		addSonButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (indicesImgToAdd.isEmpty())
+				{
+					JOptionPane.showMessageDialog(addPanel,
+							"Attention pour les indices son vérifiez bien que le nom soit le bon.\nPlacer les son dans le dossier src\\resources\\");
+				}
+				JPanel textIndicePanel = new JPanel();
+				GridLayout layout = new GridLayout(2, 2);
+				textIndicePanel.setLayout(layout);
+				textIndicePanel.setBorder(BorderFactory.createEtchedBorder());
+				
+				JLabel name = new JLabel("Nom");
+				textIndicePanel.add(name);
+				
+				JTextField nameField = new JTextField();
+				textIndicePanel.add(nameField);
+				
+				JLabel contains = new JLabel("Nom du fichier");
+				textIndicePanel.add(contains);
+				
+				JTextField containsField = new JTextField();
+				textIndicePanel.add(containsField);
+				
+				indicesSonToAdd.put(nameField, containsField);
+				
+				indicesPanel.add(textIndicePanel);
+				indicesPanel.repaint();
+				pack();
+			}
+		});
+		addPanel.add(addSonButton);
+		
 		return addPanel;
 	}
 	
@@ -131,6 +168,7 @@ public class IndicesDialog extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 				Map<String, String> indicesTextToWrite = new HashMap<>();
 				Map<String, String> indicesImgToWrite = new HashMap<>();
+				Map<String, String> indicesSonToWrite = new HashMap<>();
 				
 				for(JTextField txtField : indicesTextToAdd.keySet())
 				{
@@ -153,7 +191,17 @@ public class IndicesDialog extends JDialog {
 						indicesImgToWrite.put(desc, text);
 					}
 				}
-				indiceManager.writeIndiceInFile(indicesTextToWrite, indicesImgToWrite);
+				
+				for(JTextField txtField : indicesSonToAdd.keySet())
+				{
+					String desc = txtField.getText();
+					String text = indicesSonToAdd.get(txtField).getText();
+					if (desc != null && !desc.isEmpty() && text != null && !text.isEmpty())
+					{
+						indicesSonToWrite.put(desc, text);
+					}
+				}
+				indiceManager.writeIndiceInFile(indicesTextToWrite, indicesImgToWrite, indicesSonToWrite);
 				JOptionPane.showMessageDialog(indicesPanel, "Les indices ont été ajoutés. Vous devez rafraichir la liste d'indice.");
 				dispose();
 			}
@@ -177,6 +225,7 @@ public class IndicesDialog extends JDialog {
 	public void openAsCreate() {
 		indicesTextToAdd = new HashMap<>();
 		indicesImgToAdd = new HashMap<>();
+		indicesSonToAdd = new HashMap<>();
 		
 		setTitle("Création d'indices");
 		
@@ -293,8 +342,10 @@ public class IndicesDialog extends JDialog {
 					indice.setDescription(values[0].getText());
 					if (indice.getTexte() != null)
 						indice.setTexte(values[1].getText());
-					else
+					else if (indice.getImageName() != null)
 						indice.setImageName(values[1].getText());
+					else
+						indice.setSon(values[1].getText());
 					indicesToUpdate.add(indice);
 				}
 				indiceManager.updateIndices(indicesToUpdate);	
@@ -349,7 +400,14 @@ public class IndicesDialog extends JDialog {
 			indiceTextField[0] = descTextField;
 			textIndicePanel.add(descTextField);
 			
-			JTextField nameTextField = new JTextField(indice.getTexte() != null ? indice.getTexte() : indice.getImageName());
+			String text = indice.getTexte();
+			if (text == null)
+			{
+				text = indice.getImageName();
+				if (text == null)
+					text = indice.getSon();
+			}
+			JTextField nameTextField = new JTextField(text);
 			nameTextField.setEnabled(needUpdate);
 			indiceTextField[1] = nameTextField;
 			textIndicePanel.add(nameTextField);

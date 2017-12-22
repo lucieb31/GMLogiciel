@@ -26,6 +26,7 @@ import javax.swing.border.EtchedBorder;
 import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Player;
+import fr.toulousescape.util.Salle;
 import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.Session;
 import fr.toulousescape.util.listeners.TimerListener;
@@ -59,14 +60,14 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	
 	private boolean isPaused = false;
 
-	public ChronoPanel(Chrono c, Session s, Player p, Properties salleProperties) {
+	public ChronoPanel(Chrono c, Session s, Salle salle) {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		chrono = c;
 		chrono.addTimerListener(this);
 		session = s;
-		player = p;
-		props = salleProperties;
+		player = salle.getMusicPlayer();
+		props = salle.getProperties();
 		hasAmbianceMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY) != null;
 		hasFinalMusic = props.getProperty(SallesProperties.MUSIC_FINAL) != null;
 		initTitle();

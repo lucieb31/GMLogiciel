@@ -19,9 +19,9 @@ public class Main {
 
 	public static void main(String[] args) {
 
+		//TODO créer une session à chaque démarrage du chrono
 		Session session = new Session();
 		Chrono chrono = new Chrono();
-		Player player = new Player();
 		
 		LoadProperties properties = new LoadProperties();
 		
@@ -29,11 +29,11 @@ public class Main {
 		
 		Properties p = salle.getProperties();
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
-		String output = p.getProperty(SallesProperties.OUTPUT);
+		String output = p.getProperty(SallesProperties.MUSIC_OUTPUT);
 		if (output == null)
-			new AudioOutputUI(player, salle);
+			new AudioOutputUI(salle);
 		else
-			player.setCurrentOut(Integer.valueOf(output));
+			salle.getMusicPlayer().setCurrentOut(Integer.valueOf(output));
 		
 		RoomPanel panel1 = new RoomPanel(chrono);
 		RoomPanel panel2 = new RoomPanel(chrono);
@@ -41,11 +41,11 @@ public class Main {
 		IndiceManager manager = new IndiceManager(salle);
 		manager.loadIndices();
 
-		IndicesPanel indicePanel = new IndicesPanel(manager, session, player);
+		IndicesPanel indicePanel = new IndicesPanel(manager, session, salle);
 		indicePanel.addListeners(panel1);
 		indicePanel.addListeners(panel2);
 
-		new MainView(chrono, panel1, panel2, indicePanel, session, player, salle);
+		new MainView(chrono, panel1, panel2, indicePanel, session, salle);
 		
 		//TODO: Gérer plus de 2 ecrans
 		int nbRoomView = Integer.parseInt(p.getProperty(SallesProperties.NB_ECRAN));

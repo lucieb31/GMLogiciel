@@ -24,10 +24,14 @@ public class SallesProperties {
 	
 	public static final String INDICES_XML_FILE = "indices.file.xml";
 	
-	public static final String OUTPUT = "output";
+	public static final String MUSIC_OUTPUT = "musique.output";
 
 	public static final String INDICES_NB = "indices.nb";
 	
 	public static final String INDICES_TRANSFERED = "indices.alreadyTransfered";
+	
+	public static final String INDICES_OUTPUT = "indices.output";
+	
+	public static final String IS_AUDIO_INDICES = "indices.isAudio";
 	
 }

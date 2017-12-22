@@ -10,10 +10,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.sound.sampled.Mixer.Info;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -28,18 +30,19 @@ public class AudioOutputUI extends JDialog {
 
 	private Info[] output;
 
-	private Player player;
-
-	private JComboBox<Info> combo;
+	private JComboBox<Info> combo_music;
+	
+	private JComboBox<Info> combo_indices;
 
 	private JPanel dialogPanel;
 	
 	private Salle currentSalle;
 
-	public AudioOutputUI(Player p, Salle salle) {
-		output = p.getAudioOutList();
-		player = p;
-		dialogPanel = new JPanel(new FlowLayout());
+	public AudioOutputUI(Salle salle) {
+		Player musicPlayer = salle.getMusicPlayer();
+		output = musicPlayer.getAudioOutList();
+		dialogPanel = new JPanel();
+		dialogPanel.setLayout(new BoxLayout(dialogPanel, BoxLayout.Y_AXIS));
 		currentSalle = salle;
 		this.add(dialogPanel);
 		addWindowListener(new WindowAdapter() {
@@ -49,44 +52,74 @@ public class AudioOutputUI extends JDialog {
 						"Attention vous n'avez pas choisi de sortie audio, celle du pc est définie par défaut");
 			}
 		});
-		initList();
-		initTestPlayer();
-		initButtons();
+		
+		Player indicePlayer = salle.getIndicePlayer();
+		initList(musicPlayer, indicePlayer);
+		initButtons(musicPlayer, indicePlayer);
+		
+		//Indice player if exist
 		setModal(true);
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 
-	private void initList() {
-		combo = new JComboBox<>(output);
-		combo.setSelectedIndex(0);
-		dialogPanel.add(combo);
+	private void initList(Player music, Player indice) {
+		JPanel musicPanel = new JPanel(new FlowLayout());
+		JLabel musicLabel = new JLabel("Source de musique : ");
+		musicPanel.add(musicLabel);
+		combo_music = new JComboBox<>(output);
+		combo_music.setSelectedIndex(0);
+		musicPanel.add(combo_music);
+		musicPanel.add(initTestPlayer(music, combo_music));
+		dialogPanel.add(musicPanel);
+		
+		if (indice != null)
+		{
+			JPanel audioPanel = new JPanel(new FlowLayout());
+			JLabel indices = new JLabel("Source de d'indices : ");
+			audioPanel.add(indices);
+			combo_indices = new JComboBox<>(output);
+			combo_indices.setSelectedIndex(0);
+			audioPanel.add(combo_indices);
+			audioPanel.add(initTestPlayer(indice, combo_indices));
+			dialogPanel.add(audioPanel);
+		}
 	}
 
-	private void initButtons() {
+	private void initButtons(Player music, Player indice) {
 		JButton valid = new JButton("Valider");
 		valid.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedOutput = combo.getSelectedIndex();
+				int selectedOutput = combo_music.getSelectedIndex();
 				Properties properties = currentSalle.getProperties();
-				properties.setProperty(SallesProperties.OUTPUT, "" + selectedOutput);
+				properties.setProperty(SallesProperties.MUSIC_OUTPUT, "" + selectedOutput);
+				music.setCurrentOut(selectedOutput);
+				
+				if (indice != null)
+				{
+					selectedOutput = combo_indices.getSelectedIndex();
+					properties.setProperty(SallesProperties.INDICES_OUTPUT, "" + selectedOutput);
+					indice.setCurrentOut(selectedOutput);
+				}
+				
 				try {
-					properties.store(new FileWriter(currentSalle.getPropertyFile()), null);
+					FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
+					properties.store(fileWriter, null);
+					fileWriter.close();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				player.setCurrentOut(selectedOutput);
 				dispose();
 			}
 		});
 		dialogPanel.add(valid);
 	}
 
-	private void initTestPlayer() {
+	private JButton initTestPlayer(Player player, JComboBox<Info> combo) {
 		JButton playButton = new JButton();
 		playButton.setIcon(new ImageIcon(Images.PLAY_IMG));
 
@@ -105,6 +138,6 @@ public class AudioOutputUI extends JDialog {
 			}
 		});
 
-		dialogPanel.add(playButton);
+		return playButton;
 	}
 }

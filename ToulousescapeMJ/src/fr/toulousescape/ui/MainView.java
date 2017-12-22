@@ -34,15 +34,13 @@ public class MainView extends JFrame {
 	
 	private Session session;
 
-	private Player player;
-
 	private JSlider gainSlider;
 	
 	private Salle salle;
 	
 	private IndiceManager indiceManager;
 	
-	public MainView(Chrono c, RoomPanel p1, RoomPanel p2, IndicesPanel iPanel, Session s, Player p, Salle sa) {
+	public MainView(Chrono c, RoomPanel p1, RoomPanel p2, IndicesPanel iPanel, Session s, Salle sa) {
 		super();
 		setName("ToulousescapeMJ");
 		setVisible(true);
@@ -50,7 +48,6 @@ public class MainView extends JFrame {
 		setPreferredSize(new Dimension(800, 800));
 		chrono = c;
 		session = s;
-		player = p;
 		salle = sa;
 		indiceManager = iPanel.getManager();
 		loadMenuBar();
@@ -94,7 +91,7 @@ public class MainView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new AudioOutputUI(player, salle);
+				new AudioOutputUI(salle);
 			}
 		});
 		
@@ -117,7 +114,7 @@ public class MainView extends JFrame {
 	}
 
 	private JPanel getChronoPanel() {
-		JPanel chronoPanel = new ChronoPanel(chrono, session, player, salle.getProperties());
+		JPanel chronoPanel = new ChronoPanel(chrono, session, salle);
 		chronoPanel.setPreferredSize(new Dimension(200, 200));
 		return chronoPanel;
 	}
@@ -146,7 +143,7 @@ public class MainView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new AudioOutputUI(player, salle);
+				new AudioOutputUI(salle);
 			}
 		});
 		configMenu.add(audioItem);

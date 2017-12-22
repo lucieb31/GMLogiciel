@@ -7,6 +7,10 @@ public class Salle {
 
 	private String name;
 	
+	private Player musicPlayer;
+	
+	private Player indicePlayer;
+	
 	private Properties props;
 	
 	private File propertyFile;
@@ -15,6 +19,9 @@ public class Salle {
 		name = salleName;
 		props = properties;
 		propertyFile = pFile;
+		musicPlayer = new Player();
+		if ("true".equals(props.getProperty(SallesProperties.IS_AUDIO_INDICES)));
+			indicePlayer = new Player();
 	}
 
 	public String getName() {
@@ -31,5 +38,13 @@ public class Salle {
 
 	public File getPropertyFile() {
 		return propertyFile;
+	}
+
+	public Player getMusicPlayer() {
+		return musicPlayer;
+	}
+
+	public Player getIndicePlayer() {
+		return indicePlayer;
 	}
 }

@@ -10,11 +10,14 @@ public class Indice {
 	
 	private String texte;
 	
+	private String son;
+	
 
-	public Indice(String description, String image, String texte) {
+	public Indice(String description, String image, String texte, String son) {
 		this.description = description;
 		this.image = image;
 		this.texte = texte;
+		this.son = son;
 	}
 
 	public String getDescription() {
@@ -50,5 +53,13 @@ public class Indice {
 	@Override
 	public String toString() {
 		return description;
+	}
+
+	public String getSon() {
+		return son;
+	}
+
+	public void setSon(String son) {
+		this.son = son;
 	}
 }

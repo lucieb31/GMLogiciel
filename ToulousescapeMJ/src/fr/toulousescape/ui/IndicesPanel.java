@@ -25,6 +25,7 @@ import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Indice;
 import fr.toulousescape.util.IndiceManager;
 import fr.toulousescape.util.Player;
+import fr.toulousescape.util.Salle;
 import fr.toulousescape.util.Session;
 import fr.toulousescape.util.listeners.IndiceListener;
 
@@ -51,11 +52,19 @@ public class IndicesPanel extends JPanel {
 	private JTextField txtField;
 
 	private JLabel nbIndiceLabel;
+	
+	private Thread indiceThread;
 
-	public IndicesPanel(IndiceManager m, Session s, Player p) {
+	public IndicesPanel(IndiceManager m, Session s, Salle salle) {
 		manager = m;
 		session = s;
-		player = p;
+		Player indicePlayer = salle.getIndicePlayer();
+		if (indicePlayer != null)
+		{
+			player = indicePlayer;
+		}
+		else
+			player = salle.getMusicPlayer();
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setBorder(BorderFactory.createEtchedBorder());
 		initTitle();
@@ -100,11 +109,23 @@ public class IndicesPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Indice indice = (Indice) indiceList.getSelectedItem();
-				if (indice.getTexte() == null) {
+				if (indice.getImageName() != null) {
 					indiceLabel.setText("");
 					Image img = scaleImage(indice.getImage().getImage(), 200);
 					indiceLabel.setIcon(new ImageIcon(img));
-				} else {
+				} else if (indice.getSon() != null)
+				{
+					indiceLabel.setText("");
+					indiceThread = new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							player.play(indice.getSon());
+						}
+					});
+				}
+				else
+				{
 					indiceLabel.setIcon(null);
 					indiceLabel.setText(indice.getTexte());
 				}
@@ -157,7 +178,7 @@ public class IndicesPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentIndice = new Indice(null, null, txtField.getText());
+				currentIndice = new Indice(null, null, txtField.getText(), null);
 				indiceLabel.setText(txtField.getText());
 				indiceLabel.setIcon(null);
 				showIndice.setEnabled(true);
@@ -207,9 +228,11 @@ public class IndicesPanel extends JPanel {
 				showIndice.setEnabled(false);
 				indiceLabel.setText("");
 				indiceLabel.setIcon(null);
-				currentIndice = new Indice(null, null, null);
+				currentIndice = new Indice(null, null, null, null);
 				txtField.setText("");
 				nbIndiceLabel.setText("" + session.getIndiceCount());
+				player.stop();
+				indiceThread = null;
 				countCheckBox.setEnabled(false);
 				countCheckBox.setSelected(false);
 				fireAddIndice();
@@ -227,16 +250,24 @@ public class IndicesPanel extends JPanel {
 				countCheckBox.setEnabled(true);
 				countCheckBox.setSelected(false);
 				session.setIndiceCount(session.getIndiceCount() + 1);
-				//TODO : attention quand on pourra ajouter des images
-				session.addIndice(currentIndice.getTexte());
-				Thread t = new Thread(new Runnable() {
+				String indiceTxt = currentIndice.getTexte();
+				if (indiceTxt != null)
+					session.addIndice(currentIndice.getTexte());
+				else
+					session.addIndice("image ou son");
+				if (indiceThread == null)
+				{
+					Thread t = new Thread(new Runnable() {
 
-					@Override
-					public void run() {
-						player.play("tools\\DING.mp3");
-					}
-				});
-				t.start();
+						@Override
+						public void run() {
+							player.play("tools\\DING.mp3");
+						}
+					});
+					t.start();
+				}
+				else
+					indiceThread.start();
 				// try {
 				// Info[] infos = AudioSystem.getMixerInfo();
 				// Mixer mixer = AudioSystem.getMixer(infos[0]);

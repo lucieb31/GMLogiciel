@@ -30,6 +30,8 @@ public class IndiceManager {
 	private static final String TEXTE_PROP = ".text";
 	
 	private static final String IMG_PROP = ".img";
+	
+	private static final String SON_PROP = ".son";
 
 	public IndiceManager(Salle salle) {
 		indices = new ArrayList<>();
@@ -68,10 +70,15 @@ public class IndiceManager {
 					{
 						String text = indicesProps.getProperty(i + TEXTE_PROP);
 						String img = null;
+						String son = null;
 						if (text == null) {
 							img = indicesProps.getProperty(i + IMG_PROP);
+							if (img == null)
+							{
+								son = indicesProps.getProperty(i + SON_PROP);
+							}
 						}
-						Indice current = new Indice(desc, img, text);
+						Indice current = new Indice(desc, img, text, son);
 						indices.add(current);
 					}
 				}
@@ -103,14 +110,14 @@ public class IndiceManager {
 							img = child.getText();
 							indicesImgToTransfert.put(desc, img);
 						}
-						Indice current = new Indice(desc, img, text);
+						Indice current = new Indice(desc, img, text, null);
 						indices.add(current);
 
 					}
 				}
 				
 				//Transfer xml to properties file
-				writeIndiceInFile(indicesTextToTransfert, indicesImgToTransfert);
+				writeIndiceInFile(indicesTextToTransfert, indicesImgToTransfert, null);
 				Properties salleProps = currentSalle.getProperties();
 				salleProps.setProperty(SallesProperties.INDICES_TRANSFERED, "true");
 				FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
@@ -124,7 +131,7 @@ public class IndiceManager {
 		}
 	}
 	
-	public void writeIndiceInFile(Map<String, String> indicesTextToWrite, Map<String, String> indicesImgToWrite)
+	public void writeIndiceInFile(Map<String, String> indicesTextToWrite, Map<String, String> indicesImgToWrite, Map<String, String> indicesSonToWrite)
 	{
 		try {
 			Properties salleProps = currentSalle.getProperties();
@@ -143,6 +150,14 @@ public class IndiceManager {
 				indiceNb++;
 				indicesProps.setProperty(indiceNb + DESC_PROP, desc);
 				indicesProps.setProperty(indiceNb + IMG_PROP, indicesImgToWrite.get(desc));
+			}
+			
+			//Ajout des indices son
+			for (String desc : indicesSonToWrite.keySet())
+			{
+				indiceNb++;
+				indicesProps.setProperty(indiceNb + DESC_PROP, desc);
+				indicesProps.setProperty(indiceNb + SON_PROP, indicesSonToWrite.get(desc));
 			}
 			
 			indicesProps.store(new FileWriter(new File("src\\resources\\" + fileName)), null);
