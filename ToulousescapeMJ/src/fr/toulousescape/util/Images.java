@@ -8,6 +8,7 @@ public class Images {
 	public static final String CLOSE_IMG = URL_RESOURCES + "close.png";
 	public static final String EYE_IMG = URL_RESOURCES + "eye.png";
 	public static final String REFRESH_IMG = URL_RESOURCES + "refresh.png";
+	public static final String SEARCH_IMG = URL_RESOURCES + "search.png";
 
 	//Chrono images
 	public static final String MINUS_IMG = URL_RESOURCES + "minus.png";
@@ -18,4 +19,5 @@ public class Images {
 	
 	//Logo
 	public static final String LOGO_IMG = URL_RESOURCES + "logo.png";
+
 }

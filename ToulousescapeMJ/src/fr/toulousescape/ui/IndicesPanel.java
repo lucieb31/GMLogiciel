@@ -55,6 +55,8 @@ public class IndicesPanel extends JPanel {
 	
 	private Thread indiceThread;
 
+	private JComboBox<Indice> indiceList;
+
 	public IndicesPanel(IndiceManager m, Session s, Salle salle) {
 		manager = m;
 		session = s;
@@ -68,6 +70,7 @@ public class IndicesPanel extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setBorder(BorderFactory.createEtchedBorder());
 		initTitle();
+		searchIndice();
 		initListPanel();
 		initAddIndice();
 		initIndiceView();
@@ -89,8 +92,8 @@ public class IndicesPanel extends JPanel {
 		
 		listPanel.add(refresh);
 
-		JComboBox<Indice> indiceList = new JComboBox<>();
-		computeIndiceList(indiceList);
+		indiceList = new JComboBox<>();
+		computeAllIndice();
 		listPanel.add(indiceList);
 		
 		refresh.addActionListener(new ActionListener() {
@@ -98,8 +101,7 @@ public class IndicesPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.reloadIndices();
-				indiceList.removeAllItems();
-				computeIndiceList(indiceList);
+				computeAllIndice();
 			}
 		});
 
@@ -359,15 +361,63 @@ public class IndicesPanel extends JPanel {
 
 		add(nbIndicePanel);
 	}
+	
+	private void searchIndice()
+	{
+		JPanel searchPanel = new JPanel(new FlowLayout());
+		JTextField searchField = new JTextField();
+		searchField.setPreferredSize(new Dimension(150, 27));
+		searchPanel.add(searchField);
+		ImageIcon icon = new ImageIcon(Images.SEARCH_IMG);
+		JButton searchButton = new JButton(icon);
+		searchButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				List<Indice> allIndices = manager.getAllIndices();
+				List<Indice> indiceToList = new ArrayList<>();
+				for (Indice indice : allIndices)
+				{
+					String description = indice.getDescription();
+					if (description.contains(searchField.getText()))
+					{
+						indiceToList.add(indice);
+					}
+				}
+				computeIndiceList(indiceToList);
+			}
+		});
+		searchPanel.add(searchButton);
+		
+		ImageIcon iconClear = new ImageIcon(Images.CLOSE_IMG);
+		JButton clearSearchButton = new JButton(iconClear);
+		clearSearchButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				searchField.setText("");
+				computeAllIndice();
+			}
+		});
+		searchPanel.add(clearSearchButton);
+		
+		add(searchPanel);
+	}
 
 	public JLabel getIndiceLabel() {
 		return indiceLabel;
 	}
 
-	private void computeIndiceList(JComboBox<Indice> uiList) {
-		List<Indice> indices = manager.getAllIndices();
+	private void computeAllIndice()
+	{
+		computeIndiceList(manager.getAllIndices());
+	}
+	
+	private void computeIndiceList(List<Indice> indices) {
+		indiceList.removeAllItems();
 		for (Indice i : indices) {
-			uiList.addItem(i);
+			indiceList.addItem(i);
 		}
 	}
 
