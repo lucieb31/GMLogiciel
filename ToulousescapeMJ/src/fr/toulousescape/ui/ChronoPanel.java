@@ -7,17 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -27,7 +23,6 @@ import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Player;
 import fr.toulousescape.util.Salle;
-import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.Session;
 import fr.toulousescape.util.listeners.TimerListener;
 
@@ -52,13 +47,13 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 	private Player player;
 	
-	private Properties props;
-	
 	private boolean hasAmbianceMusic = false;
 	
 	private boolean hasFinalMusic = false;
 	
 	private boolean isPaused = false;
+	
+	private Salle salle;
 
 	public ChronoPanel(Chrono c, Session s, Salle salle) {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -67,9 +62,9 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		chrono.addTimerListener(this);
 		session = s;
 		player = salle.getMusicPlayer();
-		props = salle.getProperties();
-		hasAmbianceMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY) != null;
-		hasFinalMusic = props.getProperty(SallesProperties.MUSIC_FINAL) != null;
+		this.salle = salle;
+		hasAmbianceMusic = salle.getAmbianceMusique() != null;
+		hasFinalMusic = salle.getFinalMusic() != null;
 		initTitle();
 		initTimerSetter();
 		initChangeTimePanel();
@@ -99,13 +94,13 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				System.out.println(hasAmbianceMusic + " " + isPaused);
 				if (hasAmbianceMusic && !isPaused)
 				{
-					String musicToPlay = props.getProperty(SallesProperties.MUSIC_TO_PLAY);
+					String musicToPlay = salle.getAmbianceMusique();
 					new Thread(new Runnable() {
 
 						@Override
 						public void run() {
 							System.out.println("PLAY!!! " + musicToPlay);
-							player.play(musicToPlay);
+							player.play(salle.getPseudo() + "\\" + musicToPlay);
 						}
 					}).start();
 				}
@@ -260,7 +255,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		chronoTime.setText(formatTime(currentTime));
 
 		if (currentTime == 0 && hasFinalMusic) {
-			String finalMusic = props.getProperty(SallesProperties.MUSIC_FINAL);
+			String finalMusic = salle.getFinalMusic();
 			new Thread(new Runnable() {
 
 				@Override
@@ -270,10 +265,9 @@ public class ChronoPanel extends JPanel implements TimerListener {
 					try {
 						Thread.sleep(100L);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					player.play(finalMusic);
+					player.play(salle.getPseudo() + "\\" + finalMusic);
 				}
 			}).start();
 		}

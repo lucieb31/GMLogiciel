@@ -19,7 +19,7 @@ public class IndiceManager {
 
 	private List<Indice> indices;
 	
-	private Salle currentSalle;
+	private static Salle currentSalle;
 	
 	private Properties indicesProps;
 	
@@ -36,7 +36,11 @@ public class IndiceManager {
 	public IndiceManager(Salle salle) {
 		indices = new ArrayList<>();
 		currentSalle = salle;
-		indiceNb = Integer.valueOf(currentSalle.getProperties().getProperty(SallesProperties.INDICES_NB));
+		String nbIndices = currentSalle.getProperties().getProperty(SallesProperties.INDICES_NB);
+		if (nbIndices != null)
+		{
+			indiceNb = Integer.valueOf(nbIndices);
+		}
 	}
 
 	public void addIndice(Indice indice) {
@@ -55,10 +59,9 @@ public class IndiceManager {
 		SAXBuilder sxb = new SAXBuilder();
 		try {
 			
-			String fileName = currentSalle.getProperties().getProperty(SallesProperties.INDICES_PROP_FILE);
-			if (fileName != null)
+			File indiceFile = new File("src\\resources\\" + currentSalle.getPseudo() + "\\indices.properties");
+			if (indiceFile.exists())
 			{
-				File indiceFile = new File("src\\resources\\" + fileName);
 				indicesProps = new Properties();
 				FileReader fileReader = new FileReader(indiceFile);
 				indicesProps.load(fileReader);
@@ -83,6 +86,14 @@ public class IndiceManager {
 					}
 				}
 				fileReader.close();
+			}
+			else
+			{
+				indiceFile.createNewFile();
+				currentSalle.getProperties().setProperty(SallesProperties.INDICES_NB, ""+0);
+				FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
+				currentSalle.getProperties().store(fileWriter, null);
+				fileWriter.close();
 			}
 			
 			String hasBeenTransfered = currentSalle.getProperties().getProperty(SallesProperties.INDICES_TRANSFERED);
@@ -117,7 +128,7 @@ public class IndiceManager {
 				}
 				
 				//Transfer xml to properties file
-				writeIndiceInFile(indicesTextToTransfert, indicesImgToTransfert, null);
+				writeIndiceInFile(indicesTextToTransfert, indicesImgToTransfert, new HashMap<>());
 				Properties salleProps = currentSalle.getProperties();
 				salleProps.setProperty(SallesProperties.INDICES_TRANSFERED, "true");
 				FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
@@ -250,5 +261,10 @@ public class IndiceManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static String indiceURL()
+	{
+		return currentSalle.getPseudo() + "\\";
 	}
 }

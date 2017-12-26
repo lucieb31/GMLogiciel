@@ -29,7 +29,7 @@ public class Indice {
 	}
 
 	public ImageIcon getImage() {
-		return new ImageIcon("src\\resources\\" + image);
+		return new ImageIcon("src\\resources\\" + IndiceManager.indiceURL() + image);
 	}
 
 	public String getTexte() {
@@ -56,7 +56,7 @@ public class Indice {
 	}
 
 	public String getSon() {
-		return son;
+		return IndiceManager.indiceURL() + son;
 	}
 
 	public void setSon(String son) {

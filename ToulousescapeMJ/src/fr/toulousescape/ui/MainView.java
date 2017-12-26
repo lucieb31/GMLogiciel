@@ -22,7 +22,6 @@ import javax.swing.border.EtchedBorder;
 import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.IndiceManager;
-import fr.toulousescape.util.Player;
 import fr.toulousescape.util.Salle;
 import fr.toulousescape.util.Session;
 
@@ -148,17 +147,27 @@ public class MainView extends JFrame {
 		});
 		configMenu.add(audioItem);
 		
-		JMenuItem salleItem = new JMenuItem("Salle");
-		salleItem.setToolTipText("Changer la salle du logiciel");
-		configMenu.add(salleItem);
-		
 		JMenuItem propsItem = new JMenuItem("Propriétés");
 		propsItem.setToolTipText("Modifier les propriétés de la salle");
 		configMenu.add(propsItem);
 		
+		final JFrame parent = this;
+		
+		JMenu salleMenu = new JMenu("Salle");
+		JMenuItem createItem = new JMenuItem("Créer une salle");
+		createItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ManageSalleDialog dialog = new ManageSalleDialog(parent, null);
+				dialog.openAsCreate();
+			}
+		});
+		salleMenu.add(createItem);
+		
 		JMenu indicesMenu = new JMenu("Indices");
 		JMenuItem addItem = new JMenuItem("Créer des indices");
-		final JFrame parent = this;
+		
 		addItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -203,6 +212,7 @@ public class MainView extends JFrame {
 		indicesMenu.add(showItem);
 		
 		menuBar.add(indicesMenu);
+		menuBar.add(salleMenu);
 		menuBar.add(configMenu);
 		setJMenuBar(menuBar);
 	}

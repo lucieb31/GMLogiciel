@@ -35,25 +35,24 @@ public class LoadProperties extends JDialog {
 
 	private Map<String, File> allFiles;
 	
-	public LoadProperties() {
+	public LoadProperties(String fileName) {
 		allFiles = new HashMap<>();
 		
 		try {
-			loadAllPropertiesFiles();
+			loadAllPropertiesFiles(fileName);
 			
 			//Recherche d'uns salle déjà chargé une première fois
 			for (File file : allFiles.values())
 			{
 				Properties props = new Properties();
 				props.load(new FileReader(file));
-				boolean firstStart = Boolean.parseBoolean(props.getProperty(SallesProperties.FIRST_START));
-				
-				if (!firstStart)
-				{
-					String name = props.getProperty(SallesProperties.NAME);
-					salle = new Salle(name, props, file);
+//				boolean firstStart = Boolean.parseBoolean(props.getProperty(SallesProperties.FIRST_START));
+//				
+//				if (!firstStart)
+//				{
+					salle = new Salle(fileName, props, file);
 					return;
-				}
+//				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,17 +107,17 @@ public class LoadProperties extends JDialog {
 		return salle;
 	}
 
-	private void loadAllPropertiesFiles() throws Exception {
+	private void loadAllPropertiesFiles(String fileName) throws Exception {
 		// load atelier file
-		File file = new File("src\\resources\\" + SallesProperties.ATELIER_MUSICIEN + ".properties");
+		File file = new File("src\\resources\\" + fileName + ".properties");
 		allFiles.put(Atelier, file);
 
-		// load dame rouge file
-		file = new File("src\\resources\\" + SallesProperties.DAME_ROUGE + ".properties");
-		allFiles.put(DameRouge, file);
-
-		// load black circus file
-		file = new File("src\\resources\\" + SallesProperties.CIRQUE + ".properties");
-		allFiles.put(Cirque, file);
+//		// load dame rouge file
+//		file = new File("src\\resources\\" + SallesProperties.DAME_ROUGE + ".properties");
+//		allFiles.put(DameRouge, file);
+//
+//		// load black circus file
+//		file = new File("src\\resources\\" + SallesProperties.CIRQUE + ".properties");
+//		allFiles.put(Cirque, file);
 	}
 }

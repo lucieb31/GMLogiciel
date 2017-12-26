@@ -4,8 +4,10 @@ import java.util.Properties;
 
 import fr.toulousescape.ui.AudioOutputUI;
 import fr.toulousescape.ui.IndicesPanel;
+import fr.toulousescape.ui.LoadConfig;
 import fr.toulousescape.ui.LoadProperties;
 import fr.toulousescape.ui.MainView;
+import fr.toulousescape.ui.ManageSalleDialog;
 import fr.toulousescape.ui.RoomPanel;
 import fr.toulousescape.ui.RoomView;
 import fr.toulousescape.util.Chrono;
@@ -23,9 +25,23 @@ public class Main {
 		Session session = new Session();
 		Chrono chrono = new Chrono();
 		
-		LoadProperties properties = new LoadProperties();
+		LoadConfig config = new LoadConfig();
 		
-		Salle salle = properties.getSalle();
+		Salle salle;
+		if (config.isFirstStart() && config.getSelectedSalle() == null)
+		{
+			ManageSalleDialog createSalle = new ManageSalleDialog();
+			createSalle.setModal(true);
+			createSalle.openAsCreate();
+			salle = createSalle.getCreatedSalle();
+			config.setSelectedSalle(salle.getPseudo());
+			config.setFirstStart(false);
+		}
+		else
+		{
+			LoadProperties properties = new LoadProperties(config.getSelectedSalle());
+			salle = properties.getSalle();
+		}
 		
 		Properties p = salle.getProperties();
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));

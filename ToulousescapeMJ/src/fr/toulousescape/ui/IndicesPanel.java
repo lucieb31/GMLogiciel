@@ -117,7 +117,7 @@ public class IndicesPanel extends JPanel {
 					indiceLabel.setIcon(new ImageIcon(img));
 				} else if (indice.getSon() != null)
 				{
-					indiceLabel.setText("");
+					indiceLabel.setText(indice.getSon());
 					indiceThread = new Thread(new Runnable() {
 						
 						@Override
