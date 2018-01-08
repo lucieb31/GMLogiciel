@@ -170,7 +170,8 @@ public class ManageSalleDialog extends JDialog{
 			}
 		});
 		mainPanel.add(okButton);
-		
+		resolutionDialog.add(mainPanel);
+		resolutionDialog.pack();
 		resolutionDialog.setVisible(true);
 
 		return resolutions;

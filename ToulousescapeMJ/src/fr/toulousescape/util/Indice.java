@@ -56,10 +56,15 @@ public class Indice {
 	}
 
 	public String getSon() {
-		return IndiceManager.indiceURL() + son;
+		return son;
 	}
 
 	public void setSon(String son) {
 		this.son = son;
+	}
+	
+	public String getSonWithUrl()
+	{
+		return IndiceManager.indiceURL() + son;
 	}
 }

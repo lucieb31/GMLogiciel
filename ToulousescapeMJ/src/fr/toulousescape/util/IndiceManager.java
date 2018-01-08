@@ -60,9 +60,9 @@ public class IndiceManager {
 		try {
 			
 			File indiceFile = new File("src\\resources\\" + currentSalle.getPseudo() + "\\indices.properties");
+			indicesProps = new Properties();
 			if (indiceFile.exists())
 			{
-				indicesProps = new Properties();
 				FileReader fileReader = new FileReader(indiceFile);
 				indicesProps.load(fileReader);
 				
@@ -146,7 +146,7 @@ public class IndiceManager {
 	{
 		try {
 			Properties salleProps = currentSalle.getProperties();
-			String fileName = salleProps.getProperty(SallesProperties.INDICES_PROP_FILE);
+			String fileName = currentSalle.getPseudo() + "\\indices.properties";
 			//Ajout des indices texte
 			for (String desc : indicesTextToWrite.keySet())
 			{

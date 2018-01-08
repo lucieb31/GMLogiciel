@@ -122,7 +122,7 @@ public class IndicesPanel extends JPanel {
 						
 						@Override
 						public void run() {
-							player.play(indice.getSon());
+							player.play(indice.getSonWithUrl());
 						}
 					});
 				}
