@@ -88,7 +88,7 @@ public class IndicesDialog extends JDialog {
 				if (indicesImgToAdd.isEmpty())
 				{
 					JOptionPane.showMessageDialog(addPanel,
-							"Attention pour les indices images vérifiez bien que le nom soit le bon.\nPlacer les images dans le dossier src\\resources\\");
+							"Attention pour les indices images vérifiez bien que le nom soit le bon.\nPlacer les images dans le dossier src\\resources\\[dossier de la salle]");
 				}
 				JPanel textIndicePanel = new JPanel();
 				GridLayout layout = new GridLayout(2, 2);
@@ -125,7 +125,7 @@ public class IndicesDialog extends JDialog {
 				if (indicesImgToAdd.isEmpty())
 				{
 					JOptionPane.showMessageDialog(addPanel,
-							"Attention pour les indices son vérifiez bien que le nom soit le bon.\nPlacer les son dans le dossier src\\resources\\");
+							"Attention pour les indices son vérifiez bien que le nom soit le bon.\nPlacer les son dans le dossier src\\resources\\[dossier de la salle]");
 				}
 				JPanel textIndicePanel = new JPanel();
 				GridLayout layout = new GridLayout(2, 2);

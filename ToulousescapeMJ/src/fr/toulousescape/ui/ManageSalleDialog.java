@@ -99,8 +99,7 @@ public class ManageSalleDialog extends JDialog{
 				int nbEcran = Integer.parseInt(ecranField.getText());
 				if (nbEcran != 0)
 				{
-					List<Integer> resolutions = getEcranResolution(nbEcran);
-					s.setResolutionEcrans(resolutions);
+					getEcranResolution(nbEcran, s);
 				}
 				
 				s.setNbEcran(nbEcran);
@@ -130,14 +129,13 @@ public class ManageSalleDialog extends JDialog{
 		this.createdSalle = createdSalle;
 	}
 	
-	public List<Integer> getEcranResolution(int nbEcran)
+	public void getEcranResolution(int nbEcran, Salle s)
 	{
 		List<JTextField> fields = new ArrayList<>();
-		List<Integer> resolutions = new ArrayList<>();
 		JDialog resolutionDialog = new JDialog(this, "Résolution des écrans", true);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-		for (int i = 1; i <= nbEcran + 1; i++) {
+		for (int i = 1; i <= nbEcran; i++) {
 			JPanel resPanel = new JPanel(new FlowLayout());
 			JLabel resLabel = new JLabel("Ecran " + i);
 			resPanel.add(resLabel);
@@ -153,6 +151,7 @@ public class ManageSalleDialog extends JDialog{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean closeDialog = true;
+				List<Integer> resolutions = new ArrayList<>();
 				for (JTextField txtF : fields) {
 					if (txtF.getText() == null || txtF.getText().isEmpty()) {
 						closeDialog = false;
@@ -161,6 +160,7 @@ public class ManageSalleDialog extends JDialog{
 					}
 				}
 
+				s.setResolutionEcrans(resolutions);
 				if (!closeDialog)
 					JOptionPane.showMessageDialog(resolutionDialog,
 							"Attention vous devez entrer toutes les résolutions", "Résolution erreur",
@@ -174,6 +174,5 @@ public class ManageSalleDialog extends JDialog{
 		resolutionDialog.pack();
 		resolutionDialog.setVisible(true);
 
-		return resolutions;
 	}
 }

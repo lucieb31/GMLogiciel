@@ -124,9 +124,9 @@ public class Salle {
 			props.setProperty(SallesProperties.NB_ECRAN, ""+nbEcran);
 			if (nbEcran != 0)
 			{
-				for(int i = 1; i <= nbEcran + 1; i++)
+				for(int i = 0; i < nbEcran; i++)
 				{
-					props.setProperty(SallesProperties.ECRAN_RESOLUTION + "." + i, ""+resolutionEcrans.get(i));
+					props.setProperty(SallesProperties.ECRAN_RESOLUTION + "." + (i+1), ""+resolutionEcrans.get(i));
 				}
 			}
 			props.setProperty(SallesProperties.MUSIC_FINAL, finalMusic);
@@ -151,7 +151,7 @@ public class Salle {
 		if (nbEcran != 0)
 		{
 			resolutionEcrans = new ArrayList<>();
-			for (int i = 1; i <= nbEcran + 1; i++) {
+			for (int i = 1; i <= nbEcran; i++) {
 				int res = Integer.parseInt(props.getProperty(SallesProperties.ECRAN_RESOLUTION + "." + i));
 				resolutionEcrans.add(res);
 			}
