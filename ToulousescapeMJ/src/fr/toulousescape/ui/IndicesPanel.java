@@ -16,7 +16,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -27,15 +26,18 @@ import fr.toulousescape.util.IndiceManager;
 import fr.toulousescape.util.Player;
 import fr.toulousescape.util.Salle;
 import fr.toulousescape.util.Session;
+import fr.toulousescape.util.listeners.EnigmeListener;
 import fr.toulousescape.util.listeners.IndiceListener;
 
-public class IndicesPanel extends JPanel {
+public class IndicesPanel extends JPanel implements EnigmeListener {
 
 	private static final long serialVersionUID = -8515748419839056660L;
 
 	private IndiceManager manager;
 
 	private JLabel indiceLabel;
+	
+	private JPanel listPanel;
 
 	private List<IndiceListener> listeners = new ArrayList<>();
 
@@ -55,7 +57,7 @@ public class IndicesPanel extends JPanel {
 	
 	private Thread indiceThread;
 
-	private JComboBox<Indice> indiceList;
+	private List<Indice> interactionList = new ArrayList<Indice>();
 
 	public IndicesPanel(IndiceManager m, Session s, Salle salle) {
 		manager = m;
@@ -70,7 +72,7 @@ public class IndicesPanel extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setBorder(BorderFactory.createEtchedBorder());
 		initTitle();
-		searchIndice();
+		//searchIndice();
 		initListPanel();
 		initAddIndice();
 		initIndiceView();
@@ -84,61 +86,29 @@ public class IndicesPanel extends JPanel {
 	}
 
 	private void initListPanel() {
-		JPanel listPanel = new JPanel();
+		listPanel = new JPanel();
 		listPanel.setLayout(new FlowLayout());
 		
-		ImageIcon refreshIcon = new ImageIcon(Images.REFRESH_IMG);
-		JButton refresh = new JButton(refreshIcon);
+//		ImageIcon refreshIcon = new ImageIcon(Images.REFRESH_IMG);
+//		JButton refresh = new JButton(refreshIcon);
 		
-		listPanel.add(refresh);
+//		listPanel.add(refresh);
 
-		indiceList = new JComboBox<>();
-		computeAllIndice();
-		listPanel.add(indiceList);
-		
-		refresh.addActionListener(new ActionListener() {
+/*		refresh.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				manager.reloadIndices();
 				computeAllIndice();
 			}
-		});
-
-		JButton validate = new JButton("Valider");
-		validate.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				Indice indice = (Indice) indiceList.getSelectedItem();
-				if (indice.getImageName() != null) {
-					indiceLabel.setText("");
-					Image img = scaleImage(indice.getImage().getImage(), 200);
-					indiceLabel.setIcon(new ImageIcon(img));
-				} else if (indice.getSon() != null)
-				{
-					indiceLabel.setText(indice.getSon());
-					indiceThread = new Thread(new Runnable() {
-						
-						@Override
-						public void run() {
-							player.play(indice.getSonWithUrl());
-						}
-					});
-				}
-				else
-				{
-					indiceLabel.setIcon(null);
-					indiceLabel.setText(indice.getTexte());
-				}
-				currentIndice = indice;
-				showIndice.setEnabled(true);
-				closeButton.setEnabled(true);
-			}
-		});
-		listPanel.add(validate);
+		});*/
 
 		this.add(listPanel);
+	}
+
+	protected void validateAction(Indice indice) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public static Image scaleImage(Image source, int size) {
@@ -349,6 +319,20 @@ public class IndicesPanel extends JPanel {
 		});
 		
 		showIndicePanel.add(alarmButton);
+		
+		computeAllInteraction();
+		for (Indice en : interactionList) {
+			JButton button = new JButton();
+			button.setText(en.getDescription());
+			button.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					validateIndice(en, true);
+				}
+			});
+			showIndicePanel.add(button);
+		}
 
 		add(showIndicePanel);
 	}
@@ -362,7 +346,7 @@ public class IndicesPanel extends JPanel {
 		add(nbIndicePanel);
 	}
 	
-	private void searchIndice()
+	/*private void searchIndice()
 	{
 		JPanel searchPanel = new JPanel(new FlowLayout());
 		JTextField searchField = new JTextField();
@@ -404,20 +388,20 @@ public class IndicesPanel extends JPanel {
 		
 		add(searchPanel);
 	}
-
+	 */
 	public JLabel getIndiceLabel() {
 		return indiceLabel;
 	}
 
-	private void computeAllIndice()
+	private void computeAllInteraction()
 	{
-		computeIndiceList(manager.getAllIndices());
+		computeInteractionList(manager.getAllInteractions());
 	}
 	
-	private void computeIndiceList(List<Indice> indices) {
-		indiceList.removeAllItems();
-		for (Indice i : indices) {
-			indiceList.addItem(i);
+	private void computeInteractionList(List<Indice> interactions) {
+		interactionList.clear();
+		for (Indice i : interactions) {
+			interactionList.add(i);
 		}
 	}
 
@@ -433,5 +417,66 @@ public class IndicesPanel extends JPanel {
 
 	public IndiceManager getManager() {
 		return manager;
+	}
+
+	@Override
+	public void showIndices(List<Indice> indices) {
+		listPanel.removeAll();
+		listPanel.repaint();
+		listPanel.revalidate();
+		for (Indice in : indices) {
+			JButton button = new JButton();
+			button.setText(in.getDescription());
+			if (in.getTexte() != null) {
+				button.setToolTipText(in.getTexte());
+			} else if (in.getImage() != null) {
+				button.setToolTipText("Image");
+			} else if (in.getSon() != null) {
+				button.setToolTipText("Son (envoyé directement sans validation)");
+			}
+			
+			button.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					validateIndice(in,false);
+				}
+			});
+			listPanel.add(button);
+		}
+		listPanel.repaint();
+		listPanel.revalidate();
+
+	}
+
+	protected void validateIndice(Indice indice, boolean interaction) {
+		if (indice.getImageName() != null) {
+			indiceLabel.setText("");
+			Image img = scaleImage(indice.getImage().getImage(), 200);
+			indiceLabel.setIcon(new ImageIcon(img));
+		} else if (indice.getSon() != null)
+		{
+			indiceLabel.setText(indice.getSon());
+			indiceThread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					player.play(indice.getSonWithUrl());
+				}
+			});
+		}
+		else
+		{
+			indiceLabel.setIcon(null);
+			indiceLabel.setText(indice.getTexte());
+		}
+		currentIndice = indice;
+		if (interaction) {
+			// Interaction, play sound direct
+			indiceThread.start();
+		} else { //Indice
+			showIndice.setEnabled(true);
+			closeButton.setEnabled(true);
+		}
 	}
 }

@@ -48,10 +48,10 @@ public class StopSessionDialog extends JDialog {
 		JLabel tpsRestant = new JLabel("Temps restant : " + finishedSession.getRemainingTime() + "s");
 		mainPanel.add(tpsRestant);
 		
-		JLabel tpsPasse = new JLabel("Tems passé : " + formatTime(finishedSession.getTimeSpent()));
+		JLabel tpsPasse = new JLabel("Temps passé : " + formatTime(finishedSession.getTimeSpent()));
 		mainPanel.add(tpsPasse);
 		
-		JLabel nbIndices = new JLabel("Nombre d'indice : " + finishedSession.getIndiceCount());
+		JLabel nbIndices = new JLabel("Nombre d'indices : " + finishedSession.getIndiceCount());
 		mainPanel.add(nbIndices);
 		
 		JLabel indices = new JLabel(finishedSession.getAllIndicesAsHTML());

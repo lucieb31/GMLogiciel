@@ -18,28 +18,44 @@ import org.jdom2.input.SAXBuilder;
 public class IndiceManager {
 
 	private List<Indice> indices;
+	private List<Enigme> enigmes;
+	private List<Indice> interactions;
 	
 	private static Salle currentSalle;
 	
 	private Properties indicesProps;
+	private Properties enigmesProps;
 	
 	private int indiceNb;
+	private int enigmeNb;
 	
 	private static final String DESC_PROP = ".desc";
 	
-	private static final String TEXTE_PROP = ".text";
+	private static final String LINK_PROP = ".link";
 	
+	private static final String TEXTE_PROP = ".text";
+
+	private static final String TYPE_PROP = ".type";
+
+	private static final String TYPE_IMG = "I";
+
+	private static final String TYPE_TEXT = "T";
+
+	private static final String TYPE_SON = "S";
+
 	private static final String IMG_PROP = ".img";
 	
 	private static final String SON_PROP = ".son";
 
 	public IndiceManager(Salle salle) {
-		indices = new ArrayList<>();
+		enigmes = new ArrayList<>();
 		currentSalle = salle;
 		String nbIndices = currentSalle.getProperties().getProperty(SallesProperties.INDICES_NB);
+		String nbEnigmes = currentSalle.getProperties().getProperty(SallesProperties.ENIGMES_NB);
 		if (nbIndices != null)
 		{
 			indiceNb = Integer.valueOf(nbIndices);
+			enigmeNb = Integer.valueOf(nbEnigmes);
 		}
 	}
 
@@ -54,47 +70,110 @@ public class IndiceManager {
 	public List<Indice> getAllIndices() {
 		return indices;
 	}
+	public List<Indice> getAllInteractions() {
+		return interactions;
+	}
+	public List<Enigme> getAllEnigmes() {
+		return enigmes;
+	}
 
+	public Enigme getEnigmeByIndex(int index) {
+		Enigme result = null;
+		for(Enigme e : enigmes) {
+			if (e.getIndex() == index) {
+				result = e;
+			}
+		}
+		return result;
+	}
+	
 	public void loadIndices() {
 		SAXBuilder sxb = new SAXBuilder();
 		try {
 			
-			File indiceFile = new File("src\\resources\\" + currentSalle.getPseudo() + "\\indices.properties");
-			indicesProps = new Properties();
-			if (indiceFile.exists())
-			{
-				FileReader fileReader = new FileReader(indiceFile);
-				indicesProps.load(fileReader);
+			
+			File enigmeFile = new File("src\\resources\\" + currentSalle.getPseudo() + "\\enigmes.properties");
+			enigmesProps = new Properties();
+			indices = new ArrayList<Indice>();
+			if (enigmeFile.exists()) {
+				FileReader fileReaderEnigme = new FileReader(enigmeFile);
+				enigmesProps.load(fileReaderEnigme);
 				
-				for(int i = 1; i <= indiceNb; i++)
+				for(int i = 0; i <= enigmeNb; i++)
 				{
-					String desc = indicesProps.getProperty(i + DESC_PROP);
-					if (desc != null)
+					File indiceFile = new File("src\\resources\\" + currentSalle.getPseudo() + "\\indices.properties");
+					indicesProps = new Properties();
+					
+					FileReader fileReaderIndice = new FileReader(indiceFile);
+					indicesProps.load(fileReaderIndice);
+					Enigme currentEnigma =null;
+					String name = enigmesProps.getProperty(i + DESC_PROP);
+					if (name != null)
 					{
-						String text = indicesProps.getProperty(i + TEXTE_PROP);
-						String img = null;
-						String son = null;
-						if (text == null) {
-							img = indicesProps.getProperty(i + IMG_PROP);
-							if (img == null)
-							{
-								son = indicesProps.getProperty(i + SON_PROP);
+						currentEnigma = new Enigme(name, i);
+					}
+						
+						
+					indices = new ArrayList<Indice>();
+					if (indiceFile.exists())
+					{
+						FileReader fileReader = new FileReader(indiceFile);
+						indicesProps.load(fileReader);
+						
+						for(int j = 1; j <= indiceNb; j++)
+						{
+							String link = indicesProps.getProperty(j + LINK_PROP);
+							
+							if (link != null && Integer.parseInt(link) == i) {
+								String desc = indicesProps.getProperty(j + DESC_PROP);
+								if (desc != null)
+								{
+									String text = indicesProps.getProperty(j + TEXTE_PROP);
+									String img = null;
+									String son = null;
+									if (text == null) {
+										img = indicesProps.getProperty(j + IMG_PROP);
+										if (img == null)
+										{
+											son = indicesProps.getProperty(j + SON_PROP);
+										}
+									}
+									Indice current = new Indice(desc, img, text, son);
+									indices.add(current);
+								}
 							}
 						}
-						Indice current = new Indice(desc, img, text, son);
-						indices.add(current);
+						fileReader.close();
+						if (currentEnigma != null) {
+							currentEnigma.setIndices(indices);
+						} else {
+							if (indices.size() > 0) {
+								interactions = indices;
+							}
+						}
+					}
+					else
+					{
+						indiceFile.createNewFile();
+						currentSalle.getProperties().setProperty(SallesProperties.INDICES_NB, ""+0);
+						FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
+						currentSalle.getProperties().store(fileWriter, null);
+						fileWriter.close();
+					}
+					if (currentEnigma != null) {
+						enigmes.add(currentEnigma);
 					}
 				}
-				fileReader.close();
-			}
-			else
-			{
-				indiceFile.createNewFile();
-				currentSalle.getProperties().setProperty(SallesProperties.INDICES_NB, ""+0);
+				fileReaderEnigme.close();
+				
+			} else {
+				enigmeFile.createNewFile();
+				currentSalle.getProperties().setProperty(SallesProperties.ENIGMES_NB, ""+0);
 				FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
 				currentSalle.getProperties().store(fileWriter, null);
 				fileWriter.close();
 			}
+			
 			
 			String hasBeenTransfered = currentSalle.getProperties().getProperty(SallesProperties.INDICES_TRANSFERED);
 			if (hasBeenTransfered == null)
@@ -186,6 +265,7 @@ public class IndiceManager {
 	public void reloadIndices()
 	{
 		indices.clear();
+		enigmes.clear();
 		loadIndices();
 	}
 	

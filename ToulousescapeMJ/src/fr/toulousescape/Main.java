@@ -3,6 +3,7 @@ package fr.toulousescape;
 import java.util.Properties;
 
 import fr.toulousescape.ui.AudioOutputUI;
+import fr.toulousescape.ui.EnigmesPanel;
 import fr.toulousescape.ui.IndicesPanel;
 import fr.toulousescape.ui.LoadConfig;
 import fr.toulousescape.ui.LoadProperties;
@@ -12,7 +13,6 @@ import fr.toulousescape.ui.RoomPanel;
 import fr.toulousescape.ui.RoomView;
 import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.IndiceManager;
-import fr.toulousescape.util.Player;
 import fr.toulousescape.util.Salle;
 import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.Session;
@@ -57,11 +57,13 @@ public class Main {
 		IndiceManager manager = new IndiceManager(salle);
 		manager.loadIndices();
 
+		EnigmesPanel enigmePanel = new EnigmesPanel(manager, session, salle);
 		IndicesPanel indicePanel = new IndicesPanel(manager, session, salle);
 		indicePanel.addListeners(panel1);
 		indicePanel.addListeners(panel2);
+		enigmePanel.addListeners(indicePanel);
 
-		new MainView(chrono, panel1, panel2, indicePanel, session, salle);
+		new MainView(chrono, panel1, panel2, enigmePanel, indicePanel, session, salle);
 		
 		//TODO: Gérer plus de 2 ecrans
 		int nbRoomView = Integer.parseInt(p.getProperty(SallesProperties.NB_ECRAN));

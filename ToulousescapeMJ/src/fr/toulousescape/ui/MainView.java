@@ -39,7 +39,7 @@ public class MainView extends JFrame {
 	
 	private IndiceManager indiceManager;
 	
-	public MainView(Chrono c, RoomPanel p1, RoomPanel p2, IndicesPanel iPanel, Session s, Salle sa) {
+	public MainView(Chrono c, RoomPanel p1, RoomPanel p2, EnigmesPanel ePanel, IndicesPanel iPanel, Session s, Salle sa) {
 		super();
 		setName("ToulousescapeMJ");
 		setVisible(true);
@@ -50,12 +50,12 @@ public class MainView extends JFrame {
 		salle = sa;
 		indiceManager = iPanel.getManager();
 		loadMenuBar();
-		init(p1, p2, iPanel);
+		init(p1, p2, iPanel, ePanel);
 		pack();
 		setLocationRelativeTo(null);
 	}
 
-	private void init(RoomPanel p1, RoomPanel p2, IndicesPanel iPanel) {
+	private void init(RoomPanel p1, RoomPanel p2, IndicesPanel iPanel, EnigmesPanel ePanel) {
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 		add(mainPanel);
@@ -71,6 +71,9 @@ public class MainView extends JFrame {
 
 		// Chrono
 		mainPanel.add(getChronoPanel());
+
+		// Enigmes
+		mainPanel.add(ePanel);
 
 		// Indices
 		mainPanel.add(iPanel);
@@ -178,7 +181,7 @@ public class MainView extends JFrame {
 		});
 		indicesMenu.add(addItem);
 		
-		JMenuItem changeItem = new JMenuItem("Modifier les indices");
+		JMenuItem changeItem = new JMenuItem("Modifier des indices");
 		changeItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -189,7 +192,7 @@ public class MainView extends JFrame {
 		});
 		indicesMenu.add(changeItem);
 		
-		JMenuItem removeItem = new JMenuItem("Supprimer les indices");
+		JMenuItem removeItem = new JMenuItem("Supprimer des indices");
 		removeItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -207,6 +210,52 @@ public class MainView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				IndicesDialog indicesDialog = new IndicesDialog(indiceManager, parent);
 				indicesDialog.openAsView();
+			}
+		});
+		indicesMenu.add(showItem);
+		
+		JMenu enigmesMenu = new JMenu("Énigmes");
+		JMenuItem addEnigmaItem = new JMenuItem("Créer des énigmes");
+		
+		addItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
+				//EnigmesDialog.openAsCreate();
+			}
+		});
+		enigmesMenu.add(addEnigmaItem);
+		
+		JMenuItem changeEnigmaItem = new JMenuItem("Modifier des énigmes");
+		changeEnigmaItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
+				//EnigmesDialog.openAsUpdate();
+			}
+		});
+		enigmesMenu.add(changeEnigmaItem);
+		
+		JMenuItem removeEnigmaItem = new JMenuItem("Supprimer des énigmes");
+		removeEnigmaItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
+				//enigmesDialog.openAsRemove();
+			}
+		});
+		enigmesMenu.add(removeItem);
+		
+		JMenuItem showEnigmaItem = new JMenuItem("Voir les énigmes");
+		showEnigmaItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
+				//EnigmesDialog.openAsView();
 			}
 		});
 		indicesMenu.add(showItem);

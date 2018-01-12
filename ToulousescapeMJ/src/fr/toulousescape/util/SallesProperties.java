@@ -28,6 +28,8 @@ public class SallesProperties {
 
 	public static final String INDICES_NB = "indices.nb";
 	
+	public static final String ENIGMES_NB = "enigmes.nb";
+	
 	public static final String INDICES_TRANSFERED = "indices.alreadyTransfered";
 	
 	public static final String INDICES_OUTPUT = "indices.output";
