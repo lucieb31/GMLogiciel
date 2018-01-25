@@ -17,9 +17,9 @@ import org.jdom2.input.SAXBuilder;
 
 public class IndiceManager {
 
-	private List<Indice> indices;
-	private List<Enigme> enigmes;
-	private List<Indice> interactions;
+	private List<Indice> indices = new ArrayList<Indice>();
+	private List<Enigme> enigmes = new ArrayList<Enigme>();
+	private List<Indice> interactions = new ArrayList<Indice>();
 	
 	private static Salle currentSalle;
 	
@@ -88,7 +88,6 @@ public class IndiceManager {
 	}
 	
 	public void loadIndices() {
-		SAXBuilder sxb = new SAXBuilder();
 		try {
 			
 			
@@ -129,16 +128,17 @@ public class IndiceManager {
 								if (desc != null)
 								{
 									String text = indicesProps.getProperty(j + TEXTE_PROP);
+									String type = indicesProps.getProperty(j + TYPE_PROP);
 									String img = null;
 									String son = null;
-									if (text == null) {
+									if (Indice.TYPE_IMAGE.equals(type)) {
 										img = indicesProps.getProperty(j + IMG_PROP);
-										if (img == null)
-										{
-											son = indicesProps.getProperty(j + SON_PROP);
-										}
 									}
-									Indice current = new Indice(desc, img, text, son);
+									if (Indice.TYPE_SON.equals(type))
+									{
+										son = indicesProps.getProperty(j + SON_PROP);
+									}
+									Indice current = new Indice(desc, img, text, son,type);
 									indices.add(current);
 								}
 							}
@@ -174,50 +174,9 @@ public class IndiceManager {
 				fileWriter.close();
 			}
 			
-			
-			String hasBeenTransfered = currentSalle.getProperties().getProperty(SallesProperties.INDICES_TRANSFERED);
-			if (hasBeenTransfered == null)
-			{
-				Map<String, String> indicesTextToTransfert = new HashMap<>();
-				Map<String, String> indicesImgToTransfert = new HashMap<>();
-				//Load xml file
-				String xmlFileName = currentSalle.getProperties().getProperty(SallesProperties.INDICES_XML_FILE);
-				if (xmlFileName != null) {
-					Document document = sxb.build(new File("src\\resources\\" + xmlFileName));
-
-					Element rootElement = document.getRootElement();
-					List<Element> children = rootElement.getChildren();
-
-					for (Element i : children) {
-						Element child = i.getChildren().get(0);
-						String desc = i.getAttributeValue("desc");
-						String text = null;
-						String img = null;
-						if ("text".equals(child.getName())) {
-							text = child.getText();
-							indicesTextToTransfert.put(desc, text);
-						} else if ("img".equals(child.getName())) {
-							img = child.getText();
-							indicesImgToTransfert.put(desc, img);
-						}
-						Indice current = new Indice(desc, img, text, null);
-						indices.add(current);
-
-					}
-				}
-				
-				//Transfer xml to properties file
-				writeIndiceInFile(indicesTextToTransfert, indicesImgToTransfert, new HashMap<>());
-				Properties salleProps = currentSalle.getProperties();
-				salleProps.setProperty(SallesProperties.INDICES_TRANSFERED, "true");
-				FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
-				salleProps.store(fileWriter, null);
-				fileWriter.close();
-			}
 			System.out.println("size " + indices.size());
-
-		} catch (IOException | JDOMException e) {
-			e.printStackTrace();
+		} catch(IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 	

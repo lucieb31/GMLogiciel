@@ -27,11 +27,7 @@ public class LoadProperties extends JDialog {
 
 	private Salle salle;
 
-	private static final String DameRouge = "Dame Rouge";
-
 	private static final String Atelier = "Atelier du musicien";
-
-	private static final String Cirque = "Black circus";
 
 	private Map<String, File> allFiles;
 	
@@ -46,13 +42,13 @@ public class LoadProperties extends JDialog {
 			{
 				Properties props = new Properties();
 				props.load(new FileReader(file));
-//				boolean firstStart = Boolean.parseBoolean(props.getProperty(SallesProperties.FIRST_START));
-//				
-//				if (!firstStart)
-//				{
+				boolean firstStart = Boolean.parseBoolean(props.getProperty(SallesProperties.FIRST_START));
+				
+				if (!firstStart)
+				{
 					salle = new Salle(fileName, props, file);
 					return;
-//				}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -62,7 +58,6 @@ public class LoadProperties extends JDialog {
 
 		add(chooseSallePanel);
 
-		initCombo();
 		initButtons();
 
 		setModal(true);
@@ -97,11 +92,6 @@ public class LoadProperties extends JDialog {
 		chooseSallePanel.add(valid);
 	}
 
-	private void initCombo() {
-		sallesName = new JComboBox<>(new String[] { Atelier, DameRouge, Cirque });
-		sallesName.setSelectedItem(0);
-		chooseSallePanel.add(sallesName);
-	}
 
 	public Salle getSalle() {
 		return salle;

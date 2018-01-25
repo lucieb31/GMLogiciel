@@ -150,7 +150,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentIndice = new Indice(null, null, txtField.getText(), null);
+				currentIndice = new Indice(null, null, txtField.getText(), null, Indice.TYPE_TEXTE);
 				indiceLabel.setText(txtField.getText());
 				indiceLabel.setIcon(null);
 				showIndice.setEnabled(true);
@@ -200,7 +200,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 				showIndice.setEnabled(false);
 				indiceLabel.setText("");
 				indiceLabel.setIcon(null);
-				currentIndice = new Indice(null, null, null, null);
+				currentIndice = new Indice(null, null, null, null, Indice.TYPE_TEXTE);
 				txtField.setText("");
 				nbIndiceLabel.setText("" + session.getIndiceCount());
 				player.stop();
