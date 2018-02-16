@@ -37,12 +37,6 @@ public class IndiceManager {
 
 	private static final String TYPE_PROP = ".type";
 
-	private static final String TYPE_IMG = "I";
-
-	private static final String TYPE_TEXT = "T";
-
-	private static final String TYPE_SON = "S";
-
 	private static final String IMG_PROP = ".img";
 	
 	private static final String SON_PROP = ".son";
@@ -122,7 +116,7 @@ public class IndiceManager {
 						for(int j = 1; j <= indiceNb; j++)
 						{
 							String link = indicesProps.getProperty(j + LINK_PROP);
-							
+							//System.out.println(link);
 							if (link != null && Integer.parseInt(link) == i) {
 								String desc = indicesProps.getProperty(j + DESC_PROP);
 								if (desc != null)

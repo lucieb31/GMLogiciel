@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Properties;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -13,6 +14,7 @@ import javax.swing.JTextArea;
 
 import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Indice;
+import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.listeners.IndiceListener;
 import fr.toulousescape.util.listeners.TimerListener;
 
@@ -22,22 +24,40 @@ public class RoomPanel extends JPanel implements TimerListener, IndiceListener{
 	private JLabel chronoLabel;
 	private JLabel clueLabel;
 	private JTextArea clueText;
-	
-	public RoomPanel(Chrono chrono) {
+	private Color normalBackgroundColor;
+	private Color endBackgroundColor;
+	private Color normalForegroundColor;
+	private Color endForegroundColor;
+	private JPanel chronoPanel;
+	private JPanel labelPanel;
+	public RoomPanel(Chrono chrono, Properties p) {
+		normalBackgroundColor = getPropertyColor(p,SallesProperties.BACKGROUND_COLOR_NORMAL);
+		endBackgroundColor = getPropertyColor(p,SallesProperties.BACKGROUND_COLOR_END);
+		normalForegroundColor = getPropertyColor(p,SallesProperties.FOREGROUND_COLOR_NORMAL);
+		endForegroundColor = getPropertyColor(p,SallesProperties.FOREGROUND_COLOR_END);
+		
+		this.setBackground(normalBackgroundColor);
+		this.repaint();
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		JPanel chronoPanel = new JPanel(new GridBagLayout());
+		chronoPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.CENTER;
 		chronoLabel = new JLabel("1:00:00");
 		chronoLabel.setHorizontalAlignment(JLabel.CENTER);
 		chronoLabel.setFont(new Font("Arial", Font.BOLD, 250));
+		chronoLabel.setForeground(normalForegroundColor);
+		chronoLabel.setBackground(normalBackgroundColor);
+		chronoPanel.setForeground(normalForegroundColor);
+		chronoPanel.setBackground(normalBackgroundColor);
 		chronoPanel.add(chronoLabel, constraints);
 		this.add(chronoPanel);
 		
-		JPanel labelPanel = new JPanel(new GridBagLayout());
+		labelPanel = new JPanel(new GridBagLayout());
 		clueLabel = new JLabel();
 		clueLabel.setFont(new Font("Arial", Font.BOLD, 90));
 //		clueLabel.setPreferredSize(new Dimension(1500, 1000));
+		labelPanel.setForeground(normalForegroundColor);
+		labelPanel.setBackground(normalBackgroundColor);
 		labelPanel.add(clueLabel, constraints);
 		this.add(labelPanel);
 		
@@ -46,11 +66,32 @@ public class RoomPanel extends JPanel implements TimerListener, IndiceListener{
 		clueText.setFont(new Font("Arial", Font.BOLD, 90));
 		clueText.setLineWrap(true);
 		clueText.setBackground(labelPanel.getBackground());
+		clueText.setForeground(labelPanel.getForeground());
 		clueText.setWrapStyleWord(true);
 		clueText.setEditable(false);
 		labelPanel.add(clueText, constraints);
 		
 		chrono.addTimerListener(this);
+	}
+
+	private Color getPropertyColor(Properties p, String colorType) {
+		String data = p.getProperty(colorType);
+		System.out.println("Raw color : "+data);
+		if (data != null) {
+			String[] elements = data.split(",");
+			if (elements != null && elements.length == 3) {
+				System.out.println("Color is ok");
+				return new Color(new Integer(elements[0]),new Integer(elements[1]), new Integer(elements[2]));
+			}
+		}
+		if (colorType.equals(SallesProperties.BACKGROUND_COLOR_NORMAL) || colorType.equals(SallesProperties.BACKGROUND_COLOR_END)) {
+			return Color.WHITE;
+		} else if (colorType.equals(SallesProperties.FOREGROUND_COLOR_NORMAL)) {
+			return Color.BLACK;
+		} else if (colorType.equals(SallesProperties.FOREGROUND_COLOR_END)) {
+			return Color.RED;
+		}
+		return Color.BLACK;
 	}
 
 	@Override
@@ -73,11 +114,22 @@ public class RoomPanel extends JPanel implements TimerListener, IndiceListener{
 		
 		if (minutes < 5 && hour == 0)
 		{
-			chronoLabel.setForeground(Color.RED);
+			chronoLabel.setForeground(endForegroundColor);
+			chronoLabel.setBackground(endBackgroundColor);
+			clueText.setForeground(endForegroundColor);
+			clueText.setBackground(endBackgroundColor);
+			chronoPanel.setBackground(endBackgroundColor);
+			labelPanel.setBackground(endBackgroundColor);
 		}
 		else
 		{
-			chronoLabel.setForeground(Color.BLACK);
+			chronoLabel.setForeground(normalForegroundColor);
+			chronoLabel.setBackground(normalBackgroundColor);
+			clueText.setForeground(normalForegroundColor);
+			clueText.setBackground(normalBackgroundColor);
+			chronoPanel.setBackground(normalBackgroundColor);
+			labelPanel.setBackground(normalBackgroundColor);
+
 		}
 		if (hour > 0)
 		{

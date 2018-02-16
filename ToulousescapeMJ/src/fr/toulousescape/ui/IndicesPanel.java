@@ -53,7 +53,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 
 	private JTextField txtField;
 
-	private JLabel nbIndiceLabel;
+	public JLabel nbIndiceLabel;
 	
 	private Thread indiceThread;
 
@@ -217,11 +217,14 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				closeButton.setEnabled(true);
-				showIndice.setEnabled(false);
+				if (! Indice.TYPE_SON.equals(currentIndice.getType())){
+					closeButton.setEnabled(true);
+					showIndice.setEnabled(false);
+				}
 				countCheckBox.setEnabled(true);
 				countCheckBox.setSelected(false);
 				session.setIndiceCount(session.getIndiceCount() + 1);
+				nbIndiceLabel.setText("" + session.getIndiceCount());
 				String indiceTxt = currentIndice.getTexte();
 				if (indiceTxt != null)
 					session.addIndice(currentIndice.getTexte());
@@ -432,7 +435,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 			} else if (in.getImage() != null) {
 				button.setToolTipText("Image");
 			} else if (in.getSon() != null) {
-				button.setToolTipText("Son (envoyé directement sans validation)");
+				button.setToolTipText("Son");
 			}
 			
 			button.addActionListener(new ActionListener() {
@@ -450,13 +453,17 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 	}
 
 	protected void validateIndice(Indice indice, boolean interaction) {
-		if (indice.getImageName() != null) {
+		indiceLabel.setText(indice.getTexte());
+		if (Indice.TYPE_IMAGE.equals(indice.getType())) {
 			indiceLabel.setText("");
 			Image img = scaleImage(indice.getImage().getImage(), 200);
 			indiceLabel.setIcon(new ImageIcon(img));
-		} else if (indice.getSon() != null)
-		{
-			indiceLabel.setText(indice.getSon());
+		} else if (Indice.TYPE_SON.equals(indice.getType())){
+			if (indice.getTexte() != null && ! indice.getTexte().equals("")) {
+				indiceLabel.setText(indice.getTexte());
+			} else {
+				indiceLabel.setText(indice.getSon());
+			}
 			indiceThread = new Thread(new Runnable() {
 				
 				@Override
@@ -476,7 +483,9 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 			indiceThread.start();
 		} else { //Indice
 			showIndice.setEnabled(true);
-			closeButton.setEnabled(true);
+			if (! Indice.TYPE_SON.equals(currentIndice.getType())) {
+				closeButton.setEnabled(true);
+			}
 		}
 	}
 }

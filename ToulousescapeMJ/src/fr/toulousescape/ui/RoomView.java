@@ -1,9 +1,7 @@
 package fr.toulousescape.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
@@ -25,6 +23,7 @@ public class RoomView extends JFrame
 //		setLayout(new GridBagLayout());
 //		GridBagConstraints constraints = new GridBagConstraints();
 //		constraints.anchor = GridBagConstraints.CENTER;
+		this.repaint();
 		add(panel);
 		pack();
 //		setExtendedState(MAXIMIZED_BOTH);

@@ -51,8 +51,8 @@ public class Main {
 		else
 			salle.getMusicPlayer().setCurrentOut(Integer.valueOf(output));
 		
-		RoomPanel panel1 = new RoomPanel(chrono);
-		RoomPanel panel2 = new RoomPanel(chrono);
+		RoomPanel panel1 = new RoomPanel(chrono,p);
+		RoomPanel panel2 = new RoomPanel(chrono,p);
 
 		IndiceManager manager = new IndiceManager(salle);
 		manager.loadIndices();

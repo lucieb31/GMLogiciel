@@ -55,8 +55,11 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	
 	private Salle salle;
 
-	public ChronoPanel(Chrono c, Session s, Salle salle) {
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+	private MainView parent;
+	
+	public ChronoPanel(Chrono c, Session s, Salle salle, MainView parent) {
+		this.parent = parent;
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		chrono = c;
 		chrono.addTimerListener(this);
@@ -67,20 +70,20 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		hasFinalMusic = salle.getFinalMusic() != null;
 		initTitle();
 		initTimerSetter();
-		initChangeTimePanel();
 		initButtons();
-		initTimeLabel();
 	}
 
 	public void initTitle() {
 		JLabel chronoLabel = new JLabel();
-		chronoLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		chronoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		chronoLabel.setVerticalAlignment(SwingConstants.CENTER);
 		chronoLabel.setText("Chronomètre :");
 		this.add(chronoLabel);
 	}
 
 	public void initButtons() {
+		JPanel globalPanel = new JPanel(new FlowLayout());
+		
 		JPanel chronoButtonsPanel = new JPanel(new FlowLayout());
 		startButton.addActionListener(new ActionListener() {
 
@@ -153,13 +156,25 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				// Reset all
 				session.clearAllIndices();
 				session.setIndiceCount(0);
+				parent.iPanel.nbIndiceLabel.setText("0");
 				session.setDate(null);
 				timeSpent = 0;
 				isPaused = false;
 			}
 		});
 		chronoButtonsPanel.add(stopButton);
-		this.add(chronoButtonsPanel);
+		
+		globalPanel.add(chronoButtonsPanel);
+		
+		chronoTime.setHorizontalAlignment(JLabel.CENTER);
+		chronoTime.setVerticalAlignment(JLabel.CENTER);
+		chronoTime.setText("1:00:00");
+		Font chronoFont = new Font("Arial", Font.BOLD, 30);
+		chronoTime.setFont(chronoFont);
+		globalPanel.add(chronoTime);
+
+		
+		this.add(globalPanel);
 	}
 
 	public void initTimeLabel() {
@@ -172,6 +187,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	}
 
 	private void initTimerSetter() {
+		JPanel timerSetterAndChangeTimePanel = new JPanel (new FlowLayout());
+
 		JPanel timerSetterPanel = new JPanel(new FlowLayout());
 
 		JLabel label = new JLabel("Durée du chrono : ");
@@ -192,8 +209,62 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			}
 		});
 		timerSetterPanel.add(validSetter);
+		
+		timerSetterAndChangeTimePanel.add(timerSetterPanel);
+		
+		JPanel penalityPanel = new JPanel(new FlowLayout());
 
-		this.add(timerSetterPanel);
+		JLabel label2 = new JLabel("Pénalité : ");
+		penalityPanel.add(label2);
+
+		JTextField txtField2 = new JTextField();
+		txtField2.setPreferredSize(new Dimension(50, 27));
+
+		txtField2.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if (!Character.isDigit(e.getKeyChar())) {
+					e.consume();
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
+		penalityPanel.add(txtField2);
+		JLabel l2 = new JLabel("min");
+		penalityPanel.add(l2);
+
+		JButton removeTime = new JButton(new ImageIcon(Images.MINUS_IMG));
+		removeTime.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.removeTime(Integer.valueOf(txtField2.getText()));
+			}
+		});
+		penalityPanel.add(removeTime);
+
+		JButton addTime = new JButton(new ImageIcon(Images.PLUS_IMG));
+		addTime.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.addTime(Integer.valueOf(txtField2.getText()));
+			}
+		});
+		penalityPanel.add(addTime);
+
+		timerSetterAndChangeTimePanel.add(penalityPanel);
+
+
+		this.add(timerSetterAndChangeTimePanel);
 	}
 
 	private void initChangeTimePanel() {

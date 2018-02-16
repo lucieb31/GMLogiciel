@@ -38,4 +38,11 @@ public class SallesProperties {
 
 	public static final String NB_SALLE = "salle.nb";
 	
+	public static final String FOREGROUND_COLOR_NORMAL = "couleur.texte.normal";
+
+	public static final String FOREGROUND_COLOR_END = "couleur.texte.fin";
+
+	public static final String BACKGROUND_COLOR_NORMAL = "couleur.fond.normal";
+
+	public static final String BACKGROUND_COLOR_END = "couleur.fond.fin";
 }

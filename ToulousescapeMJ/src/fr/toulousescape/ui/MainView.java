@@ -1,5 +1,6 @@
 package fr.toulousescape.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -39,9 +40,12 @@ public class MainView extends JFrame {
 	
 	private IndiceManager indiceManager;
 	
+	public IndicesPanel iPanel;
+	
 	public MainView(Chrono c, RoomPanel p1, RoomPanel p2, EnigmesPanel ePanel, IndicesPanel iPanel, Session s, Salle sa) {
 		super();
 		setName("ToulousescapeMJ");
+		this.iPanel = iPanel ;
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(800, 800));
@@ -116,8 +120,8 @@ public class MainView extends JFrame {
 	}
 
 	private JPanel getChronoPanel() {
-		JPanel chronoPanel = new ChronoPanel(chrono, session, salle);
-		chronoPanel.setPreferredSize(new Dimension(200, 200));
+		JPanel chronoPanel = new ChronoPanel(chrono, session, salle,this);
+		chronoPanel.setPreferredSize(new Dimension(200, 50));
 		return chronoPanel;
 	}
 
