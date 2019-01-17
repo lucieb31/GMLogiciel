@@ -10,8 +10,12 @@ public class SallesProperties {
 	
 	public static final String MUSIC_TO_PLAY = "musique.ambiance";
 	
-	public static final String MUSIC_FINAL = "musique.finale";
-	
+	public static final String MUSIC_BEGIN = "musique.debut";
+
+	public static final String MUSIC_END = "musique.fin";
+
+	public static final String MUSIC_ELEMENTS = "musique.elements";
+
 	public static final String DAME_ROUGE = "dame_rouge";
 	
 	public static final String ATELIER_MUSICIEN = "atelier";

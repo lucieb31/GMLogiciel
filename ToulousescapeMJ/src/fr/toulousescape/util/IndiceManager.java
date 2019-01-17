@@ -21,6 +21,8 @@ public class IndiceManager {
 	private List<Enigme> enigmes = new ArrayList<Enigme>();
 	private List<Indice> interactions = new ArrayList<Indice>();
 	
+	private EnigmeComparator enigmeComparator = new EnigmeComparator();
+	
 	private static Salle currentSalle;
 	
 	private Properties indicesProps;
@@ -37,10 +39,19 @@ public class IndiceManager {
 
 	private static final String TYPE_PROP = ".type";
 
+	private static final String COLOR_PROP = ".color";
+
+	private static final String INDEX_PROP = ".idx";
+
+	private static final String MUSIC_PROP = ".music";
+
 	private static final String IMG_PROP = ".img";
 	
 	private static final String SON_PROP = ".son";
 
+	private static final String FUNCTION_PROP = ".function";
+	
+	
 	public IndiceManager(Salle salle) {
 		enigmes = new ArrayList<>();
 		currentSalle = salle;
@@ -68,6 +79,7 @@ public class IndiceManager {
 		return interactions;
 	}
 	public List<Enigme> getAllEnigmes() {
+		enigmes.sort(enigmeComparator);
 		return enigmes;
 	}
 
@@ -101,9 +113,10 @@ public class IndiceManager {
 					indicesProps.load(fileReaderIndice);
 					Enigme currentEnigma =null;
 					String name = enigmesProps.getProperty(i + DESC_PROP);
+					String idx = enigmesProps.getProperty(i + INDEX_PROP);
 					if (name != null)
 					{
-						currentEnigma = new Enigme(name, i);
+						currentEnigma = new Enigme(name, idx);
 					}
 						
 						
@@ -123,16 +136,29 @@ public class IndiceManager {
 								{
 									String text = indicesProps.getProperty(j + TEXTE_PROP);
 									String type = indicesProps.getProperty(j + TYPE_PROP);
+									String color = indicesProps.getProperty(j + COLOR_PROP);
+									String index = indicesProps.getProperty(j + INDEX_PROP);
 									String img = null;
 									String son = null;
+									String function = null;
+									String music = "false";
 									if (Indice.TYPE_IMAGE.equals(type)) {
 										img = indicesProps.getProperty(j + IMG_PROP);
 									}
 									if (Indice.TYPE_SON.equals(type))
 									{
 										son = indicesProps.getProperty(j + SON_PROP);
+										music = indicesProps.getProperty(j + MUSIC_PROP);
 									}
-									Indice current = new Indice(desc, img, text, son,type);
+									if (Indice.TYPE_MODULE.equals(type))
+									{
+										function = indicesProps.getProperty(j + FUNCTION_PROP);
+									}
+									boolean bMusic = false;
+									if ("true".equals(music)) {
+										bMusic = true;
+									}
+									Indice current = new Indice(desc, img, text, son,type, color, index, function, bMusic);
 									indices.add(current);
 								}
 							}

@@ -7,13 +7,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -32,8 +42,18 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 	JButton startButton = new JButton(new ImageIcon(Images.PLAY_IMG));
 	JButton stopButton = new JButton(new ImageIcon(Images.STOP_IMG));
+	JButton nextMusicButton = new JButton(new ImageIcon(Images.NEXT_IMG));
 	JButton pauseButton = new JButton(new ImageIcon(Images.PAUSE_IMG));
-
+	JButton sessionSearch = new JButton(new ImageIcon(Images.REFRESH_IMG));
+	Timer autoStartTimer;
+	boolean autoStartTimerRunning = false;
+	private int musicNumber = 0;
+	
+	private static final String NO_SESSION_TEXT = "Récupérer une session pour pouvoir lancer le chrono.";
+	
+	JTextField sessionField;
+	JLabel sessionInfoLabel = new JLabel(NO_SESSION_TEXT);
+	
 	JLabel chronoTime = new JLabel();
 	JLabel remainingTimeLabel = new JLabel();
 
@@ -46,17 +66,26 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	private JButton validSetter;
 
 	private Player player;
-	
+
 	private boolean hasAmbianceMusic = false;
-	
+
+	private boolean hasBeginMusic = false;
+
+	private boolean hasElementsMusic = false;
+
 	private boolean hasFinalMusic = false;
 	
 	private boolean isPaused = false;
+
+	private boolean firstLaunch = true;
+
+	private Map<Integer, String> elementsMusic = null;
 	
 	private Salle salle;
 
 	private MainView parent;
-	
+	Thread currentMusicThread = null;
+
 	public ChronoPanel(Chrono c, Session s, Salle salle, MainView parent) {
 		this.parent = parent;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -68,23 +97,25 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		this.salle = salle;
 		hasAmbianceMusic = salle.getAmbianceMusique() != null;
 		hasFinalMusic = salle.getFinalMusic() != null;
+		hasBeginMusic = salle.getBeginMusic() != null;
+		elementsMusic = salle.getElementsMusic();
+		hasElementsMusic = elementsMusic != null;
+		//initSession();
 		initTitle();
 		initTimerSetter();
 		initButtons();
 	}
 
 	public void initTitle() {
-		JLabel chronoLabel = new JLabel();
-		chronoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		chronoLabel.setVerticalAlignment(SwingConstants.CENTER);
-		chronoLabel.setText("Chronomètre :");
-		this.add(chronoLabel);
+		this.add(sessionInfoLabel);
 	}
 
 	public void initButtons() {
 		JPanel globalPanel = new JPanel(new FlowLayout());
 		
 		JPanel chronoButtonsPanel = new JPanel(new FlowLayout());
+		startButton.setEnabled(false);
+		startButton.setToolTipText("Veuillez récupérer la session avant de lancer le chrono");
 		startButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -92,12 +123,35 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				startButton.setEnabled(false);
 				pauseButton.setEnabled(true);
 				stopButton.setEnabled(true);
+				nextMusicButton.setEnabled(true);
 				validSetter.setEnabled(false);
+				sessionSearch.setEnabled(false);
+				if (autoStartTimer != null) {
+					autoStartTimerRunning = false;
+					autoStartTimer.cancel();
+				}
 				session.setDate(new Date());
 				System.out.println(hasAmbianceMusic + " " + isPaused);
 				if (hasAmbianceMusic && !isPaused)
 				{
-					String musicToPlay = salle.getAmbianceMusique();
+					String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+					musicNumber++;
+					if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
+						nextMusicButton.setEnabled(false);
+					}
+					currentMusicThread = new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							System.out.println("PLAY!!! " + musicToPlay);
+							player.play(salle.getPseudo() + "\\" + musicToPlay);
+						}
+					});
+					currentMusicThread.start();
+				}
+				if (hasBeginMusic && !isPaused && firstLaunch)
+				{
+					String musicToPlay = salle.getBeginMusic();
 					new Thread(new Runnable() {
 
 						@Override
@@ -107,8 +161,10 @@ public class ChronoPanel extends JPanel implements TimerListener {
 						}
 					}).start();
 				}
+
 				chrono.start();
 				isPaused = false;
+				firstLaunch = false;
 			}
 		});
 		chronoButtonsPanel.add(startButton);
@@ -133,16 +189,25 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				musicNumber = 0;
+				nextMusicButton.setEnabled(false);
 				stopButton.setEnabled(false);
-				startButton.setEnabled(true);
+				startButton.setEnabled(false);
+				sessionSearch.setEnabled(true);
 				pauseButton.setEnabled(false);
 				validSetter.setEnabled(true);
+				
 				player.stop();
 
 				// TODO : Afficher temps passé et temps restant en seconde (pour
 				// le score)
 				session.setRemainingTime(chrono.getCurrentTime());
 				session.setTimeSpent(timeSpent);
+				if (! "".equals(sessionField.getText())) {
+					session.setId(new Integer(sessionField.getText()));
+				}
+				sessionInfoLabel.setText(NO_SESSION_TEXT);
+				sessionField.setText("");
 				chrono.stop();
 				
 				StopSessionDialog dialog = new StopSessionDialog(getParent(), session);
@@ -160,9 +225,43 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				session.setDate(null);
 				timeSpent = 0;
 				isPaused = false;
+				firstLaunch = true;
 			}
 		});
 		chronoButtonsPanel.add(stopButton);
+		
+		nextMusicButton.setEnabled(false);
+		nextMusicButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.stop();
+				currentMusicThread.interrupt();
+//				String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+//				musicNumber++;
+//				if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
+//					nextMusicButton.setEnabled(false);
+//				}
+//				
+//				player.play(salle.getPseudo() + "\\" + musicToPlay);
+				
+				currentMusicThread = new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+						musicNumber++;
+						if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
+							nextMusicButton.setEnabled(false);
+						}
+						System.out.println("PLAY!!! " + musicToPlay);
+						player.play(salle.getPseudo() + "\\" + musicToPlay);
+					}
+				});
+				currentMusicThread.start();
+			}
+		});
+		chronoButtonsPanel.add(nextMusicButton);
 		
 		globalPanel.add(chronoButtonsPanel);
 		
@@ -191,6 +290,24 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 		JPanel timerSetterPanel = new JPanel(new FlowLayout());
 
+		JLabel sessionLabel = new JLabel();
+		sessionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		sessionLabel.setVerticalAlignment(SwingConstants.CENTER);
+		sessionLabel.setText("Session :");
+		sessionField = new JTextField();
+		sessionField.setPreferredSize(new Dimension(50, 27));
+		sessionField.setEditable(false);
+		sessionSearch.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getSessionFromWebsite();
+			}
+		});
+		timerSetterPanel.add(sessionLabel);
+		timerSetterPanel.add(sessionField);
+		timerSetterPanel.add(sessionSearch);
+	
 		JLabel label = new JLabel("Durée du chrono : ");
 		timerSetterPanel.add(label);
 
@@ -323,8 +440,28 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	@Override
 	public void timeChanged(int currentTime) {
 
-		chronoTime.setText(formatTime(currentTime));
-
+		chronoTime.setText(Chrono.formatTime(currentTime));
+		if (hasElementsMusic) {
+			for (Integer value : elementsMusic.keySet()) {
+				if (currentTime == value) {
+					String elementMusic = elementsMusic.get(value);
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							System.out.println("PLAY !!! " + elementMusic);
+							// player.stop();
+							try {
+								Thread.sleep(100L);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							player.play(salle.getPseudo() + "\\" + elementMusic);
+						}
+					}).start();					
+				}
+			}
+		}
+		
 		if (currentTime == 0 && hasFinalMusic) {
 			String finalMusic = salle.getFinalMusic();
 			new Thread(new Runnable() {
@@ -347,29 +484,98 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		timeSpent++;
 	}
 
-	private String formatTime(int timeToFormat) {
-		// Calculate current time
-		int hour = timeToFormat / 3600;
-		int minutes = (timeToFormat % 3600) / 60;
-		int secondes = ((timeToFormat - minutes * 60) % 60);
+	public void getSessionFromWebsite() {
 
-		String s = String.valueOf(secondes);
+	  try {
+		LoadConfig config = new LoadConfig();
+		String room = config.getSelectedSalle();
+		System.out.println("Salle : "+room);
+		URL url = new URL("https://www.toulousescape.fr/process/wstescape?room="+room);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Accept", "application/json");
 
-		if (secondes < 10) {
-			s = "0" + s;
+		if (conn.getResponseCode() != 200) {
+			throw new RuntimeException("Failed : HTTP error code : "
+					+ conn.getResponseCode());
 		}
 
-		String m = String.valueOf(minutes);
-		if (minutes < 10) {
-			m = "0" + m;
-		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+			(conn.getInputStream())));
 
-		if (hour > 0) {
-			return hour + ":" + m + ":" + s;
-		} else if (minutes > 0) {
-			return m + ":" + s;
+		String output;
+		String all ="";
+		System.out.println("Output from Server .... \n");
+		while ((output = br.readLine()) != null) {
+			all += output;
+		}
+		System.out.println(all);
+		
+		if (all.trim().equals("nosession")) {
+			JOptionPane.showMessageDialog(this, "Merci de synchroniser une session "+room+" via le backend.");
 		} else {
-			return s + "'";
+			String session = all.substring(all.indexOf(":")+2, all.indexOf(",") - 1);
+			startButton.setEnabled(true);
+			if (! autoStartTimerRunning) {
+				scheduleAutoStartTimer();
+			}
+			String firstname = all.substring(all.indexOf("firstname\":")+12, all.indexOf(",\"lastname") - 1);
+			String lastname = all.substring(all.indexOf("lastname\":")+11, all.indexOf(",\"phone") - 1);
+			String phone = all.substring(all.indexOf("phone\":")+8, all.indexOf(",\"email") - 1);
+			String players = all.substring(all.indexOf("players\":")+10, all.indexOf(",\"bonus") - 1);
+			String running = all.substring(all.indexOf("running\":")+10, all.indexOf(",\"players") - 1);
+			String special = all.substring(all.indexOf("special\":")+10, all.indexOf(",\"price_category") - 1);
+			System.out.println(firstname);
+			System.out.println(lastname);
+			System.out.println(phone);
+			System.out.println(players);
+			String specialText = "";
+			if ("D".equals(special)) {
+				specialText = "Découverte - ";
+			} else if ("A".equals(special)) {
+				specialText = "Version anglaise - ";
+			}
+			sessionField.setText(session);
+			sessionInfoLabel.setText(specialText +firstname+ " "+ lastname + " ("+phone+") "+players+" joueurs");
+			if ("1".equals(running)) {
+				startButton.doClick();
+			}
 		}
+
+	  } catch (MalformedURLException e) {
+
+		e.printStackTrace();
+
+	  } catch (IOException e) {
+
+		e.printStackTrace();
+
+	  }
+
+	}
+
+	private void scheduleAutoStartTimer() {
+		autoStartTimerRunning = true;
+
+		autoStartTimer = new Timer();
+
+		TimerTask task = new TimerTask() {
+			
+			@Override
+			public void run() {
+				System.out.println("Getting info");
+				getSessionFromWebsite();
+				
+			}
+		};
+		
+		autoStartTimer.schedule(task, 2000, 2000);
+	}
+
+	public void setPlayable(boolean enabled) {
+		this.startButton.setEnabled(enabled);
+	}
+	public void deactivateBeginMusic() {
+		this.firstLaunch = false;
 	}
 }

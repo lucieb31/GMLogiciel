@@ -66,10 +66,16 @@ public class AudioOutputUI extends JDialog {
 
 	private void initList(Player music, Player indice) {
 		JPanel musicPanel = new JPanel(new FlowLayout());
-		JLabel musicLabel = new JLabel("Source de musique : ");
+		JLabel musicLabel = new JLabel("Sortie musique : ");
 		musicPanel.add(musicLabel);
+		Properties properties = currentSalle.getProperties();
+		String selected = properties.getProperty(SallesProperties.MUSIC_OUTPUT);
 		combo_music = new JComboBox<>(output);
-		combo_music.setSelectedIndex(0);
+		if (selected != null) {
+			combo_music.setSelectedIndex(new Integer(selected));
+		} else {
+			combo_music.setSelectedIndex(0);
+		}
 		musicPanel.add(combo_music);
 		musicPanel.add(initTestPlayer(music, combo_music));
 		dialogPanel.add(musicPanel);
@@ -77,10 +83,15 @@ public class AudioOutputUI extends JDialog {
 		if (indice != null)
 		{
 			JPanel audioPanel = new JPanel(new FlowLayout());
-			JLabel indices = new JLabel("Source de d'indices : ");
+			JLabel indices = new JLabel("Sortie indices : ");
 			audioPanel.add(indices);
+			selected = properties.getProperty(SallesProperties.INDICES_OUTPUT);
 			combo_indices = new JComboBox<>(output);
-			combo_indices.setSelectedIndex(0);
+			if (selected != null) {
+				combo_indices.setSelectedIndex(new Integer(selected));
+			} else {
+				combo_indices.setSelectedIndex(0);
+			}
 			audioPanel.add(combo_indices);
 			audioPanel.add(initTestPlayer(indice, combo_indices));
 			dialogPanel.add(audioPanel);

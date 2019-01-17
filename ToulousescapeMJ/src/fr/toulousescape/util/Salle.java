@@ -4,9 +4,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @author Toulousescape
+ *
+ */
 public class Salle {
 
 	private String name;
@@ -21,7 +27,11 @@ public class Salle {
 	
 	private boolean hasAudioIndice;
 	
-	private String ambianceMusique;
+	private String ambianceMusic;
+
+	private String beginMusic;
+
+	private String elementsMusic;
 	
 	private String finalMusic;
 	
@@ -94,11 +104,11 @@ public class Salle {
 	}
 
 	public String getAmbianceMusique() {
-		return ambianceMusique;
+		return ambianceMusic;
 	}
 
 	public void setAmbianceMusique(String ambianceMusique) {
-		this.ambianceMusique = ambianceMusique;
+		this.ambianceMusic = ambianceMusique;
 	}
 
 	public String getFinalMusic() {
@@ -129,8 +139,10 @@ public class Salle {
 					props.setProperty(SallesProperties.ECRAN_RESOLUTION + "." + (i+1), ""+resolutionEcrans.get(i));
 				}
 			}
-			props.setProperty(SallesProperties.MUSIC_FINAL, finalMusic);
-			props.setProperty(SallesProperties.MUSIC_TO_PLAY, ambianceMusique);
+			props.setProperty(SallesProperties.MUSIC_END, finalMusic);
+			props.setProperty(SallesProperties.MUSIC_TO_PLAY, ambianceMusic);
+			props.setProperty(SallesProperties.MUSIC_BEGIN, beginMusic);
+			props.setProperty(SallesProperties.MUSIC_ELEMENTS, elementsMusic);
 			FileWriter writer = new FileWriter(propertyFile);
 			props.store(writer, "Create salle");
 			writer.close();
@@ -145,8 +157,10 @@ public class Salle {
 		hasAudioIndice = Boolean.parseBoolean(props.getProperty(SallesProperties.IS_AUDIO_INDICES));
 		if (hasAudioIndice)
 			indicePlayer = new Player();
-		finalMusic = props.getProperty(SallesProperties.MUSIC_FINAL);
-		ambianceMusique = props.getProperty(SallesProperties.MUSIC_TO_PLAY);
+		finalMusic = props.getProperty(SallesProperties.MUSIC_END);
+		beginMusic = props.getProperty(SallesProperties.MUSIC_BEGIN);
+		elementsMusic = props.getProperty(SallesProperties.MUSIC_ELEMENTS);
+		ambianceMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY);
 		nbEcran = Integer.parseInt(props.getProperty(SallesProperties.NB_ECRAN));
 		if (nbEcran != 0)
 		{
@@ -161,4 +175,30 @@ public class Salle {
 	public String getPseudo() {
 		return pseudo;
 	}
+
+	public String getBeginMusic() {
+		return beginMusic;
+	}
+
+	public void setBeginMusic(String beginMusic) {
+		this.beginMusic = beginMusic;
+	}
+
+	public Map<Integer,String> getElementsMusic() {
+		if (elementsMusic != null) {
+			HashMap<Integer,String> map = new HashMap<Integer,String>();
+			String[] split = elementsMusic.split(";");
+			for (String s : split) {
+				String[] infos = s.split(",");
+				map.put(new Integer(infos[0]), infos[1]);
+			}
+			return map;
+		} else {
+			return null;
+		}
+	}
+
+	public void setElementsMusic(String elementsMusic) {
+		this.elementsMusic = elementsMusic;
+	}	
 }

@@ -3,13 +3,18 @@ package fr.toulousescape.util;
 import java.util.List;
 
 public class Enigme {
-
+	
+	private IndiceComparator indiceComparator = new IndiceComparator();
 	private String name;
 	private List<Indice> indices;
 	private int index;
-	public Enigme(String name, int index) {
+	public Enigme(String name, String index2) {
 		this.name = name;
-		this.index = index;
+		if (index2 != null) {
+			this.index = new Integer(index2);
+		} else {
+			index2 = null;
+		}
 	}
 
 	public String getName() {
@@ -25,6 +30,7 @@ public class Enigme {
 	}
 
 	public void setIndices(List<Indice> indices) {
+		indices.sort(indiceComparator);
 		this.indices = indices;
 	}
 

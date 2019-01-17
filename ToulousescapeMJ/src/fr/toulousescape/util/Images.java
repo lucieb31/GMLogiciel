@@ -9,7 +9,9 @@ public class Images {
 	public static final String EYE_IMG = URL_RESOURCES + "eye.png";
 	public static final String REFRESH_IMG = URL_RESOURCES + "refresh.png";
 	public static final String SEARCH_IMG = URL_RESOURCES + "search.png";
-
+	public static final String SEE_IMG = URL_RESOURCES + "list.png";
+	public static final String NEXT_IMG = URL_RESOURCES + "next.png";
+	
 	//Chrono images
 	public static final String MINUS_IMG = URL_RESOURCES + "minus.png";
 	public static final String PLUS_IMG = URL_RESOURCES + "plus.png";

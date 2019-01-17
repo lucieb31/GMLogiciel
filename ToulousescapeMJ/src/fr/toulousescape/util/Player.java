@@ -101,7 +101,9 @@ public class Player {
 				int bytesRead = 0;
 				while (((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) && !_stop) 
 				{
-					line.write(bytes, 0, bytesRead);
+					if (!_stop){
+						line.write(bytes, 0, bytesRead);
+					}
 				}
 			}
 

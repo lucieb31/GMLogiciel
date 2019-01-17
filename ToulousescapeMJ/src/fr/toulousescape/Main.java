@@ -45,12 +45,17 @@ public class Main {
 		
 		Properties p = salle.getProperties();
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
-		String output = p.getProperty(SallesProperties.MUSIC_OUTPUT);
-		if (output == null)
+		String outputMusic = p.getProperty(SallesProperties.MUSIC_OUTPUT);
+		String outputClues = p.getProperty(SallesProperties.INDICES_OUTPUT);
+		boolean audioClues = new Boolean(p.getProperty(SallesProperties.IS_AUDIO_INDICES));
+		if (outputMusic == null || (audioClues && (outputClues == null ))) {
 			new AudioOutputUI(salle);
-		else
-			salle.getMusicPlayer().setCurrentOut(Integer.valueOf(output));
-		
+		} else {
+			salle.getMusicPlayer().setCurrentOut(Integer.valueOf(outputMusic));
+			if (audioClues) {
+				salle.getIndicePlayer().setCurrentOut(Integer.valueOf(outputClues));
+			}
+		}
 		RoomPanel panel1 = new RoomPanel(chrono,p);
 		RoomPanel panel2 = new RoomPanel(chrono,p);
 
@@ -61,6 +66,7 @@ public class Main {
 		IndicesPanel indicePanel = new IndicesPanel(manager, session, salle);
 		indicePanel.addListeners(panel1);
 		indicePanel.addListeners(panel2);
+		chrono.addTimerListener(indicePanel);
 		enigmePanel.addListeners(indicePanel);
 
 		new MainView(chrono, panel1, panel2, enigmePanel, indicePanel, session, salle);
@@ -79,7 +85,6 @@ public class Main {
 			resolution = Integer.parseInt(p.getProperty(SallesProperties.ECRAN_RESOLUTION + ".2"));
 			new RoomView("Ecran 2", panel2, resolution);
 		}
-
 	}
 
 }

@@ -13,6 +13,20 @@ public class Session {
 
 	private int indiceCount;
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setIndices(List<String> indices) {
+		this.indices = indices;
+	}
+
+	private int id;
+	
 	private Date date;
 	
 	private int timeSpent;

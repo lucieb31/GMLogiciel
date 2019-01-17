@@ -36,6 +36,8 @@ public class MainView extends JFrame {
 
 	private JSlider gainSlider;
 	
+	private JPanel chronoPanel;
+	
 	private Salle salle;
 	
 	private IndiceManager indiceManager;
@@ -120,7 +122,7 @@ public class MainView extends JFrame {
 	}
 
 	private JPanel getChronoPanel() {
-		JPanel chronoPanel = new ChronoPanel(chrono, session, salle,this);
+		chronoPanel = new ChronoPanel(chrono, session, salle,this);
 		chronoPanel.setPreferredSize(new Dimension(200, 50));
 		return chronoPanel;
 	}
@@ -154,9 +156,28 @@ public class MainView extends JFrame {
 		});
 		configMenu.add(audioItem);
 		
-		JMenuItem propsItem = new JMenuItem("Propriétés");
-		propsItem.setToolTipText("Modifier les propriétés de la salle");
+		JMenuItem propsItem = new JMenuItem("Session hors ligne");
+		propsItem.setToolTipText("Attention la session ne sera pas synchronisée avec le site");
+		propsItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				allowNoSynchroSession();
+			}
+		});
 		configMenu.add(propsItem);
+
+		JMenuItem noStartItem = new JMenuItem("Désactiver la musique de lancement");
+		noStartItem.setToolTipText("La musique se relancera du début, mais le son de départ ne se lancera pas. Utilisez cette fonctionnalité si vous redémarrez le logiciel au milieu d'une session.");
+		noStartItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				deactivateBeginMusic();
+			}
+		});
+		configMenu.add(noStartItem);
+
 		
 		final JFrame parent = this;
 		
@@ -268,5 +289,12 @@ public class MainView extends JFrame {
 		menuBar.add(salleMenu);
 		menuBar.add(configMenu);
 		setJMenuBar(menuBar);
+	}
+	
+	public void allowNoSynchroSession() {
+		((ChronoPanel) chronoPanel).setPlayable(true);
+	}
+	public void deactivateBeginMusic() {
+		((ChronoPanel) chronoPanel).deactivateBeginMusic();
 	}
 }

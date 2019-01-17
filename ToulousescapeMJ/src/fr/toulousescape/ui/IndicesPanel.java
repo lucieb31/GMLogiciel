@@ -1,5 +1,6 @@
 package fr.toulousescape.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -8,8 +9,19 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -20,21 +32,37 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Indice;
+import fr.toulousescape.util.IndiceComparator;
 import fr.toulousescape.util.IndiceManager;
 import fr.toulousescape.util.Player;
 import fr.toulousescape.util.Salle;
+import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.Session;
 import fr.toulousescape.util.listeners.EnigmeListener;
 import fr.toulousescape.util.listeners.IndiceListener;
+import fr.toulousescape.util.listeners.TimerListener;
 
-public class IndicesPanel extends JPanel implements EnigmeListener {
+public class IndicesPanel extends JPanel implements EnigmeListener, TimerListener {
 
 	private static final long serialVersionUID = -8515748419839056660L;
 
 	private IndiceManager manager;
 
+	private int time = 0;
+	
+	private Color RED = new Color(255, 0, 0);
+	
+	private Color ORANGE = new Color(255, 150, 0);
+
+	private Color YELLOW = new Color(255, 250, 0);
+
+	private Color GREEN = new Color(0, 255, 0);
+
+	private int lastClueTime = 0;
+	
 	private JLabel indiceLabel;
 	
 	private JPanel listPanel;
@@ -44,31 +72,39 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 	private JButton closeButton;
 
 	protected Indice currentIndice;
+	
+	String roomPseudo;
 
 	private JButton showIndice;
 
+	private JButton showSilentIndice;
+
+	private JCheckBox countCheckBox;
+	
 	private Session session;
 
-	private Player player;
+	private Player indicePlayer;
+
+	private Player musicPlayer;
 
 	private JTextField txtField;
 
 	public JLabel nbIndiceLabel;
 	
 	private Thread indiceThread;
+	
+	private Properties p;
 
 	private List<Indice> interactionList = new ArrayList<Indice>();
 
 	public IndicesPanel(IndiceManager m, Session s, Salle salle) {
 		manager = m;
 		session = s;
-		Player indicePlayer = salle.getIndicePlayer();
-		if (indicePlayer != null)
-		{
-			player = indicePlayer;
-		}
-		else
-			player = salle.getMusicPlayer();
+		
+		p = salle.getProperties();
+		roomPseudo = salle.getPseudo();
+		indicePlayer = salle.getIndicePlayer();
+		musicPlayer = salle.getMusicPlayer();
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setBorder(BorderFactory.createEtchedBorder());
 		initTitle();
@@ -150,14 +186,26 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentIndice = new Indice(null, null, txtField.getText(), null, Indice.TYPE_TEXTE);
+				currentIndice = new Indice(null, null, txtField.getText(), null, Indice.TYPE_TEXTE, null, null, null, false);
 				indiceLabel.setText(txtField.getText());
 				indiceLabel.setIcon(null);
 				showIndice.setEnabled(true);
+				showSilentIndice.setEnabled(true);
 				closeButton.setEnabled(true);
 			}
 		});
 		addIndicePanel.add(valid);
+		JButton see = new JButton(new ImageIcon(Images.SEE_IMG));
+		see.setToolTipText("Voir les indices déjà envoyés");
+		see.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SeeCluesDialog dialog = new SeeCluesDialog(getParent(), session.getAllIndicesAsHTML());
+				dialog.openDialog();
+			}
+		});
+		addIndicePanel.add(see);
 
 		this.add(addIndicePanel);
 	}
@@ -170,7 +218,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 	private void initCloseIndice() {
 		JPanel showIndicePanel = new JPanel(new FlowLayout());
 
-		JCheckBox countCheckBox = new JCheckBox("Ne pas compter l'indice");
+		countCheckBox = new JCheckBox("Ne pas compter l'indice");
 		countCheckBox.setEnabled(false);
 		countCheckBox.addActionListener(new ActionListener() {
 
@@ -191,6 +239,8 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 		ImageIcon eyeIcon = new ImageIcon(Images.EYE_IMG);
 		showIndice = new JButton(eyeIcon);
 		showIndice.setEnabled(false);
+		showSilentIndice = new JButton("Modifier");
+		showSilentIndice.setEnabled(false);
 		closeButton.setEnabled(false);
 		closeButton.addActionListener(new ActionListener() {
 
@@ -198,12 +248,13 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 			public void actionPerformed(ActionEvent e) {
 				closeButton.setEnabled(false);
 				showIndice.setEnabled(false);
+				showSilentIndice.setEnabled(false);
 				indiceLabel.setText("");
 				indiceLabel.setIcon(null);
-				currentIndice = new Indice(null, null, null, null, Indice.TYPE_TEXTE);
+				currentIndice = new Indice(null, null, null, null, Indice.TYPE_TEXTE, null, null, null, false);
 				txtField.setText("");
 				nbIndiceLabel.setText("" + session.getIndiceCount());
-				player.stop();
+				indicePlayer.stop();
 				indiceThread = null;
 				countCheckBox.setEnabled(false);
 				countCheckBox.setSelected(false);
@@ -217,81 +268,24 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (! Indice.TYPE_SON.equals(currentIndice.getType())){
-					closeButton.setEnabled(true);
-					showIndice.setEnabled(false);
-				}
-				countCheckBox.setEnabled(true);
-				countCheckBox.setSelected(false);
-				session.setIndiceCount(session.getIndiceCount() + 1);
-				nbIndiceLabel.setText("" + session.getIndiceCount());
-				String indiceTxt = currentIndice.getTexte();
-				if (indiceTxt != null)
-					session.addIndice(currentIndice.getTexte());
-				else
-					session.addIndice("image ou son");
-				if (indiceThread == null)
-				{
-					Thread t = new Thread(new Runnable() {
-
-						@Override
-						public void run() {
-							player.play("tools\\DING.mp3");
-						}
-					});
-					t.start();
-				}
-				else
-					indiceThread.start();
-				// try {
-				// Info[] infos = AudioSystem.getMixerInfo();
-				// Mixer mixer = AudioSystem.getMixer(infos[0]);
-				// mixer.open();
-				//
-				// MpegAudioFileReader mp = new MpegAudioFileReader();
-				// AudioInputStream audioFileFormat = mp.getAudioInputStream(new
-				// File("src\\resources\\portrait.mp3"));
-				//// AudioInputStream audioInputStream =
-				// AudioSystem.getAudioInputStream(new
-				// File("src\\resources\\portrait.mp3"));
-				// AudioFormat format = audioFileFormat.getFormat();
-				// AudioInputStream audioInputStream =
-				// AudioSystem.getAudioInputStream(new AudioFormat(
-				// AudioFormat.Encoding.PCM_SIGNED,
-				// format.getSampleRate(),
-				// 16,
-				// format.getChannels(),
-				// format.getChannels() * 2,
-				// format.getSampleRate(),
-				// false), audioFileFormat);
-				// AudioFormat audioFormat = audioInputStream.getFormat();
-				// javax.sound.sampled.DataLine.Info info = new
-				// DataLine.Info(SourceDataLine.class, audioFormat);
-				// SourceDataLine line = (SourceDataLine) mixer.getLine(info);
-				// line.open(audioFormat);
-				// line.start();
-				//
-				// byte bytes[] = new byte[1024];
-				// int bytesRead=0;
-				// while (((bytesRead = audioInputStream.read(bytes, 0,
-				// bytes.length)) != -1)) {
-				// line.write(bytes, 0, bytesRead);
-				// }
-				//
-				//// InputStream in = (InputStream)new BufferedInputStream(new
-				// FileInputStream(new File("src\\resources\\portrait.mp3")));
-				//// AdvancedPlayer advancedPlayer = new AdvancedPlayer(in);
-				//// advancedPlayer.play();
-				// } catch (UnsupportedAudioFileException | IOException |
-				// LineUnavailableException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// }
-				fireAddIndice();
+				launchShowIndice(false);
 			}
+
+			
+		});
+
+		showSilentIndice.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				launchShowIndice(true);
+			}
+
+			
 		});
 
 		showIndicePanel.add(showIndice);
+		showIndicePanel.add(showSilentIndice);
 
 		JButton bipButton = new JButton("Bip");
 
@@ -303,7 +297,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 
 					@Override
 					public void run() {
-						player.play("tools\\DING.mp3");
+						indicePlayer.play("tools\\DING.mp3");
 					}
 				}).start();
 			}
@@ -317,16 +311,25 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				player.play("tools\\alarm.mp3");
+				indicePlayer.play("tools\\alarm.mp3");
 			}
 		});
 		
 		showIndicePanel.add(alarmButton);
 		
 		computeAllInteraction();
+		interactionList.sort(new IndiceComparator());
 		for (Indice en : interactionList) {
 			JButton button = new JButton();
 			button.setText(en.getDescription());
+			if (en.getColor() != null) {
+				Color color = new Color(new Integer(p.getProperty(en.getColor()+".R", "255")),new Integer(p.getProperty(en.getColor()+".G", "255")),new Integer(p.getProperty(en.getColor()+".B", "255")));
+				
+				button.setBackground(color);
+			}
+			if (en.getTexte() != null && ! en.getTexte().equals("")) {
+				button.setToolTipText(en.getTexte());
+			}
 			button.addActionListener(new ActionListener() {
 				
 				@Override
@@ -437,6 +440,11 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 			} else if (in.getSon() != null) {
 				button.setToolTipText("Son");
 			}
+			if (in.getColor() != null) {
+				Color color = new Color(new Integer(p.getProperty(in.getColor()+".R", "255")),new Integer(p.getProperty(in.getColor()+".G", "255")),new Integer(p.getProperty(in.getColor()+".B", "255")));
+				
+				button.setBackground(color);
+			}
 			
 			button.addActionListener(new ActionListener() {
 				
@@ -468,7 +476,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 				
 				@Override
 				public void run() {
-					player.play(indice.getSonWithUrl());
+					indicePlayer.play(indice.getSonWithUrl());
 				}
 			});
 		}
@@ -479,13 +487,222 @@ public class IndicesPanel extends JPanel implements EnigmeListener {
 		}
 		currentIndice = indice;
 		if (interaction) {
-			// Interaction, play sound direct
-			indiceThread.start();
+			// Interaction, play sound direct or send webservice
+			if (currentIndice.getType().equals(Indice.TYPE_SON)){
+				if (currentIndice.isMusic()) {
+					musicPlayer.stop();
+					
+					String musicToPlay = currentIndice.getSon();
+					new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							System.out.println("PLAY!!! " + musicToPlay);
+							musicPlayer.play(roomPseudo +"\\" + musicToPlay);
+						}
+					}).start();
+				} else {
+					indiceThread.start();
+				}
+				
+			} else {
+				callWebService(currentIndice.getFunction());
+			}
 		} else { //Indice
 			showIndice.setEnabled(true);
+			showSilentIndice.setEnabled(true);
 			if (! Indice.TYPE_SON.equals(currentIndice.getType())) {
 				closeButton.setEnabled(true);
 			}
 		}
 	}
+
+	private void callWebService(String function) {
+		System.out.println("APPEL DU WEBSERVICE DES MODULES");
+		try {
+			URL url;
+//			url = new URL("https://www.toulousescape.fr/process/wsmod");
+			url = new URL("http://localhost/toulousescape/process/wsmod");
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			Map<String, String> postParams = new LinkedHashMap<>();
+			postParams.put("function", function);
+			System.out.println("FONCTION : "+function);
+
+			byte[] postDataBytes = generatePostData(postParams);
+	        
+		    conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+//			conn.setRequestProperty("Accept", "application/json");
+			conn.setDoOutput(true);
+	        conn.getOutputStream().write(postDataBytes);
+
+	        
+	        if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ conn.getResponseCode());
+			}
+	        
+	        System.out.println("FIN APPEL : "+conn.getResponseCode());
+	        BufferedReader br = new BufferedReader(new InputStreamReader(
+					(conn.getInputStream())));
+
+			String output;
+			String all ="";
+			System.out.println("Output from Server .... \n");
+			while ((output = br.readLine()) != null) {
+				all += output;
+			}
+			System.out.println(all);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void timeChanged(int currentTime) {
+		this.time = currentTime;
+		updateColor();
+	}
+	
+	private void updateColor() {
+		if (lastClueTime < time) {
+			lastClueTime = time;
+		}
+		int difference = lastClueTime - time;
+		int fiveMinutes = 60*5;
+		int fourMinutes = 60*4;
+		int threeMinutes = 60*3;
+		if (difference > fiveMinutes) {
+			showIndice.setBackground(GREEN);
+		} else if (difference > fourMinutes) {
+			showIndice.setBackground(YELLOW);
+		} else if (difference > threeMinutes) {
+			showIndice.setBackground(ORANGE);
+		} else {
+			showIndice.setBackground(RED);
+		}
+	}
+	public void launchShowIndice(boolean s) {
+		boolean silent = s;
+		showIndice.setEnabled(false);
+		showSilentIndice.setEnabled(false);
+	
+		if (! Indice.TYPE_SON.equals(currentIndice.getType())){
+			closeButton.setEnabled(true);
+		}
+		countCheckBox.setEnabled(true);
+		countCheckBox.setSelected(false);
+		if (! Indice.TYPE_MODULE.equals(currentIndice.getType())) {
+			session.setIndiceCount(session.getIndiceCount() + 1);
+			lastClueTime = time;
+			updateColor();
+		}
+		nbIndiceLabel.setText("" + session.getIndiceCount());
+		
+		
+		String indiceTxt = currentIndice.getTexte();
+		if (indiceTxt != null) {
+			String toAdd = Chrono.formatTime(time) + " "+ currentIndice.getTexte();
+			session.addIndice(toAdd);
+		}
+		else {
+			String toAdd = Chrono.formatTime(time) + " image ou son";
+	
+			session.addIndice(toAdd);
+		}
+		if (indiceThread == null)
+		{
+			if (! silent) {
+				Thread t = new Thread(new Runnable() {
+		
+					@Override
+					public void run() {
+						indicePlayer.play("tools\\DING.mp3");
+					}
+				});
+				t.start();
+			}
+		}
+		else {
+			indiceThread.start();
+		}
+		// try {
+		// Info[] infos = AudioSystem.getMixerInfo();
+		// Mixer mixer = AudioSystem.getMixer(infos[0]);
+		// mixer.open();
+		//
+		// MpegAudioFileReader mp = new MpegAudioFileReader();
+		// AudioInputStream audioFileFormat = mp.getAudioInputStream(new
+		// File("src\\resources\\portrait.mp3"));
+		//// AudioInputStream audioInputStream =
+		// AudioSystem.getAudioInputStream(new
+		// File("src\\resources\\portrait.mp3"));
+		// AudioFormat format = audioFileFormat.getFormat();
+		// AudioInputStream audioInputStream =
+		// AudioSystem.getAudioInputStream(new AudioFormat(
+		// AudioFormat.Encoding.PCM_SIGNED,
+		// format.getSampleRate(),
+		// 16,
+		// format.getChannels(),
+		// format.getChannels() * 2,
+		// format.getSampleRate(),
+		// false), audioFileFormat);
+		// AudioFormat audioFormat = audioInputStream.getFormat();
+		// javax.sound.sampled.DataLine.Info info = new
+		// DataLine.Info(SourceDataLine.class, audioFormat);
+		// SourceDataLine line = (SourceDataLine) mixer.getLine(info);
+		// line.open(audioFormat);
+		// line.start();
+		//
+		// byte bytes[] = new byte[1024];
+		// int bytesRead=0;
+		// while (((bytesRead = audioInputStream.read(bytes, 0,
+		// bytes.length)) != -1)) {
+		// line.write(bytes, 0, bytesRead);
+		// }
+		//
+		//// InputStream in = (InputStream)new BufferedInputStream(new
+		// FileInputStream(new File("src\\resources\\portrait.mp3")));
+		//// AdvancedPlayer advancedPlayer = new AdvancedPlayer(in);
+		//// advancedPlayer.play();
+		// } catch (UnsupportedAudioFileException | IOException |
+		// LineUnavailableException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
+		fireAddIndice();
+	}
+	public byte[] generatePostData(Map<String, String> postParams) 
+    {
+        StringBuilder postData = new StringBuilder();
+        for (Map.Entry<String, String> dParam : postParams.entrySet())
+        {
+            if (postData.length() != 0) 
+                postData.append('&');
+            try {
+                postData.append(URLEncoder.encode(dParam.getKey(), "UTF-8"));
+                postData.append('=');
+                postData.append(URLEncoder.encode(String.valueOf(dParam.getValue()), "UTF-8"));
+            } 
+            catch (UnsupportedEncodingException e) 
+            {
+                e.printStackTrace();
+            }
+        }
+        byte[] postDataBytes = null;
+        try 
+        {
+            postDataBytes = postData.toString().getBytes("UTF-8");
+        } 
+        catch (UnsupportedEncodingException e) 
+        {
+            e.printStackTrace();
+        }
+        return postDataBytes;
+    }
+
 }

@@ -14,6 +14,7 @@ public class ViewUtils {
 		gms.add(new GameMaster("Legrand", "Maxime").getNameToDisplay());
 		gms.add(new GameMaster("Derioz", "Thibault").getNameToDisplay());
 		gms.add(new GameMaster("Roche", "Thibault").getNameToDisplay());
+		gms.add(new GameMaster("Vallet", "Emmanuelle").getNameToDisplay());
 		
 		return gms;
 	}

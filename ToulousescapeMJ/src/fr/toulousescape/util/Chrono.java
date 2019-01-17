@@ -105,4 +105,30 @@ public class Chrono {
 	public int getCurrentTime() {
 		return currentTime;
 	}
+	
+	public static String formatTime(int timeToFormat) {
+		// Calculate current time
+		int hour = timeToFormat / 3600;
+		int minutes = (timeToFormat % 3600) / 60;
+		int secondes = ((timeToFormat - minutes * 60) % 60);
+
+		String s = String.valueOf(secondes);
+
+		if (secondes < 10) {
+			s = "0" + s;
+		}
+
+		String m = String.valueOf(minutes);
+		if (minutes < 10) {
+			m = "0" + m;
+		}
+
+		if (hour > 0) {
+			return hour + ":" + m + ":" + s;
+		} else if (minutes > 0) {
+			return m + ":" + s;
+		} else {
+			return s + "'";
+		}
+	}
 }
