@@ -1,5 +1,7 @@
 package fr.toulousescape.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -13,7 +15,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,20 +44,22 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 	private static final long serialVersionUID = 8970100750129366954L;
 
+	ArrayList<Thread> threadsList = new ArrayList<Thread>();
 	JButton startButton = new JButton(new ImageIcon(Images.PLAY_IMG));
 	JButton stopButton = new JButton(new ImageIcon(Images.STOP_IMG));
 	JButton nextMusicButton = new JButton(new ImageIcon(Images.NEXT_IMG));
 	JButton pauseButton = new JButton(new ImageIcon(Images.PAUSE_IMG));
 	JButton sessionSearch = new JButton(new ImageIcon(Images.REFRESH_IMG));
+	Map<String,String> sessionMap = new HashMap<String,String>();
 	Timer autoStartTimer;
 	boolean autoStartTimerRunning = false;
 	private int musicNumber = 0;
-	
 	private static final String NO_SESSION_TEXT = "Récupérer une session pour pouvoir lancer le chrono.";
-	
+	boolean paymentDialogFirstTime = true;
+	int players = 0;
 	JTextField sessionField;
 	JLabel sessionInfoLabel = new JLabel(NO_SESSION_TEXT);
-	
+	ChronoPanel chronoPanel = this;
 	JLabel chronoTime = new JLabel();
 	JLabel remainingTimeLabel = new JLabel();
 
@@ -82,6 +88,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	private Map<Integer, String> elementsMusic = null;
 	
 	private Salle salle;
+	
+	private JButton updateInfosButton = null;
 
 	private MainView parent;
 	Thread currentMusicThread = null;
@@ -97,9 +105,17 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		this.salle = salle;
 		hasAmbianceMusic = salle.getAmbianceMusique() != null;
 		hasFinalMusic = salle.getFinalMusic() != null;
-		hasBeginMusic = salle.getBeginMusic() != null;
+		hasBeginMusic = salle.getBeginMusic(0) != null;
 		elementsMusic = salle.getElementsMusic();
 		hasElementsMusic = elementsMusic != null;
+		updateInfosButton = new JButton("Modifier");
+		updateInfosButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showPaymentDialog(chronoPanel);
+			}
+		});
 		//initSession();
 		initTitle();
 		initTimerSetter();
@@ -107,7 +123,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	}
 
 	public void initTitle() {
-		this.add(sessionInfoLabel);
+		this.add(sessionInfoLabel,BorderLayout.WEST);
+		this.add(updateInfosButton,BorderLayout.EAST);
 	}
 
 	public void initButtons() {
@@ -140,9 +157,10 @@ public class ChronoPanel extends JPanel implements TimerListener {
 						nextMusicButton.setEnabled(false);
 					}
 					currentMusicThread = new Thread(new Runnable() {
-
+						
 						@Override
 						public void run() {
+							threadsList.add(currentMusicThread);
 							System.out.println("PLAY!!! " + musicToPlay);
 							player.play(salle.getPseudo() + "\\" + musicToPlay);
 						}
@@ -151,7 +169,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				}
 				if (hasBeginMusic && !isPaused && firstLaunch)
 				{
-					String musicToPlay = salle.getBeginMusic();
+					String musicToPlay = salle.getBeginMusic(players);
 					new Thread(new Runnable() {
 
 						@Override
@@ -189,6 +207,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				paymentDialogFirstTime = true;
+
 				musicNumber = 0;
 				nextMusicButton.setEnabled(false);
 				stopButton.setEnabled(false);
@@ -196,17 +216,15 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				sessionSearch.setEnabled(true);
 				pauseButton.setEnabled(false);
 				validSetter.setEnabled(true);
-				
 				player.stop();
 
-				// TODO : Afficher temps passé et temps restant en seconde (pour
-				// le score)
 				session.setRemainingTime(chrono.getCurrentTime());
 				session.setTimeSpent(timeSpent);
 				if (! "".equals(sessionField.getText())) {
 					session.setId(new Integer(sessionField.getText()));
 				}
 				sessionInfoLabel.setText(NO_SESSION_TEXT);
+				sessionInfoLabel.setForeground(Color.BLACK);
 				sessionField.setText("");
 				chrono.stop();
 				
@@ -250,6 +268,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 					@Override
 					public void run() {
 						String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+						threadsList.add(currentMusicThread);
+
 						musicNumber++;
 						if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
 							nextMusicButton.setEnabled(false);
@@ -267,7 +287,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		
 		chronoTime.setHorizontalAlignment(JLabel.CENTER);
 		chronoTime.setVerticalAlignment(JLabel.CENTER);
-		chronoTime.setText("1:00:00");
+		chronoTime.setText(Chrono.formatTime(3600+chrono.getExtraTime()));
 		Font chronoFont = new Font("Arial", Font.BOLD, 30);
 		chronoTime.setFont(chronoFont);
 		globalPanel.add(chronoTime);
@@ -279,7 +299,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	public void initTimeLabel() {
 		chronoTime.setHorizontalAlignment(JLabel.CENTER);
 		chronoTime.setVerticalAlignment(JLabel.CENTER);
-		chronoTime.setText("1:00:00");
+		chronoTime.setText(Chrono.formatTime(3600+chrono.getExtraTime()));
 		Font chronoFont = new Font("Arial", Font.BOLD, 30);
 		chronoTime.setFont(chronoFont);
 		this.add(chronoTime);
@@ -514,6 +534,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		if (all.trim().equals("nosession")) {
 			JOptionPane.showMessageDialog(this, "Merci de synchroniser une session "+room+" via le backend.");
 		} else {
+			boolean somethingToPay = false;
 			String session = all.substring(all.indexOf(":")+2, all.indexOf(",") - 1);
 			startButton.setEnabled(true);
 			if (! autoStartTimerRunning) {
@@ -524,22 +545,70 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			String phone = all.substring(all.indexOf("phone\":")+8, all.indexOf(",\"email") - 1);
 			String players = all.substring(all.indexOf("players\":")+10, all.indexOf(",\"bonus") - 1);
 			String running = all.substring(all.indexOf("running\":")+10, all.indexOf(",\"players") - 1);
+			String price_category = all.substring(all.indexOf("price_category\":")+17, all.indexOf(",\"hours") - 1);
 			String special = all.substring(all.indexOf("special\":")+10, all.indexOf(",\"price_category") - 1);
-			System.out.println(firstname);
-			System.out.println(lastname);
-			System.out.println(phone);
-			System.out.println(players);
+			String comment = all.substring(all.indexOf("comment\":")+10, all.indexOf(",\"clues") - 1);
+			String ancv = all.substring(all.indexOf("ancv\":")+7, all.indexOf(",\"publication") - 1);
+			String amount = all.substring(all.indexOf("amount\":")+9, all.indexOf(",\"victory") - 1);
+			String payment_type = all.substring(all.indexOf("payment_type\":")+15, all.indexOf(",\"fk_payment") - 1);
+			sessionMap.put("firstname", firstname);
+			sessionMap.put("lastname", lastname);
+			sessionMap.put("phone", phone);
+			sessionMap.put("players", players);
+			sessionMap.put("special", special);
+			sessionMap.put("price_category", price_category);
+			sessionMap.put("comment", comment);
+			sessionMap.put("ancv", ancv);
+			sessionMap.put("amount", amount);
+			sessionMap.put("payment_type", payment_type);
+			sessionMap.put("id", session);
+			
+			this.players = Integer.parseInt(players);
+			
+			boolean unpaid = (! "0".equals(amount) && "".equals(payment_type));
+			
+			if (unpaid) {
+				sessionMap.put("unpaid", "1");				
+			} else {
+				sessionMap.put("unpaid", "0");				
+			}
+			
 			String specialText = "";
 			if ("D".equals(special)) {
 				specialText = "Découverte - ";
 			} else if ("A".equals(special)) {
 				specialText = "Version anglaise - ";
+			} else if ("B".equals(special)) {
+				specialText = "Découverte version anglaise - ";
+			}
+			String sessionInfos = (specialText +firstname+ " "+ lastname + " ("+phone+") "+players+" joueurs");
+			if (! "".equals(comment)) {
+				sessionInfos += "<br>"+comment;
 			}
 			sessionField.setText(session);
-			sessionInfoLabel.setText(specialText +firstname+ " "+ lastname + " ("+phone+") "+players+" joueurs");
+			String alertText = "";
+			if (ancv != null && ! "".equals(ancv) && ! "0".equals(ancv)) {
+				sessionInfoLabel.setForeground(Color.RED);
+				alertText += "<br>"+ancv+" € de chèques vacances à récupérer";
+				somethingToPay = true;
+			}
+			if (unpaid) {
+				sessionInfoLabel.setForeground(Color.RED);
+				if (! "".equals(alertText)) {
+					alertText += "<br>";
+				}
+				alertText += "Session non payée ("+amount+" €).";
+				somethingToPay = true;
+			}
+			sessionInfoLabel.setText("<html>"+sessionInfos+alertText+"<html>");
 			if ("1".equals(running)) {
 				startButton.doClick();
 			}
+			if (somethingToPay && paymentDialogFirstTime) {
+				paymentDialogFirstTime = false;
+				showPaymentDialog(this);
+			}
+			//parent.pack();
 		}
 
 	  } catch (MalformedURLException e) {
@@ -577,5 +646,9 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	}
 	public void deactivateBeginMusic() {
 		this.firstLaunch = false;
+	}
+	public void showPaymentDialog(ChronoPanel chronoPanel) {
+		PaymentDialog dialog = new PaymentDialog(getParent(), sessionMap,chronoPanel);
+		dialog.openDialog();
 	}
 }

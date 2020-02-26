@@ -466,6 +466,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 			indiceLabel.setText("");
 			Image img = scaleImage(indice.getImage().getImage(), 200);
 			indiceLabel.setIcon(new ImageIcon(img));
+			indiceThread = null;
 		} else if (Indice.TYPE_SON.equals(indice.getType())){
 			if (indice.getTexte() != null && ! indice.getTexte().equals("")) {
 				indiceLabel.setText(indice.getTexte());
@@ -484,6 +485,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 		{
 			indiceLabel.setIcon(null);
 			indiceLabel.setText(indice.getTexte());
+			indiceThread = null;
 		}
 		currentIndice = indice;
 		if (interaction) {
@@ -530,7 +532,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 			System.out.println("FONCTION : "+function);
 
 			byte[] postDataBytes = generatePostData(postParams);
-	        
+
 		    conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 //			conn.setRequestProperty("Accept", "application/json");
 			conn.setDoOutput(true);

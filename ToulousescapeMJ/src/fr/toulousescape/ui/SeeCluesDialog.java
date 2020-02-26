@@ -41,7 +41,6 @@ public class SeeCluesDialog extends JDialog {
 	public SeeCluesDialog(Component parent, String indicesAsHtml) {
 		this.indicesAsHtml = indicesAsHtml;
 		setTitle("Indices donnés");
-		setLocationRelativeTo(null);
 
 	}
 	
@@ -55,6 +54,8 @@ public class SeeCluesDialog extends JDialog {
 		mainPanel.add(indices);
 		add(mainPanel);
 		pack();
+		setLocationRelativeTo(null);
+
 		setVisible(true);
 	}
 }

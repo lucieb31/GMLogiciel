@@ -23,7 +23,6 @@ public class Main {
 
 		//TODO créer une session à chaque démarrage du chrono
 		Session session = new Session();
-		Chrono chrono = new Chrono();
 		
 		LoadConfig config = new LoadConfig();
 		
@@ -45,6 +44,7 @@ public class Main {
 		
 		Properties p = salle.getProperties();
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
+		Chrono chrono = new Chrono(new Integer(p.getProperty(SallesProperties.EXTRA_TIME,"0")));
 		String outputMusic = p.getProperty(SallesProperties.MUSIC_OUTPUT);
 		String outputClues = p.getProperty(SallesProperties.INDICES_OUTPUT);
 		boolean audioClues = new Boolean(p.getProperty(SallesProperties.IS_AUDIO_INDICES));

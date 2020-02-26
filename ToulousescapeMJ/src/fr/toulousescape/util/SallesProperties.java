@@ -3,7 +3,9 @@ package fr.toulousescape.util;
 public class SallesProperties {
 
 	public static final String FIRST_START = "first_start";
-	
+
+	public static final String EXTRA_TIME = "extra_time";
+
 	public static final String NB_ECRAN = "ecran.nb";
 	
 	public static final String ECRAN_RESOLUTION = "ecran.resolution";
@@ -11,7 +13,7 @@ public class SallesProperties {
 	public static final String MUSIC_TO_PLAY = "musique.ambiance";
 	
 	public static final String MUSIC_BEGIN = "musique.debut";
-
+	
 	public static final String MUSIC_END = "musique.fin";
 
 	public static final String MUSIC_ELEMENTS = "musique.elements";

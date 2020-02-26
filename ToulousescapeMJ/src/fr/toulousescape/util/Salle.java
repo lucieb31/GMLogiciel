@@ -29,7 +29,7 @@ public class Salle {
 	
 	private String ambianceMusic;
 
-	private String beginMusic;
+	private Map<Integer,String> beginMusic;
 
 	private String elementsMusic;
 	
@@ -99,8 +99,10 @@ public class Salle {
 
 	public void setHasAudioIndice(boolean hasAudioIndice) {
 		this.hasAudioIndice = hasAudioIndice;
-		if (hasAudioIndice)
+		if (hasAudioIndice) {			
 			indicePlayer = new Player();
+		}
+
 	}
 
 	public String getAmbianceMusique() {
@@ -141,7 +143,10 @@ public class Salle {
 			}
 			props.setProperty(SallesProperties.MUSIC_END, finalMusic);
 			props.setProperty(SallesProperties.MUSIC_TO_PLAY, ambianceMusic);
-			props.setProperty(SallesProperties.MUSIC_BEGIN, beginMusic);
+			props.setProperty(SallesProperties.MUSIC_BEGIN, beginMusic.get(0));
+			for (int i = 2; i < 7 ; i++) {
+				props.setProperty(SallesProperties.MUSIC_BEGIN+"."+i, beginMusic.get(i));	
+			}
 			props.setProperty(SallesProperties.MUSIC_ELEMENTS, elementsMusic);
 			FileWriter writer = new FileWriter(propertyFile);
 			props.store(writer, "Create salle");
@@ -153,12 +158,16 @@ public class Salle {
 	
 	public void loadPropFile()
 	{
+		beginMusic = new HashMap<Integer,String>();
 		name = props.getProperty(SallesProperties.NAME);
 		hasAudioIndice = Boolean.parseBoolean(props.getProperty(SallesProperties.IS_AUDIO_INDICES));
 		if (hasAudioIndice)
 			indicePlayer = new Player();
 		finalMusic = props.getProperty(SallesProperties.MUSIC_END);
-		beginMusic = props.getProperty(SallesProperties.MUSIC_BEGIN);
+		beginMusic.put(0, props.getProperty(SallesProperties.MUSIC_BEGIN));
+		for (int i = 2 ; i < 7 ; i++) {
+			beginMusic.put(i, props.getProperty(SallesProperties.MUSIC_BEGIN+"."+i));
+		}
 		elementsMusic = props.getProperty(SallesProperties.MUSIC_ELEMENTS);
 		ambianceMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY);
 		nbEcran = Integer.parseInt(props.getProperty(SallesProperties.NB_ECRAN));
@@ -176,12 +185,11 @@ public class Salle {
 		return pseudo;
 	}
 
-	public String getBeginMusic() {
-		return beginMusic;
-	}
-
-	public void setBeginMusic(String beginMusic) {
-		this.beginMusic = beginMusic;
+	public String getBeginMusic(int players) {
+		if (beginMusic.get(players) == null) {
+			return beginMusic.get(4);
+		}
+		return beginMusic.get(players);
 	}
 
 	public Map<Integer,String> getElementsMusic() {

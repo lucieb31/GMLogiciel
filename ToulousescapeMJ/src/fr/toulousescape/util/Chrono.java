@@ -17,14 +17,19 @@ public class Chrono {
 
 	private Timer timer;
 	
-	public Chrono() {
+	private int extraTime;
+	
+	public Chrono(int extraTime) {
+		this.extraTime = extraTime;
 		listeners = new ArrayList<>();
+		finalTime = finalTime + extraTime;
 	}
 
 	public void start()
 	{
-		if (currentTime == 0)
+		if (currentTime == 0) {
 			currentTime = finalTime;
+		}
 		
 		timer = new Timer();
 
@@ -34,8 +39,9 @@ public class Chrono {
 			public void run() {
 				currentTime--;
 				fireTimeChanged(currentTime);
-				if (currentTime == 0)
+				if (currentTime == 0) {
 					timer.cancel();
+				}
 			}
 		};
 		
@@ -106,6 +112,10 @@ public class Chrono {
 		return currentTime;
 	}
 	
+	public int getExtraTime() {
+		return extraTime;
+	}
+
 	public static String formatTime(int timeToFormat) {
 		// Calculate current time
 		int hour = timeToFormat / 3600;

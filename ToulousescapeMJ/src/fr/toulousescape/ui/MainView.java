@@ -145,6 +145,18 @@ public class MainView extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu configMenu = new JMenu("Configuration");
+
+		JMenuItem musicItem = new JMenuItem("Musiques");
+		musicItem.setToolTipText("Changer la sortie audio");
+		musicItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new MusicUI(salle,(ChronoPanel) chronoPanel);
+			}
+		});
+		configMenu.add(musicItem);
+		
 		JMenuItem audioItem = new JMenuItem("Sortie audio");
 		audioItem.setToolTipText("Changer la sortie audio");
 		audioItem.addActionListener(new ActionListener() {
@@ -193,7 +205,7 @@ public class MainView extends JFrame {
 		});
 		salleMenu.add(createItem);
 		
-		JMenu indicesMenu = new JMenu("Indices");
+//		JMenu indicesMenu = new JMenu("Indices");
 		JMenuItem addItem = new JMenuItem("Créer des indices");
 		
 		addItem.addActionListener(new ActionListener() {
@@ -204,7 +216,7 @@ public class MainView extends JFrame {
 				indicesDialog.openAsCreate();
 			}
 		});
-		indicesMenu.add(addItem);
+//		indicesMenu.add(addItem);
 		
 		JMenuItem changeItem = new JMenuItem("Modifier des indices");
 		changeItem.addActionListener(new ActionListener() {
@@ -215,7 +227,7 @@ public class MainView extends JFrame {
 				indicesDialog.openAsUpdate();
 			}
 		});
-		indicesMenu.add(changeItem);
+//		indicesMenu.add(changeItem);
 		
 		JMenuItem removeItem = new JMenuItem("Supprimer des indices");
 		removeItem.addActionListener(new ActionListener() {
@@ -226,7 +238,7 @@ public class MainView extends JFrame {
 				indicesDialog.openAsRemove();
 			}
 		});
-		indicesMenu.add(removeItem);
+//		indicesMenu.add(removeItem);
 		
 		JMenuItem showItem = new JMenuItem("Voir les indices");
 		showItem.addActionListener(new ActionListener() {
@@ -237,7 +249,7 @@ public class MainView extends JFrame {
 				indicesDialog.openAsView();
 			}
 		});
-		indicesMenu.add(showItem);
+//		indicesMenu.add(showItem);
 		
 		JMenu enigmesMenu = new JMenu("Énigmes");
 		JMenuItem addEnigmaItem = new JMenuItem("Créer des énigmes");
@@ -283,10 +295,10 @@ public class MainView extends JFrame {
 				//EnigmesDialog.openAsView();
 			}
 		});
-		indicesMenu.add(showItem);
+//		indicesMenu.add(showItem);
 		
-		menuBar.add(indicesMenu);
-		menuBar.add(salleMenu);
+//		menuBar.add(indicesMenu);
+//		menuBar.add(salleMenu);
 		menuBar.add(configMenu);
 		setJMenuBar(menuBar);
 	}

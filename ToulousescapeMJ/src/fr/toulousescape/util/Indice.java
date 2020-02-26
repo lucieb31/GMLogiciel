@@ -36,7 +36,7 @@ public class Indice {
 		this.son = son;
 		this.type = type;
 		if (index != null) {
-			this.index = new Integer(index);
+			this.index = new Integer(index.trim());
 		} else {
 			this.index = 0;
 		}

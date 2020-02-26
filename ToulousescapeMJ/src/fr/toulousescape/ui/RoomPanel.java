@@ -30,6 +30,9 @@ public class RoomPanel extends JPanel implements TimerListener, IndiceListener{
 	private Color endForegroundColor;
 	private JPanel chronoPanel;
 	private JPanel labelPanel;
+	private Font classic = new Font("Arial", Font.BOLD, 90);
+	private Font little = new Font("Arial", Font.BOLD, 70);
+	private Font verylittle = new Font("Arial", Font.BOLD, 50);
 	public RoomPanel(Chrono chrono, Properties p) {
 		normalBackgroundColor = getPropertyColor(p,SallesProperties.BACKGROUND_COLOR_NORMAL);
 		endBackgroundColor = getPropertyColor(p,SallesProperties.BACKGROUND_COLOR_END);
@@ -148,10 +151,18 @@ public class RoomPanel extends JPanel implements TimerListener, IndiceListener{
 		clueLabel.setText("");
 		clueLabel.setIcon(null);
 		if (texte != null) {
-				clueText.setEditable(true);
-				clueText.setText(indice.getTexte());
-				clueText.setVisible(true);
-				clueLabel.setVisible(false);
+			System.out.println("TAILLE : "+texte.length());
+			clueText.setFont(classic);
+			if (texte.length() > 90) {
+				clueText.setFont(little);
+			}
+			if (texte.length() > 120) {
+				clueText.setFont(verylittle);
+			}
+			clueText.setEditable(true);
+			clueText.setText(indice.getTexte());
+			clueText.setVisible(true);
+			clueLabel.setVisible(false);
 		} else {
 			clueLabel.setVisible(true);
 			clueLabel.setIcon(indice.getImage());

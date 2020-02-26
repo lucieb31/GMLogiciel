@@ -36,7 +36,7 @@ public class Session {
 	private List<String> indices;
 	
 	private String gm;
-	
+
 	public Session() {
 		indices = new ArrayList<>();
 	}
@@ -44,7 +44,7 @@ public class Session {
 	public int getIndiceCount() {
 		return indiceCount;
 	}
-
+	
 	public void setIndiceCount(int indiceCount) {
 		this.indiceCount = indiceCount;
 	}

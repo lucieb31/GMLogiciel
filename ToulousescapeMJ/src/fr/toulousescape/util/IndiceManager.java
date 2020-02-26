@@ -130,7 +130,7 @@ public class IndiceManager {
 						{
 							String link = indicesProps.getProperty(j + LINK_PROP);
 							//System.out.println(link);
-							if (link != null && Integer.parseInt(link) == i) {
+							if (link != null && Integer.parseInt(link.trim()) == i) {
 								String desc = indicesProps.getProperty(j + DESC_PROP);
 								if (desc != null)
 								{

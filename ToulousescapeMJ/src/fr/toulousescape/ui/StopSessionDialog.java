@@ -49,7 +49,6 @@ public class StopSessionDialog extends JDialog {
 	public StopSessionDialog(Component parent, Session session) {
 		finishedSession = session;
 		
-		setLocationRelativeTo(null);
 		setModal(true);
 		setTitle("Fin de la session");
 	}
@@ -102,7 +101,7 @@ public class StopSessionDialog extends JDialog {
 		mainPanel.add(timePanel);
 		
 		JPanel bonusPanel = new JPanel(new FlowLayout());
-		JLabel bonusLabel = new JLabel("Bonus (P = partition, S = sauver le monde, X = trésors trouvés");
+		JLabel bonusLabel = new JLabel("Bonus (P = partition, S = sauver le monde, X = trésors, O = objet)");
 		bonusField = new JTextField(4);
 		bonusPanel.add(bonusLabel);
 		bonusPanel.add(bonusField);
@@ -154,6 +153,8 @@ public class StopSessionDialog extends JDialog {
 		mainPanel.add(okButton);
 		add(mainPanel);
 		pack();
+		setLocationRelativeTo(null);
+
 		setVisible(true);
 	}
 	
