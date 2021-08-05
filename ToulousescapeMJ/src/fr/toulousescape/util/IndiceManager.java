@@ -17,7 +17,8 @@ import org.jdom2.input.SAXBuilder;
 
 public class IndiceManager {
 
-	private List<Indice> indices = new ArrayList<Indice>();
+	private List<Indice> indicesForEnigma = new ArrayList<Indice>();
+	private List<Indice> allIndices = new ArrayList<Indice>();
 	private List<Enigme> enigmes = new ArrayList<Enigme>();
 	private List<Indice> interactions = new ArrayList<Indice>();
 	
@@ -32,7 +33,7 @@ public class IndiceManager {
 	private int enigmeNb;
 	
 	private static final String DESC_PROP = ".desc";
-	
+
 	private static final String LINK_PROP = ".link";
 	
 	private static final String TEXTE_PROP = ".text";
@@ -65,15 +66,15 @@ public class IndiceManager {
 	}
 
 	public void addIndice(Indice indice) {
-		indices.add(indice);
+		indicesForEnigma.add(indice);
 	}
 
 	public Indice getIndice(int idx) {
-		return indices.get(idx);
+		return indicesForEnigma.get(idx);
 	}
 
 	public List<Indice> getAllIndices() {
-		return indices;
+		return allIndices;
 	}
 	public List<Indice> getAllInteractions() {
 		return interactions;
@@ -96,10 +97,10 @@ public class IndiceManager {
 	public void loadIndices() {
 		try {
 			
-			
+			allIndices.clear();
 			File enigmeFile = new File("src\\resources\\" + currentSalle.getPseudo() + "\\enigmes.properties");
 			enigmesProps = new Properties();
-			indices = new ArrayList<Indice>();
+			indicesForEnigma = new ArrayList<Indice>();
 			if (enigmeFile.exists()) {
 				FileReader fileReaderEnigme = new FileReader(enigmeFile);
 				enigmesProps.load(fileReaderEnigme);
@@ -116,11 +117,11 @@ public class IndiceManager {
 					String idx = enigmesProps.getProperty(i + INDEX_PROP);
 					if (name != null)
 					{
-						currentEnigma = new Enigme(name, idx);
+						currentEnigma = new Enigme(i, name, idx);
 					}
 						
 						
-					indices = new ArrayList<Indice>();
+					indicesForEnigma = new ArrayList<Indice>();
 					if (indiceFile.exists())
 					{
 						FileReader fileReader = new FileReader(indiceFile);
@@ -158,17 +159,18 @@ public class IndiceManager {
 									if ("true".equals(music)) {
 										bMusic = true;
 									}
-									Indice current = new Indice(desc, img, text, son,type, color, index, function, bMusic);
-									indices.add(current);
+									Indice current = new Indice(j, desc, img, text, son,type, color, index, function, bMusic, Integer.parseInt(link.trim()));
+									indicesForEnigma.add(current);
+									allIndices.add(current);
 								}
 							}
 						}
 						fileReader.close();
 						if (currentEnigma != null) {
-							currentEnigma.setIndices(indices);
+							currentEnigma.setIndices(indicesForEnigma);
 						} else {
-							if (indices.size() > 0) {
-								interactions = indices;
+							if (indicesForEnigma.size() > 0) {
+								interactions = indicesForEnigma;
 							}
 						}
 					}
@@ -180,6 +182,9 @@ public class IndiceManager {
 						currentSalle.getProperties().store(fileWriter, null);
 						fileWriter.close();
 					}
+					
+					fileReaderIndice.close();
+					
 					if (currentEnigma != null) {
 						enigmes.add(currentEnigma);
 					}
@@ -194,7 +199,7 @@ public class IndiceManager {
 				fileWriter.close();
 			}
 			
-			System.out.println("size " + indices.size());
+			System.out.println("size " + indicesForEnigma.size());
 		} catch(IOException ex) {
 			ex.printStackTrace();
 		}
@@ -229,7 +234,7 @@ public class IndiceManager {
 				indicesProps.setProperty(indiceNb + SON_PROP, indicesSonToWrite.get(desc));
 			}
 			
-			indicesProps.store(new FileWriter(new File("src\\resources\\" + fileName)), null);
+			indicesProps.store(new FileWriter(new File("src\\resources\\" + currentSalle.getPseudo() + fileName)), null);
 			
 			salleProps.setProperty(SallesProperties.INDICES_NB, "" + indiceNb);
 			FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());
@@ -243,7 +248,7 @@ public class IndiceManager {
 	
 	public void reloadIndices()
 	{
-		indices.clear();
+		indicesForEnigma.clear();
 		enigmes.clear();
 		loadIndices();
 	}
@@ -251,9 +256,9 @@ public class IndiceManager {
 	public void removeIndice(List<Indice> indiceToRemove)
 	{
 		try {
-			indices.removeAll(indiceToRemove);
+			indicesForEnigma.removeAll(indiceToRemove);
 			Properties salleProps = currentSalle.getProperties();
-			String fileName = salleProps.getProperty(SallesProperties.INDICES_PROP_FILE);
+			String fileName = "indices.properties";
 			File file = new File("src\\resources\\" + fileName);
 			file.delete();
 			boolean newFile = file.createNewFile();
@@ -262,7 +267,7 @@ public class IndiceManager {
 			{
 				indicesProps = new Properties();
 				int cpt = 1;
-				for(Indice indice : indices)
+				for(Indice indice : indicesForEnigma)
 				{
 					indicesProps.setProperty(cpt + DESC_PROP, indice.getDescription());
 					if (indice.getTexte() != null)
@@ -290,11 +295,12 @@ public class IndiceManager {
 
 	public void updateIndices(List<Indice> indicesToUpdate) {
 		try {
-			indices.removeAll(indicesToUpdate);
-			indices.addAll(indicesToUpdate);
-			Properties salleProps = currentSalle.getProperties();
-			String fileName = salleProps.getProperty(SallesProperties.INDICES_PROP_FILE);
-			File file = new File("src\\resources\\" + fileName);
+			allIndices.clear();
+			allIndices.addAll(indicesToUpdate);
+			String filename = "src\\resources\\" + currentSalle.getPseudo() + "\\indices.properties";
+			File file = new File(filename);
+			System.out.println("PATH");
+			System.out.println(file.getAbsolutePath());
 			file.delete();
 			boolean newFile = file.createNewFile();
 			
@@ -302,19 +308,62 @@ public class IndiceManager {
 			{
 				indicesProps = new Properties();
 				int cpt = 1;
-				for (Indice indice : indices)
+				for (Indice indice : allIndices)
 				{
+					indicesProps.setProperty(cpt+INDEX_PROP, indice.getIndex()+"");
+					indicesProps.setProperty(cpt+TYPE_PROP, indice.getType()+"");
 					indicesProps.setProperty(cpt + DESC_PROP, indice.getDescription());
-					if (indice.getTexte() != null)
-						indicesProps.setProperty(cpt + TEXTE_PROP, indice.getTexte());
-					else
+					indicesProps.setProperty(cpt+COLOR_PROP, indice.getColor()+"");
+					indicesProps.setProperty(cpt+SON_PROP, indice.getSon()+"");
+					indicesProps.setProperty(cpt+FUNCTION_PROP, indice.getFunction()+"");
+					indicesProps.setProperty(cpt+LINK_PROP,indice.getLink()+"");
+					System.out.println(indice.getIndex());
+					System.out.println(indice.getType());
+					System.out.println(indice.getDescription());
+					System.out.println(indice.getTexte());
+					if (Indice.TYPE_IMAGE.equals(indice.getType())) {
 						indicesProps.setProperty(cpt + IMG_PROP, indice.getImageName());
+					}
+					else {
+						String texte = "";
+						if (indice.getTexte() != null) {
+							texte = indice.getTexte();
+						}
+						indicesProps.setProperty(cpt + TEXTE_PROP, texte);
+					}
 					cpt++;
 				}
 				
-				FileWriter fileWriter = new FileWriter(new File("src\\resources\\" + fileName));
+				FileWriter fileWriter = new FileWriter(new File("src\\resources\\" + currentSalle.getPseudo() + "\\indices.properties"));
 				indicesProps.store(fileWriter, null);
 				fileWriter.close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateEnigmes(List<Enigme> enigmesToUpdate) {
+		try {
+			String filename = "src\\resources\\" + currentSalle.getPseudo() + "\\enigmes.properties";
+			File file = new File(filename);
+			file.delete();
+			boolean newFile = file.createNewFile();
+			
+			if (newFile)
+			{
+				enigmesProps = new Properties();
+				for (Enigme enigme : enigmesToUpdate)
+				{
+					enigmesProps.setProperty(enigme.getId() + DESC_PROP, enigme.getName());
+					enigmesProps.setProperty(enigme.getId() + INDEX_PROP, enigme.getIndex()+"");
+				}
+				
+				FileWriter fileWriter = new FileWriter(filename);
+				enigmesProps.store(fileWriter, null);
+				fileWriter.close();
+				reloadIndices();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

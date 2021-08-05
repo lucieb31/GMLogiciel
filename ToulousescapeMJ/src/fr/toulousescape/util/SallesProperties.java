@@ -10,6 +10,8 @@ public class SallesProperties {
 	
 	public static final String ECRAN_RESOLUTION = "ecran.resolution";
 	
+	public static final String MUSIC_TO_PLAY_BEFORE = "musique.preambule";
+
 	public static final String MUSIC_TO_PLAY = "musique.ambiance";
 	
 	public static final String MUSIC_BEGIN = "musique.debut";
@@ -27,7 +29,9 @@ public class SallesProperties {
 	public static final String NAME = "name";
 	
 	public static final String INDICES_PROP_FILE = "indices.file.prop";
-	
+
+	public static final String ENIGMES_PROP_FILE = "enigmes.file.prop";
+
 	public static final String INDICES_XML_FILE = "indices.file.xml";
 	
 	public static final String MUSIC_OUTPUT = "musique.output";

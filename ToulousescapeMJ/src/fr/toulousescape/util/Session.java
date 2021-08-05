@@ -13,6 +13,27 @@ public class Session {
 
 	private int indiceCount;
 	
+	private String incident;
+	private String discount;
+	
+	
+	
+	public String getIncident() {
+		return incident;
+	}
+
+	public void setIncident(String incident) {
+		this.incident = incident;
+	}
+
+	public String getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(String discount) {
+		this.discount = discount;
+	}
+
 	public int getId() {
 		return id;
 	}

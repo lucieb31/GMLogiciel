@@ -186,7 +186,8 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentIndice = new Indice(null, null, txtField.getText(), null, Indice.TYPE_TEXTE, null, null, null, false);
+				indiceThread = null;
+				currentIndice = new Indice(0,null, null, txtField.getText(), null, Indice.TYPE_TEXTE, null, null, null, false,-1);
 				indiceLabel.setText(txtField.getText());
 				indiceLabel.setIcon(null);
 				showIndice.setEnabled(true);
@@ -251,7 +252,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 				showSilentIndice.setEnabled(false);
 				indiceLabel.setText("");
 				indiceLabel.setIcon(null);
-				currentIndice = new Indice(null, null, null, null, Indice.TYPE_TEXTE, null, null, null, false);
+				currentIndice = new Indice(0,null, null, null, null, Indice.TYPE_TEXTE, null, null, null, false,-1);
 				txtField.setText("");
 				nbIndiceLabel.setText("" + session.getIndiceCount());
 				indicePlayer.stop();

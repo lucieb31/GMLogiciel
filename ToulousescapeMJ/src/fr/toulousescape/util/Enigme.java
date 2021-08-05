@@ -8,8 +8,18 @@ public class Enigme {
 	private String name;
 	private List<Indice> indices;
 	private int index;
-	public Enigme(String name, String index2) {
+	private int id;
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Enigme(int id, String name, String index2) {
 		this.name = name;
+		this.id = id;
 		if (index2 != null) {
 			this.index = new Integer(index2);
 		} else {
@@ -42,5 +52,7 @@ public class Enigme {
 		this.index = index;
 	}
 	
-	
+	public String toString() {
+		return this.name + "/"+this.index;
+	}
 }

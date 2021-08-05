@@ -26,7 +26,9 @@ public class Salle {
 	private File propertyFile;
 	
 	private boolean hasAudioIndice;
-	
+
+	private String preambuleMusic;
+
 	private String ambianceMusic;
 
 	private Map<Integer,String> beginMusic;
@@ -113,6 +115,14 @@ public class Salle {
 		this.ambianceMusic = ambianceMusique;
 	}
 
+	public String getPreambuleMusic() {
+		return preambuleMusic;
+	}
+
+	public void setPreambuleMusic(String preambuleMusic) {
+		this.preambuleMusic = preambuleMusic;
+	}
+
 	public String getFinalMusic() {
 		return finalMusic;
 	}
@@ -130,6 +140,7 @@ public class Salle {
 	}
 
 	public void computePropFile() {
+		System.out.println("COMPUTE PROP FILE");
 		try {
 			props.setProperty(SallesProperties.NAME, name);
 			props.setProperty(SallesProperties.IS_AUDIO_INDICES, ""+hasAudioIndice);
@@ -142,6 +153,8 @@ public class Salle {
 				}
 			}
 			props.setProperty(SallesProperties.MUSIC_END, finalMusic);
+			System.out.println("PROPERTIES : "+SallesProperties.MUSIC_TO_PLAY_BEFORE+" : "+preambuleMusic);
+			props.setProperty(SallesProperties.MUSIC_TO_PLAY_BEFORE, preambuleMusic);
 			props.setProperty(SallesProperties.MUSIC_TO_PLAY, ambianceMusic);
 			props.setProperty(SallesProperties.MUSIC_BEGIN, beginMusic.get(0));
 			for (int i = 2; i < 7 ; i++) {
@@ -169,6 +182,7 @@ public class Salle {
 			beginMusic.put(i, props.getProperty(SallesProperties.MUSIC_BEGIN+"."+i));
 		}
 		elementsMusic = props.getProperty(SallesProperties.MUSIC_ELEMENTS);
+		preambuleMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY_BEFORE);
 		ambianceMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY);
 		nbEcran = Integer.parseInt(props.getProperty(SallesProperties.NB_ECRAN));
 		if (nbEcran != 0)

@@ -1,0 +1,386 @@
+#Removing 3 indices.
+#Wed Dec 20 21:53:22 CET 2017
+
+18.desc=Boule Livre
+18.text=Quels gros livres à gauche en bas de l'étagère \!
+18.link=1
+18.idx=1
+
+11.text=On peut voir des symboles similaires sur les bougies et la table.
+11.desc=Bougies
+11.link=3
+11.idx=1
+
+88.text=Quelles étranges bougies !
+88.desc=Bougies léger
+88.link=3
+88.idx=2
+
+80.text=mille huit cent ......
+80.desc=Bougies début du code
+80.link=3
+80.idx=3
+
+75.text=Placez bien les bougies entre les symboles, ils doivent correspondre sur les côtés.
+75.desc=Bougies débutant
+75.link=3
+75.idx=4
+
+89.text=Une rangée de livres dans la bibliothèque de droite cache un secret.
+89.desc=Emplacement coffre
+89.link=4
+89.idx=3
+
+10.desc=Lettre William
+10.text=La fin de la lettre de William parle d'un livre important.
+10.link=4
+10.idx=1
+
+7.desc=20 000 débutants
+7.text=Le livre 20 000 p.101 vous montrera le chemin.
+7.link=4
+7.idx=2
+
+73.desc=Cadre calcul
+73.text=Il y a un cadre intéressant dans le buffet tout à gauche.
+73.link=4
+73.idx=4
+
+76.text=La phrase rouge dans le livre vous donne le chemin à faire au mur.
+76.desc=Chemin du sorcier
+76.link=4
+76.idx=5
+
+77.text=Les mots de la phrase rouge qui ont une majuscule sont traduits dans un cadre dans le meuble noir.
+77.desc=Traduction dans cadre
+77.link=4
+77.idx=6
+
+78.text=En suivant la phrase rouge et en traduisant les mots, vous pouvez faire un calcul grâce au mur et au cadre dans le buffet, à gauche.
+78.desc=Kabbale très débutant
+78.link=4
+78.idx=7
+
+79.text=Suivez le chemin du sorcier, traduisez les mots, et faites le calcul.
+79.desc=Kabbale débutant
+79.link=4
+79.idx=8
+
+74.desc=Soustractions
+74.text=Il n'y a pas que des additions.
+74.link=4
+74.idx=9
+
+12.desc=Dragon a faim
+12.text=Le dragon a faim.
+12.link=5
+12.idx=1
+
+19.desc=Manque boule
+19.text=Il vous manque une boule.
+19.link=5
+19.idx=2
+
+25.desc=Symboles éléments
+25.text=Grenouille, Pierre, Papillon, quels sont ces éléments ?
+25.link=5
+25.idx=3
+
+81.desc=Ordre éléments
+81.text=En nourrissant le dragon, il vous a donné l'ordre des éléments.
+81.link=5
+81.idx=4
+
+23.text=Partez du centre.
+23.desc=Sens fiole
+23.link=6
+23.idx=1
+
+9.desc=Escargot fiole débutant
+9.text=Partez du centre et placez bien la fiole contre le cadre en suivant le chemin rouge.
+9.link=6
+9.idx=2
+
+82.text=La fiole réagira à 4 lettres si vous la passez devant.
+82.desc=Utilisation fiole
+82.link=6
+82.idx=3
+
+17.desc=Cadenas ERIN
+17.text=Le code est bien ERIN. Allignez les lettres sur le trait et tirez la partie droite du cadenas.
+17.link=6
+17.idx=4
+
+21.desc=Triangle
+21.text=Triangle sur triangle.
+21.link=7
+21.idx=1
+
+90.desc=Triangle débutant
+90.text=Ce triangle est similaire à un autre triangle dans la pièce.
+90.link=7
+90.idx=2
+
+83.desc=Porte
+83.text=On ne sait jamais ce qui se cache derrière une porte.
+83.link=7
+83.idx=3
+
+4.desc=Tiroirs
+4.text=Il y a des tiroirs sur cette table.
+4.link=8
+4.idx=1
+
+13.desc=Tangram débutant
+13.text=3 formes sur la table... 1 chiffre par forme
+13.link=8
+13.idx=2
+
+91.desc=Tangram très débutant
+91.text=On peut recomposer chaque forme séparément avec les 7 pièces en bois, chaque forme vous révèlera un chiffre.
+91.link=8
+91.idx=3
+
+24.desc=Carré
+24.type=img
+24.img=carre.gif
+24.link=8
+24.idx=4
+
+5.desc=Chat
+5.type=img
+5.img=chat.jpg
+5.link=8
+5.idx=5
+
+70.desc=Bateau léger
+70.type=img
+70.img=bateauleger.png
+70.link=8
+70.idx=6
+
+71.desc=Carré léger
+71.type=img
+71.img=carreleger.png
+71.link=8
+71.idx=7
+
+72.desc=Chat léger
+72.type=img
+72.img=chatleger.png
+72.link=8
+72.idx=8
+
+2.desc=Interrupteur débutant
+2.text=Que fait cet interrupteur lorsqu'on appuie ?
+2.link=9
+2.idx=1
+
+28.desc=Interrupteur
+28.text=Rouge allume, Noir éteint.
+28.link=9
+28.idx=2
+
+1.desc=Cheval blanc
+1.type=img
+1.img=chevalBlanc.gif
+1.link=10
+1.idx=1
+
+14.desc=Roi noir diagonal
+14.type=img
+14.img=roiNoir.gif
+14.link=10
+14.idx=2
+
+3.desc=Fou noir
+3.type=img
+3.img=fouNoir.gif
+3.link=10
+3.idx=3
+
+16.desc=Echecs recommencer partie
+16.text=La partie d'échec ne s'est pas déroulée ainsi... Recommencez \!
+16.link=10
+16.idx=4
+
+15.desc=Echecs et mat
+15.text=Échec et mat \! L'échiquier vous offre son présent.
+15.link=10
+15.idx=5
+
+30.desc=Fou en D5
+30.text=Le Fou blanc devrait terminer la partie en D5.
+30.link=10
+30.idx=6
+
+31.desc=Placement échecs
+31.text=La Dame Rouge a noté le placement de départ dans son journal.
+31.link=10
+31.idx=7
+
+39.desc=Instructions échecs
+39.text=La Dame Rouge a imaginé la suite de la partie d'échecs sur une double page de son journal.
+39.link=10
+39.idx=8
+
+92.desc=Instructions échecs mode D
+92.text=La Dame Rouge a imaginé la suite de la partie d'échecs sur une double page avec le placement de départ.
+92.link=10
+92.idx=9
+
+32.desc=Confusion fou pion
+32.text=Un fou est plus grand qu'un pion.
+32.link=10
+32.idx=10
+
+33.desc=Règle de prise d'une pièce
+33.text=Quand une pièce en mange une autre elle prend sa place.
+33.link=10
+33.idx=11
+
+22.desc=Formes
+22.text=Il y a trois formes à côté du cercueil.
+22.link=11
+29.idx=5
+
+29.desc=Cercueil débutant
+29.text=3 dés ouvrent le cercueil
+29.link=11
+29.idx=1
+
+93.desc=Pochette cercueil
+93.text=Un dé se cache derrière le cercueil
+93.link=11
+93.idx=2
+
+94.desc=Pochette lanterne
+94.text=Un dé se cache sur la lanterne
+94.link=11
+94.idx=3
+
+95.desc=Pochette poteau
+95.text=Un dé se cache dans le coin du poteau au-dessus du panneau des adjectifs.
+95.link=11
+95.idx=4
+
+26.desc=Commode à lettres
+26.text=En plongeant dans le noir la main lit le code.
+26.link=12
+26.idx=1
+
+27.desc=Commode à lettres débutant
+27.text=Cette commode cache un secret que seule la main pourra toucher.
+27.link=12
+27.idx=2
+
+34.desc=Commode à lettres débutant 2
+34.text=Plongez votre main dans le trou, vous toucherez le code.
+34.link=12
+34.idx=3
+
+96.desc=Commode à lettres très débutant
+96.text=Il y a 5 lettres à toucher au fond du trou, les gravures du bois donnent l'ordre.
+96.link=12
+96.idx=4
+
+97.desc=Ordre des lettres
+97.text=L'ordre est gravé devant le trou
+97.link=12
+97.idx=5
+
+6.desc=Placard
+6.text=Partez des prénoms et remontez les phrases mot par mot pour mieux comprendre.
+6.link=13
+6.idx=1
+
+100.desc=3 noms
+100.text=Il faut placer seulement 3 plaquettes.
+100.link=13
+100.idx=2
+
+101.desc=Manque plaquettes
+101.text=Il vous manque des prénoms.
+101.link=13
+101.idx=3
+
+84.desc=Enfants en bas
+84.text=Les grands-parents sont en haut, les parents au milieu, et les enfants en bas.
+84.link=13
+84.idx=4
+
+62.desc=Phrase Isagrine facile
+62.text=Isagrine a un époux qui a un fils, ce fils a lui-même un père, qui a un fils.
+62.link=13
+62.idx=5
+
+99.desc=Phrase Isagrine facile 2
+99.text=Trouvez Isagrine sur l'arbre, cherchez ensuite son époux, puis son fils, etc. Remontez bien la phrase mot par mot.
+99.link=13
+99.idx=6
+
+63.desc=Phrace Georges facile
+63.text=Georges a une fille, qui a une soeur, elles ont une mère, qui a elle-même une mère.
+63.link=13
+63.idx=7
+
+64.desc=Phrase Lili facile
+64.text=Lili a une grand-mère, qui a un fils, ce fils a une fille, qui a un frère.
+64.link=13
+64.idx=8
+
+60.desc=Grand-mère pas Isagrine
+60.text=La mère de la mère n'est pas Isagrine.
+60.link=13
+60.idx=9
+
+20.desc=Lettre Ethel
+20.text=La fin de la lettre d'Ethel parle d'un livre important
+20.link=14
+20.idx=1
+
+65.desc=Rangement livre
+65.text=Un livre semble manquer dans une rangée de la bibliothèque.
+65.link=14
+65.idx=2
+
+8.desc=Marche Funèbre
+8.text=Vous devriez remettre le livre que vous venez de trouver à sa place dans la bibliothèque.
+8.link=14
+8.idx=3
+
+86.desc=Clé du milieu
+86.text=Seule la clé sur le chemin du milieu arrivera au bout pour ouvrir la boîte au mur.
+86.link=15
+86.idx=1
+
+87.desc=Bille
+87.text=Vous n'avez pas besoin d'aimant pour cette bille, seule la gravité vous aidera.
+87.link=16
+87.idx=2
+
+85.desc=Cartes placement
+85.text=Il y a des mots écrits sur les croix au mur.
+85.link=17
+85.idx=1
+
+98.desc=Cartes placement débutant
+98.text=Placez les cartes sur la table selon les croix au mur.
+98.link=17
+98.idx=2
+
+103.desc=Lire courriers
+103.text=Ces courriers vous révèleront bien des secrets...
+103.link=18
+103.idx=1
+
+102.desc=Effondrement
+102.type=snd
+102.son=Effondrement.mp3
+102.link=0
+102.idx=1
+
+104.desc=Invoquer le dieu du temps
+104.text=Si vous vous placez autour du pentacle et dites "Nous invoquons le Dieu du Temps", il pourrait se passer quelque chose
+104.link=19
+104.idx=1

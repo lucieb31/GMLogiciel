@@ -1,6 +1,5 @@
 package fr.toulousescape.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -45,12 +44,14 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	private static final long serialVersionUID = 8970100750129366954L;
 
 	ArrayList<Thread> threadsList = new ArrayList<Thread>();
+	JButton soundButton = new JButton(new ImageIcon(Images.SOUND_IMG));
 	JButton startButton = new JButton(new ImageIcon(Images.PLAY_IMG));
 	JButton stopButton = new JButton(new ImageIcon(Images.STOP_IMG));
 	JButton nextMusicButton = new JButton(new ImageIcon(Images.NEXT_IMG));
 	JButton pauseButton = new JButton(new ImageIcon(Images.PAUSE_IMG));
 	JButton sessionSearch = new JButton(new ImageIcon(Images.REFRESH_IMG));
 	Map<String,String> sessionMap = new HashMap<String,String>();
+	boolean paymentRegistered = false;
 	Timer autoStartTimer;
 	boolean autoStartTimerRunning = false;
 	private int musicNumber = 0;
@@ -73,6 +74,10 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 	private Player player;
 
+	private boolean hasPreambuleMusic = false;
+
+	private boolean preambuleMusicIsRunning = false;
+
 	private boolean hasAmbianceMusic = false;
 
 	private boolean hasBeginMusic = false;
@@ -85,13 +90,19 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 	private boolean firstLaunch = true;
 
+	public String incident = "";
+	
+	public String discount = "";
+	
 	private Map<Integer, String> elementsMusic = null;
 	
 	private Salle salle;
 	
 	private JButton updateInfosButton = null;
+	private JButton incidentButton = null;
 
 	private MainView parent;
+	Thread preambuleMusicThread = null;
 	Thread currentMusicThread = null;
 
 	public ChronoPanel(Chrono c, Session s, Salle salle, MainView parent) {
@@ -103,6 +114,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		session = s;
 		player = salle.getMusicPlayer();
 		this.salle = salle;
+		hasPreambuleMusic = salle.getPreambuleMusic() != null;
 		hasAmbianceMusic = salle.getAmbianceMusique() != null;
 		hasFinalMusic = salle.getFinalMusic() != null;
 		hasBeginMusic = salle.getBeginMusic(0) != null;
@@ -116,6 +128,14 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				showPaymentDialog(chronoPanel);
 			}
 		});
+		incidentButton = new JButton("Incident");
+		incidentButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showIncidentDialog(chronoPanel);
+			}
+		});
 		//initSession();
 		initTitle();
 		initTimerSetter();
@@ -123,20 +143,51 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	}
 
 	public void initTitle() {
-		this.add(sessionInfoLabel,BorderLayout.WEST);
-		this.add(updateInfosButton,BorderLayout.EAST);
+		JPanel titlePanel = new JPanel();
+		titlePanel.setLayout(new BoxLayout(titlePanel,BoxLayout.X_AXIS));
+		titlePanel.add(sessionInfoLabel);
+		titlePanel.add(updateInfosButton);
+		titlePanel.add(incidentButton);
+		this.add(titlePanel);
 	}
 
 	public void initButtons() {
 		JPanel globalPanel = new JPanel(new FlowLayout());
 		
 		JPanel chronoButtonsPanel = new JPanel(new FlowLayout());
+		System.out.println("PREAMBULE : "+hasPreambuleMusic);
+		if (hasPreambuleMusic) {
+			soundButton.setEnabled(false);
+			soundButton.setToolTipText("Veuillez récupérer la session avant de lancer la musique d'ambiance");
+			soundButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println(hasPreambuleMusic + " " + isPaused);
+					String musicToPlay = salle.getPreambuleMusic();
+					preambuleMusicThread = new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							//threadsList.add(preambuleMusicThread);
+							System.out.println("PLAY!!! " + musicToPlay);
+							player.play(salle.getPseudo() + "\\" + musicToPlay);
+						}
+					});
+					preambuleMusicThread.start();
+					preambuleMusicIsRunning = true;
+				}
+			});
+			chronoButtonsPanel.add(soundButton);
+		}
+		
 		startButton.setEnabled(false);
 		startButton.setToolTipText("Veuillez récupérer la session avant de lancer le chrono");
 		startButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				soundButton.setEnabled(false);
 				startButton.setEnabled(false);
 				pauseButton.setEnabled(true);
 				stopButton.setEnabled(true);
@@ -147,10 +198,16 @@ public class ChronoPanel extends JPanel implements TimerListener {
 					autoStartTimerRunning = false;
 					autoStartTimer.cancel();
 				}
+				if (hasPreambuleMusic && preambuleMusicIsRunning) {
+					interruptPreambuleMusic();
+				}
+
+				
 				session.setDate(new Date());
 				System.out.println(hasAmbianceMusic + " " + isPaused);
 				if (hasAmbianceMusic && !isPaused)
 				{
+
 					String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
 					musicNumber++;
 					if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
@@ -184,6 +241,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				isPaused = false;
 				firstLaunch = false;
 			}
+
 		});
 		chronoButtonsPanel.add(startButton);
 
@@ -208,7 +266,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				paymentDialogFirstTime = true;
-
+				paymentRegistered = false;
 				musicNumber = 0;
 				nextMusicButton.setEnabled(false);
 				stopButton.setEnabled(false);
@@ -228,6 +286,10 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				sessionField.setText("");
 				chrono.stop();
 				
+				session.setIncident(incident);
+				session.setDiscount(discount);
+				incident = "";
+				discount = "";
 				StopSessionDialog dialog = new StopSessionDialog(getParent(), session);
 				dialog.openDialog();
 //				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -244,6 +306,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				timeSpent = 0;
 				isPaused = false;
 				firstLaunch = true;
+				preambuleMusicIsRunning = false;
 			}
 		});
 		chronoButtonsPanel.add(stopButton);
@@ -536,6 +599,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		} else {
 			boolean somethingToPay = false;
 			String session = all.substring(all.indexOf(":")+2, all.indexOf(",") - 1);
+			soundButton.setEnabled(true);
 			startButton.setEnabled(true);
 			if (! autoStartTimerRunning) {
 				scheduleAutoStartTimer();
@@ -588,12 +652,16 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			sessionField.setText(session);
 			String alertText = "";
 			if (ancv != null && ! "".equals(ancv) && ! "0".equals(ancv)) {
-				sessionInfoLabel.setForeground(Color.RED);
+				if (!paymentRegistered) {
+					sessionInfoLabel.setForeground(Color.RED);
+				}
 				alertText += "<br>"+ancv+" € de chèques vacances à récupérer";
 				somethingToPay = true;
 			}
 			if (unpaid) {
-				sessionInfoLabel.setForeground(Color.RED);
+				if (! paymentRegistered) {
+					sessionInfoLabel.setForeground(Color.RED);
+				}
 				if (! "".equals(alertText)) {
 					alertText += "<br>";
 				}
@@ -603,8 +671,10 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			sessionInfoLabel.setText("<html>"+sessionInfos+alertText+"<html>");
 			if ("1".equals(running)) {
 				startButton.doClick();
+			} else if ("2".equals(running) && ! preambuleMusicIsRunning) {
+				soundButton.doClick();
 			}
-			if (somethingToPay && paymentDialogFirstTime) {
+			if (somethingToPay && paymentDialogFirstTime && ! paymentRegistered) {
 				paymentDialogFirstTime = false;
 				showPaymentDialog(this);
 			}
@@ -642,6 +712,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	}
 
 	public void setPlayable(boolean enabled) {
+		this.soundButton.setEnabled(enabled);
 		this.startButton.setEnabled(enabled);
 	}
 	public void deactivateBeginMusic() {
@@ -650,5 +721,14 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	public void showPaymentDialog(ChronoPanel chronoPanel) {
 		PaymentDialog dialog = new PaymentDialog(getParent(), sessionMap,chronoPanel);
 		dialog.openDialog();
+	}
+	public void showIncidentDialog(ChronoPanel chronoPanel) {
+		IncidentDialog dialog = new IncidentDialog(getParent(), chronoPanel);
+		dialog.openDialog();
+	}
+
+	private void interruptPreambuleMusic() {
+		System.out.println("Interruption de "+preambuleMusicThread);
+		preambuleMusicThread.stop();
 	}
 }

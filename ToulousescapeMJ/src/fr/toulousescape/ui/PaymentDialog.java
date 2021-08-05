@@ -328,6 +328,7 @@ public class PaymentDialog extends JDialog {
 		} else {
 			sendDataToWebsite();
 			chronoPanel.sessionInfoLabel.setForeground(Color.BLACK);
+			chronoPanel.paymentRegistered = true;
 		}
 	}
 

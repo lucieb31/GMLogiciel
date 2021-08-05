@@ -1,6 +1,5 @@
 package fr.toulousescape.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -205,101 +204,33 @@ public class MainView extends JFrame {
 		});
 		salleMenu.add(createItem);
 		
-//		JMenu indicesMenu = new JMenu("Indices");
-		JMenuItem addItem = new JMenuItem("Créer des indices");
+		JMenu indicesMenu = new JMenu("Administration");
+		JMenuItem changeEnigmes = new JMenuItem("Énigmes");
 		
-		addItem.addActionListener(new ActionListener() {
+		changeEnigmes.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IndicesDialog indicesDialog = new IndicesDialog(indiceManager, parent);
-				indicesDialog.openAsCreate();
+				AdminEnigmesDialog dialog = new AdminEnigmesDialog(indiceManager, parent);
+				//dialog.openAsCreate();
 			}
 		});
-//		indicesMenu.add(addItem);
+		indicesMenu.add(changeEnigmes);
 		
-		JMenuItem changeItem = new JMenuItem("Modifier des indices");
-		changeItem.addActionListener(new ActionListener() {
+		JMenuItem changeIndices = new JMenuItem("Indices");
+		changeIndices.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IndicesDialog indicesDialog = new IndicesDialog(indiceManager, parent);
-				indicesDialog.openAsUpdate();
+				AdminIndicesDialog indicesDialog = new AdminIndicesDialog(indiceManager, parent);
+				//indicesDialog.openAsUpdate();
 			}
 		});
-//		indicesMenu.add(changeItem);
+		indicesMenu.add(changeIndices);
 		
-		JMenuItem removeItem = new JMenuItem("Supprimer des indices");
-		removeItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				IndicesDialog indicesDialog = new IndicesDialog(indiceManager, parent);
-				indicesDialog.openAsRemove();
-			}
-		});
-//		indicesMenu.add(removeItem);
-		
-		JMenuItem showItem = new JMenuItem("Voir les indices");
-		showItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				IndicesDialog indicesDialog = new IndicesDialog(indiceManager, parent);
-				indicesDialog.openAsView();
-			}
-		});
-//		indicesMenu.add(showItem);
-		
-		JMenu enigmesMenu = new JMenu("Énigmes");
-		JMenuItem addEnigmaItem = new JMenuItem("Créer des énigmes");
-		
-		addItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
-				//EnigmesDialog.openAsCreate();
-			}
-		});
-		enigmesMenu.add(addEnigmaItem);
-		
-		JMenuItem changeEnigmaItem = new JMenuItem("Modifier des énigmes");
-		changeEnigmaItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
-				//EnigmesDialog.openAsUpdate();
-			}
-		});
-		enigmesMenu.add(changeEnigmaItem);
-		
-		JMenuItem removeEnigmaItem = new JMenuItem("Supprimer des énigmes");
-		removeEnigmaItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
-				//enigmesDialog.openAsRemove();
-			}
-		});
-		enigmesMenu.add(removeItem);
-		
-		JMenuItem showEnigmaItem = new JMenuItem("Voir les énigmes");
-		showEnigmaItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//EnigmesDialog enigmesDialog = new EnigmesDialog(enigmeManager, parent);
-				//EnigmesDialog.openAsView();
-			}
-		});
-//		indicesMenu.add(showItem);
-		
-//		menuBar.add(indicesMenu);
 //		menuBar.add(salleMenu);
 		menuBar.add(configMenu);
+		menuBar.add(indicesMenu);
 		setJMenuBar(menuBar);
 	}
 	

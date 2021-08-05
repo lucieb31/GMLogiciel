@@ -28,6 +28,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -40,6 +42,7 @@ public class StopSessionDialog extends JDialog {
 	private JTextField bonusField;
 	private JTextField timeField;
 	private JTextArea alertField;
+	private JTextField discountField;
 	private JRadioButton perduButton;
 	private JRadioButton gagneButton;
 	private JTextField JrealIndicesField;
@@ -66,7 +69,8 @@ public class StopSessionDialog extends JDialog {
 		mainPanel.add(infos);
 				
 		JLabel indices = new JLabel(finishedSession.getAllIndicesAsHTML());
-		mainPanel.add(indices);
+		JScrollPane jsp = new JScrollPane(indices);
+		mainPanel.add(jsp);
 
 		JPanel indicesPanel = new JPanel(new FlowLayout());
 		JLabel realIndicesLabel = new JLabel("Indices à comptabiliser :");
@@ -110,9 +114,15 @@ public class StopSessionDialog extends JDialog {
 		
 		JPanel alertPanel = new JPanel(new FlowLayout());
 		JLabel alertLabel = new JLabel("Incidents :");
+		JLabel discountLabel = new JLabel("Code");
 		alertField = new JTextArea(2,30);
+		alertField.setText(finishedSession.getIncident());
+		discountField = new JTextField(10);
+		discountField.setText(finishedSession.getDiscount());
 		alertPanel.add(alertLabel);
 		alertPanel.add(alertField);
+		alertPanel.add(discountLabel);
+		alertPanel.add(discountField);
 		mainPanel.add(alertPanel);
 		JButton okButton;
 		if (finishedSession.getId() != 0) {
@@ -232,6 +242,7 @@ public class StopSessionDialog extends JDialog {
 				postParams.put("bonus", bonusField.getText());
 				postParams.put("flow", finishedSession.getAllIndicesAsHTML());
 				postParams.put("alert", alertField.getText());
+				postParams.put("discount", discountField.getText());
 				byte[] postDataBytes = generatePostData(postParams);
 		        
 			    conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));

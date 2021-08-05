@@ -15,6 +15,7 @@ public class Images {
 	//Chrono images
 	public static final String MINUS_IMG = URL_RESOURCES + "minus.png";
 	public static final String PLUS_IMG = URL_RESOURCES + "plus.png";
+	public static final String SOUND_IMG = URL_RESOURCES + "sound.png";
 	public static final String PLAY_IMG = URL_RESOURCES + "start.png";
 	public static final String STOP_IMG = URL_RESOURCES + "stop.png";
 	public static final String PAUSE_IMG = URL_RESOURCES + "pause.png";

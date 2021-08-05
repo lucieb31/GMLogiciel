@@ -28,9 +28,21 @@ public class Indice {
 	private String function;
 	
 	private int index;
+	private int id;
 
-	public Indice(String description, String image, String texte, String son, String type, String color, String index, String function, boolean music) {
+	private int link;
+	public int getLink() {
+		return link;
+	}
+
+	public void setLink(int link) {
+		this.link = link;
+	}
+
+	public Indice(int id, String description, String image, String texte, String son, String type, String color, String index, String function, boolean music, int link) {
 		this.description = description;
+		this.link = link;
+		this.id = id;
 		this.image = image;
 		this.texte = texte;
 		this.son = son;
@@ -143,6 +155,14 @@ public class Indice {
 
 	public void setMusic(boolean music) {
 		this.music = music;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 
