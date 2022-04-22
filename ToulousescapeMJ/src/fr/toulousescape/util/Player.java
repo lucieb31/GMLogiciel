@@ -2,6 +2,10 @@ package fr.toulousescape.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -19,9 +23,9 @@ import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 
 public class Player {
 
-	private Info[] _audioOut;
+	private Map<String,Info> _audioOut;
 
-	private int _currentOut;
+	private String _currentOut;
 	
 	private boolean _stop;
 	
@@ -30,21 +34,34 @@ public class Player {
 	private byte[] _currentRead;
 
 	public Player() {
-		_audioOut = AudioSystem.getMixerInfo();
+		Info[] audioOut = AudioSystem.getMixerInfo();
+		_audioOut = new HashMap<>();
+		for (Info audioInfo :  audioOut) {
+			if (!audioInfo.getDescription().equals("Port Mixer")
+					&& !_audioOut.containsKey(audioInfo.getName())
+					&& !audioInfo.getName().contains("Micro"))
+			{
+				_audioOut.put(audioInfo.getName(), audioInfo);
+			}
+		}
 	}
 
-	public Info[] getAudioOutList() {
+	public Map<String,Info> getAudioOutList() {
 		return _audioOut;
 	}
+	
+	public Set<String> getOutNames() {
+		return _audioOut.keySet();
+	}
 
-	public void setCurrentOut(int out) {
+	public void setCurrentOut(String out) {
 		_currentOut = out;
 	}
 
 	public void play(String url) {
 		try {
 			
-			Mixer mixer = AudioSystem.getMixer(_audioOut[_currentOut]);
+			Mixer mixer = AudioSystem.getMixer(_audioOut.get(_currentOut));
 			mixer.open();
 			
 			MpegAudioFileReader mp = new MpegAudioFileReader();
@@ -110,7 +127,7 @@ public class Player {
 			_stop = false;
 			_pause = false;
 			
-		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException | IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}

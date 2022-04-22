@@ -28,8 +28,8 @@ public class MusicUI extends JDialog {
 	private ArrayList<Thread> threadsList;
 	private ArrayList<JButton> buttonsList = new ArrayList<JButton> ();
 	public MusicUI(Salle salle, ChronoPanel chronoPanel) {
-		Player musicPlayer = salle.getMusicPlayer();
-		output = musicPlayer.getAudioOutList();
+		//Player musicPlayer = salle.getMusicPlayer();
+		//output = musicPlayer.getAudioOutList();
 		this.salle = salle;
 		threadsList = chronoPanel.threadsList;
 		dialogPanel = new JPanel();

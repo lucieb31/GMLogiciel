@@ -51,9 +51,9 @@ public class Main {
 		if (outputMusic == null || (audioClues && (outputClues == null ))) {
 			new AudioOutputUI(salle);
 		} else {
-			salle.getMusicPlayer().setCurrentOut(Integer.valueOf(outputMusic));
+			salle.getMusicPlayer().setCurrentOut(String.valueOf(outputMusic));
 			if (audioClues) {
-				salle.getIndicePlayer().setCurrentOut(Integer.valueOf(outputClues));
+				salle.getIndicePlayer().setCurrentOut(String.valueOf(outputMusic));
 			}
 		}
 		RoomPanel panel1 = new RoomPanel(chrono,p);

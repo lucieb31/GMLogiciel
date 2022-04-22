@@ -8,6 +8,7 @@ import java.awt.event.WindowEvent;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.sound.sampled.Mixer.Info;
 import javax.swing.BoxLayout;
@@ -28,11 +29,11 @@ public class AudioOutputUI extends JDialog {
 
 	private static final long serialVersionUID = -2113163270768489618L;
 
-	private Info[] output;
+	private Set<String> output;
 
-	private JComboBox<Info> combo_music;
+	private JComboBox combo_music;
 	
-	private JComboBox<Info> combo_indices;
+	private JComboBox<String> combo_indices;
 
 	private JPanel dialogPanel;
 	
@@ -40,7 +41,8 @@ public class AudioOutputUI extends JDialog {
 
 	public AudioOutputUI(Salle salle) {
 		Player musicPlayer = salle.getMusicPlayer();
-		output = musicPlayer.getAudioOutList();
+		output = musicPlayer.getOutNames();
+		
 		dialogPanel = new JPanel();
 		dialogPanel.setLayout(new BoxLayout(dialogPanel, BoxLayout.Y_AXIS));
 		currentSalle = salle;
@@ -53,9 +55,10 @@ public class AudioOutputUI extends JDialog {
 			}
 		});
 		
-		Player indicePlayer = salle.getIndicePlayer();
-		initList(musicPlayer, indicePlayer);
-		initButtons(musicPlayer, indicePlayer);
+		// TODO: vérifier dans la config si on a une sortie différente pour les indices
+		//Player indicePlayer = salle.getIndicePlayer();
+		initList(musicPlayer, null);
+		initButtons(musicPlayer, null);
 		
 		//Indice player if exist
 		setModal(true);
@@ -66,13 +69,16 @@ public class AudioOutputUI extends JDialog {
 
 	private void initList(Player music, Player indice) {
 		JPanel musicPanel = new JPanel(new FlowLayout());
-		JLabel musicLabel = new JLabel("Sortie musique : ");
+		String labelName = "Sortie son : ";
+		if (indice != null)
+			labelName = "Sortie musique : ";
+		JLabel musicLabel = new JLabel(labelName);
 		musicPanel.add(musicLabel);
 		Properties properties = currentSalle.getProperties();
 		String selected = properties.getProperty(SallesProperties.MUSIC_OUTPUT);
-		combo_music = new JComboBox<>(output);
+		combo_music = new JComboBox<>(output.toArray());
 		if (selected != null) {
-			combo_music.setSelectedIndex(new Integer(selected));
+			combo_music.setSelectedItem(selected);
 		} else {
 			combo_music.setSelectedIndex(0);
 		}
@@ -82,19 +88,19 @@ public class AudioOutputUI extends JDialog {
 		
 		if (indice != null)
 		{
-			JPanel audioPanel = new JPanel(new FlowLayout());
-			JLabel indices = new JLabel("Sortie indices : ");
-			audioPanel.add(indices);
-			selected = properties.getProperty(SallesProperties.INDICES_OUTPUT);
-			combo_indices = new JComboBox<>(output);
-			if (selected != null) {
-				combo_indices.setSelectedIndex(new Integer(selected));
-			} else {
-				combo_indices.setSelectedIndex(0);
-			}
-			audioPanel.add(combo_indices);
-			audioPanel.add(initTestPlayer(indice, combo_indices));
-			dialogPanel.add(audioPanel);
+//			JPanel audioPanel = new JPanel(new FlowLayout());
+//			JLabel indices = new JLabel("Sortie indices : ");
+//			audioPanel.add(indices);
+//			selected = properties.getProperty(SallesProperties.INDICES_OUTPUT);
+//			combo_indices = new JComboBox<>(output.toArray());
+//			if (selected != null) {
+//				combo_indices.setSelectedIndex(new Integer(selected));
+//			} else {
+//				combo_indices.setSelectedIndex(0);
+//			}
+//			audioPanel.add(combo_indices);
+//			audioPanel.add(initTestPlayer(indice, combo_indices));
+//			dialogPanel.add(audioPanel);
 		}
 	}
 
@@ -104,16 +110,16 @@ public class AudioOutputUI extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedOutput = combo_music.getSelectedIndex();
+				String name = (String) combo_music.getSelectedItem();
 				Properties properties = currentSalle.getProperties();
-				properties.setProperty(SallesProperties.MUSIC_OUTPUT, "" + selectedOutput);
-				music.setCurrentOut(selectedOutput);
+				properties.setProperty(SallesProperties.MUSIC_OUTPUT, name);
+				music.setCurrentOut(name);
 				
 				if (indice != null)
 				{
-					selectedOutput = combo_indices.getSelectedIndex();
-					properties.setProperty(SallesProperties.INDICES_OUTPUT, "" + selectedOutput);
-					indice.setCurrentOut(selectedOutput);
+//					selectedOutput = combo_indices.getSelectedIndex();
+//					properties.setProperty(SallesProperties.INDICES_OUTPUT, "" + selectedOutput);
+//					indice.setCurrentOut(selectedOutput);
 				}
 				
 				try {
@@ -142,7 +148,7 @@ public class AudioOutputUI extends JDialog {
 
 					@Override
 					public void run() {
-						player.setCurrentOut(combo.getSelectedIndex());
+						player.setCurrentOut((String) combo.getSelectedItem());
 						player.play("tools\\DING.mp3");
 					}
 				}).start();
@@ -151,4 +157,5 @@ public class AudioOutputUI extends JDialog {
 
 		return playButton;
 	}
+	
 }
