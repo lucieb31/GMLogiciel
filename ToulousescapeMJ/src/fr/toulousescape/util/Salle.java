@@ -44,15 +44,16 @@ public class Salle {
 	private String pseudo;
 	
 	public Salle(String pseudoN, Properties properties, File pFile) {
+		this();
 		pseudo = pseudoN;
 		props = properties;
 		propertyFile = pFile;
-		musicPlayer = new Player();
 		loadPropFile();
 	}
 	
 	public Salle(String salleName, String pseudo)
 	{
+		this();
 		try {
 			this.pseudo = pseudo;
 			name = salleName;
@@ -61,10 +62,15 @@ public class Salle {
 			salleFolder.mkdirs();
 			propertyFile = new File("src\\resources\\"+pseudo+".properties");
 			propertyFile.createNewFile();
-			musicPlayer = new Player();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public Salle()
+	{
+		musicPlayer = new Player();
+		indicePlayer = new Player();
 	}
 
 	public String getName() {
@@ -97,14 +103,6 @@ public class Salle {
 
 	public boolean isHasAudioIndice() {
 		return hasAudioIndice;
-	}
-
-	public void setHasAudioIndice(boolean hasAudioIndice) {
-		this.hasAudioIndice = hasAudioIndice;
-		if (hasAudioIndice) {			
-			indicePlayer = new Player();
-		}
-
 	}
 
 	public String getAmbianceMusique() {
@@ -173,9 +171,6 @@ public class Salle {
 	{
 		beginMusic = new HashMap<Integer,String>();
 		name = props.getProperty(SallesProperties.NAME);
-		hasAudioIndice = Boolean.parseBoolean(props.getProperty(SallesProperties.IS_AUDIO_INDICES));
-		if (hasAudioIndice)
-			indicePlayer = new Player();
 		finalMusic = props.getProperty(SallesProperties.MUSIC_END);
 		beginMusic.put(0, props.getProperty(SallesProperties.MUSIC_BEGIN));
 		for (int i = 2 ; i < 7 ; i++) {

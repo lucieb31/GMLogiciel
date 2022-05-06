@@ -83,10 +83,6 @@ public class ManageSalleDialog extends JDialog{
 		finalMusicPanel.add(finalMusicField);
 		mainPanel.add(finalMusicPanel);
 		
-		JCheckBox audioIndice = new JCheckBox("Activer audio indices");
-		audioIndice.setSelected(false);
-		mainPanel.add(audioIndice);
-		
 		JButton createButton = new JButton("Créer la salle");
 		createButton.addActionListener(new ActionListener() {
 			
@@ -106,7 +102,6 @@ public class ManageSalleDialog extends JDialog{
 				
 				s.setAmbianceMusique(ambianceMusicField.getText());
 				s.setFinalMusic(finalMusicField.getText());
-				s.setHasAudioIndice(audioIndice.isSelected());
 				
 				s.computePropFile();
 				createdSalle = s;

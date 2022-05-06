@@ -46,15 +46,12 @@ public class Main {
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
 		Chrono chrono = new Chrono(new Integer(p.getProperty(SallesProperties.EXTRA_TIME,"0")));
 		String outputMusic = p.getProperty(SallesProperties.MUSIC_OUTPUT);
-		String outputClues = p.getProperty(SallesProperties.INDICES_OUTPUT);
-		boolean audioClues = new Boolean(p.getProperty(SallesProperties.IS_AUDIO_INDICES));
-		if (outputMusic == null || (audioClues && (outputClues == null ))) {
+		//String outputClues = p.getProperty(SallesProperties.INDICES_OUTPUT);
+		if (outputMusic == null) {
 			new AudioOutputUI(salle);
 		} else {
 			salle.getMusicPlayer().setCurrentOut(String.valueOf(outputMusic));
-			if (audioClues) {
-				salle.getIndicePlayer().setCurrentOut(String.valueOf(outputMusic));
-			}
+			salle.getIndicePlayer().setCurrentOut(String.valueOf(outputMusic));
 		}
 		RoomPanel panel1 = new RoomPanel(chrono,p);
 		RoomPanel panel2 = new RoomPanel(chrono,p);
