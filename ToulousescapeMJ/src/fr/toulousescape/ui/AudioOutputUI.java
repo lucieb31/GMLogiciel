@@ -20,6 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Player;
 import fr.toulousescape.util.Salle;
@@ -38,8 +41,11 @@ public class AudioOutputUI extends JDialog {
 	private JPanel dialogPanel;
 	
 	private Salle currentSalle;
+	
+	private Logger logger;
 
 	public AudioOutputUI(Salle salle) {
+		logger = LogManager.getLogger(AudioOutputUI.class);
 		Player musicPlayer = salle.getMusicPlayer();
 		output = musicPlayer.getOutNames();
 		
@@ -51,14 +57,14 @@ public class AudioOutputUI extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				JOptionPane.showMessageDialog(dialogPanel.getParent(),
-						"Attention vous n'avez pas choisi de sortie audio, celle du pc est définie par défaut");
+						"Sortie audio non modifiée.");
 			}
 		});
 		
 		// TODO: vérifier dans la config si on a une sortie différente pour les indices
-		//Player indicePlayer = salle.getIndicePlayer();
+		Player indicePlayer = salle.getIndicePlayer();
 		initList(musicPlayer, null);
-		initButtons(musicPlayer, null);
+		initButtons(musicPlayer, indicePlayer);
 		
 		//Indice player if exist
 		setModal(true);
@@ -119,7 +125,7 @@ public class AudioOutputUI extends JDialog {
 				{
 //					selectedOutput = combo_indices.getSelectedIndex();
 //					properties.setProperty(SallesProperties.INDICES_OUTPUT, "" + selectedOutput);
-//					indice.setCurrentOut(selectedOutput);
+					indice.setCurrentOut(name);
 				}
 				
 				try {
@@ -127,8 +133,7 @@ public class AudioOutputUI extends JDialog {
 					properties.store(fileWriter, null);
 					fileWriter.close();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error(e1.getMessage());
 				}
 				dispose();
 			}
