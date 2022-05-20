@@ -19,6 +19,10 @@ import javax.sound.sampled.Mixer.Info;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import fr.toulousescape.ui.IndicesPanel;
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 
 public class Player {
@@ -32,8 +36,11 @@ public class Player {
 	private boolean _pause;
 	
 	private byte[] _currentRead;
+	
+	private Logger logger;
 
 	public Player() {
+		logger = LogManager.getLogger(Player.class);
 		Info[] audioOut = AudioSystem.getMixerInfo();
 		_audioOut = new HashMap<>();
 		for (Info audioInfo :  audioOut) {
@@ -60,21 +67,27 @@ public class Player {
 
 	public void play(String url) {
 		try {
-			
+			logger.debug("Play " + url);
 			Mixer mixer = AudioSystem.getMixer(_audioOut.get(_currentOut));
 			mixer.open();
-			
+			logger.debug("Play 1");
 			MpegAudioFileReader mp = new MpegAudioFileReader();
 			AudioInputStream audioFileFormat = mp.getAudioInputStream(new File("src\\resources\\" + url));
+			logger.debug("Play 2");
 			AudioFormat format = audioFileFormat.getFormat();
+			logger.debug("Play 2");
 			AudioInputStream audioInputStream = AudioSystem
 					.getAudioInputStream(
 							new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, format.getSampleRate(), 16,
 									format.getChannels(), format.getChannels() * 2, format.getSampleRate(), false),
 							audioFileFormat);
+			logger.debug("Play 3");
 			AudioFormat audioFormat = audioInputStream.getFormat();
+			logger.debug("Play 4");
 			javax.sound.sampled.DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+			logger.debug("Play 5");
 			SourceDataLine line = (SourceDataLine) mixer.getLine(info);
+			logger.debug("Play 6");
 			
 //			FloatControl control = (FloatControl) line
 //            .getControl(FloatControl.Type.BALANCE);
@@ -103,7 +116,9 @@ public class Player {
 //			System.out.println(control.getValue());
 			
 			line.open(audioFormat);
+			logger.debug("Play 7");
 			line.start();
+			logger.debug("Started");
 
 			byte bytes[] = new byte[1024];
 			
@@ -130,6 +145,7 @@ public class Player {
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException | IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			logger.error(e1.getMessage());
 		}
 	}
 	

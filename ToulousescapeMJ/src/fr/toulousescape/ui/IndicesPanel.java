@@ -32,6 +32,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import fr.toulousescape.Main;
 import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Indice;
@@ -96,8 +100,12 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 	private Properties p;
 
 	private List<Indice> interactionList = new ArrayList<Indice>();
+	
+	private Logger logger;
 
 	public IndicesPanel(IndiceManager m, Session s, Salle salle) {
+		
+		logger =  LogManager.getLogger(IndicesPanel.class);
 		manager = m;
 		session = s;
 		
@@ -335,6 +343,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					logger.debug("On clique sur l'indice");
 					validateIndice(en, true);
 				}
 			});
@@ -478,6 +487,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 				
 				@Override
 				public void run() {
+					logger.debug("Play indice");
 					indicePlayer.play(indice.getSonWithUrl());
 				}
 			});

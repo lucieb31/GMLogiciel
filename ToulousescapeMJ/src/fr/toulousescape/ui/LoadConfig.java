@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import fr.toulousescape.util.SallesProperties;
 
+
 public class LoadConfig {
 
 	private boolean firstStart;
@@ -45,8 +46,9 @@ public class LoadConfig {
 		} catch (NumberFormatException | IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
-
+	
 	public boolean isFirstStart() {
 		return firstStart;
 	}
