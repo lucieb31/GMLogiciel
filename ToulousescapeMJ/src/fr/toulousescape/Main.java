@@ -1,11 +1,12 @@
 package fr.toulousescape;
 
+import java.io.File;
 import java.util.Properties;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import fr.toulousescape.ui.AudioOutputUI;
 import fr.toulousescape.ui.EnigmesPanel;
 import fr.toulousescape.ui.IndicesPanel;
@@ -25,6 +26,11 @@ public class Main {
 
 	public static void main(String[] args) {
 
+		File file = new File("src\\resources\\log4j2.xml");
+	    
+		LoggerContext context = (LoggerContext) LogManager.getContext(false);
+		context.setConfigLocation(file.toURI());
+		//Configurator.initialize("Test", "src\\resources\\log4j2.properties");
 		PropertyConfigurator.configure("src\\resources\\log4j2.properties");
 		Logger logger =  LogManager.getLogger(Main.class);
 		try {

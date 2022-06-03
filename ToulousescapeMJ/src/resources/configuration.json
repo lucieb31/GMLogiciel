@@ -1,0 +1,23 @@
+{
+	"salle": {
+		"pseudo": "RT",
+		"name": "rouages",
+		"audio_indices": true,
+		"ecran": [
+			{
+				"resolution": 1024
+			},
+			{
+				"resolution": 2048
+			}
+		],
+		"music_end": "lamusique.mp3",
+		"music_start": "lautremusique.mp3",
+		"music_ambiance": "latotal.mp3",
+		"music_preambule": "encoreunemusique.mp3"
+		"music_elements": "ok.mp3"
+	},
+	"
+		
+				
+}
