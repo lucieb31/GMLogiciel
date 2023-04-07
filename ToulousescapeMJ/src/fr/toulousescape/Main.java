@@ -2,6 +2,10 @@ package fr.toulousescape;
 
 import java.util.Properties;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import fr.toulousescape.ui.AudioOutputUI;
 import fr.toulousescape.ui.EnigmesPanel;
 import fr.toulousescape.ui.IndicesPanel;
@@ -21,6 +25,9 @@ public class Main {
 
 	public static void main(String[] args) {
 
+		PropertyConfigurator.configure("src\\resources\\log4j2.properties");
+		Logger logger =  LogManager.getLogger(Main.class);
+		logger.debug("Start application");
 		//TODO créer une session à chaque démarrage du chrono
 		Session session = new Session();
 		
