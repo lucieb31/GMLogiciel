@@ -25,8 +25,6 @@ public class Salle {
 	
 	private File propertyFile;
 	
-	private boolean hasAudioIndice;
-
 	private String preambuleMusic;
 
 	private String ambianceMusic;
@@ -101,10 +99,6 @@ public class Salle {
 		nbEcran = ecran;
 	}
 
-	public boolean isHasAudioIndice() {
-		return hasAudioIndice;
-	}
-
 	public String getAmbianceMusique() {
 		return ambianceMusic;
 	}
@@ -141,7 +135,6 @@ public class Salle {
 		System.out.println("COMPUTE PROP FILE");
 		try {
 			props.setProperty(SallesProperties.NAME, name);
-			props.setProperty(SallesProperties.IS_AUDIO_INDICES, ""+hasAudioIndice);
 			props.setProperty(SallesProperties.NB_ECRAN, ""+nbEcran);
 			if (nbEcran != 0)
 			{

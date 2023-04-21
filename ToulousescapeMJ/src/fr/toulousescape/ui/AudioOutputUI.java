@@ -51,14 +51,13 @@ public class AudioOutputUI extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				JOptionPane.showMessageDialog(dialogPanel.getParent(),
-						"Attention vous n'avez pas choisi de sortie audio, celle du pc est définie par défaut");
+						"La sortie audio n'a pas été modifiée");
 			}
 		});
 		
-		// TODO: vérifier dans la config si on a une sortie différente pour les indices
-		//Player indicePlayer = salle.getIndicePlayer();
-		initList(musicPlayer, null);
-		initButtons(musicPlayer, null);
+		Player indicePlayer = salle.getIndicePlayer();
+		initList(musicPlayer);
+		initButtons(musicPlayer, indicePlayer);
 		
 		//Indice player if exist
 		setModal(true);
@@ -67,11 +66,9 @@ public class AudioOutputUI extends JDialog {
 		setVisible(true);
 	}
 
-	private void initList(Player music, Player indice) {
+	private void initList(Player music) {
 		JPanel musicPanel = new JPanel(new FlowLayout());
 		String labelName = "Sortie son : ";
-		if (indice != null)
-			labelName = "Sortie musique : ";
 		JLabel musicLabel = new JLabel(labelName);
 		musicPanel.add(musicLabel);
 		Properties properties = currentSalle.getProperties();
@@ -86,22 +83,6 @@ public class AudioOutputUI extends JDialog {
 		musicPanel.add(initTestPlayer(music, combo_music));
 		dialogPanel.add(musicPanel);
 		
-		if (indice != null)
-		{
-//			JPanel audioPanel = new JPanel(new FlowLayout());
-//			JLabel indices = new JLabel("Sortie indices : ");
-//			audioPanel.add(indices);
-//			selected = properties.getProperty(SallesProperties.INDICES_OUTPUT);
-//			combo_indices = new JComboBox<>(output.toArray());
-//			if (selected != null) {
-//				combo_indices.setSelectedIndex(new Integer(selected));
-//			} else {
-//				combo_indices.setSelectedIndex(0);
-//			}
-//			audioPanel.add(combo_indices);
-//			audioPanel.add(initTestPlayer(indice, combo_indices));
-//			dialogPanel.add(audioPanel);
-		}
 	}
 
 	private void initButtons(Player music, Player indice) {
@@ -114,13 +95,7 @@ public class AudioOutputUI extends JDialog {
 				Properties properties = currentSalle.getProperties();
 				properties.setProperty(SallesProperties.MUSIC_OUTPUT, name);
 				music.setCurrentOut(name);
-				
-				if (indice != null)
-				{
-//					selectedOutput = combo_indices.getSelectedIndex();
-//					properties.setProperty(SallesProperties.INDICES_OUTPUT, "" + selectedOutput);
-//					indice.setCurrentOut(selectedOutput);
-				}
+				indice.setCurrentOut(name);
 				
 				try {
 					FileWriter fileWriter = new FileWriter(currentSalle.getPropertyFile());

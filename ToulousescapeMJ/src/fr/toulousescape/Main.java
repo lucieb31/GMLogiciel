@@ -46,7 +46,6 @@ public class Main {
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
 		Chrono chrono = new Chrono(new Integer(p.getProperty(SallesProperties.EXTRA_TIME,"0")));
 		String outputMusic = p.getProperty(SallesProperties.MUSIC_OUTPUT);
-		//String outputClues = p.getProperty(SallesProperties.INDICES_OUTPUT);
 		if (outputMusic == null) {
 			new AudioOutputUI(salle);
 		} else {

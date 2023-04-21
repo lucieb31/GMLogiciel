@@ -42,10 +42,6 @@ public class SallesProperties {
 	
 	public static final String INDICES_TRANSFERED = "indices.alreadyTransfered";
 	
-	public static final String INDICES_OUTPUT = "indices.output";
-	
-	public static final String IS_AUDIO_INDICES = "indices.isAudio";
-
 	public static final String NB_SALLE = "salle.nb";
 	
 	public static final String FOREGROUND_COLOR_NORMAL = "couleur.texte.normal";
