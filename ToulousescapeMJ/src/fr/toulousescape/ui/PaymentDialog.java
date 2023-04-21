@@ -50,6 +50,9 @@ public class PaymentDialog extends JDialog {
 	private JRadioButton noInvoiceButton;
 	private boolean alreadyTried = false;
 	private ChronoPanel chronoPanel;
+	
+	private boolean unpaid;
+	
 	public PaymentDialog(Component parent, Map<String, String> sessionMap, ChronoPanel chronoPanel) {
 		this.sessionMap = sessionMap;
 		this.chronoPanel = chronoPanel;
@@ -123,7 +126,7 @@ public class PaymentDialog extends JDialog {
 			ancvAmount = new Integer(sessionMap.get("ancv"));
 			mainPanel.add(ancvLabel);
 		}
-		if((! "0".equals(sessionMap.get("amount")) && "".equals(sessionMap.get("payment_type")))) {
+		if("1".equals(sessionMap.get("unpaid"))) {
 			JLabel toPayLabel = new JLabel(sessionMap.get("amount")+" € à régler sur place (et / ou facture à envoyer)");
 			toPayLabel.setForeground(Color.RED);
 			unpaidAmount= new Integer(sessionMap.get("amount"));

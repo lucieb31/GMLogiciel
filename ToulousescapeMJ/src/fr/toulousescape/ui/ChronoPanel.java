@@ -32,6 +32,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Player;
@@ -603,6 +606,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		}
 		System.out.println(all);
 		
+		JSONObject jsonAll = new JSONObject(all);
+		
 		if (all.trim().equals("nosession")) {
 			JOptionPane.showMessageDialog(this, "Merci de synchroniser une session "+room+" via le backend.");
 		} else {
@@ -613,17 +618,18 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			if (! autoStartTimerRunning) {
 				scheduleAutoStartTimer();
 			}
-			String firstname = all.substring(all.indexOf("firstname\":")+12, all.indexOf(",\"lastname") - 1);
-			String lastname = all.substring(all.indexOf("lastname\":")+11, all.indexOf(",\"phone") - 1);
-			String phone = all.substring(all.indexOf("phone\":")+8, all.indexOf(",\"email") - 1);
-			String players = all.substring(all.indexOf("players\":")+10, all.indexOf(",\"bonus") - 1);
-			String running = all.substring(all.indexOf("running\":")+10, all.indexOf(",\"players") - 1);
-			String price_category = all.substring(all.indexOf("price_category\":")+17, all.indexOf(",\"hours") - 1);
-			String special = all.substring(all.indexOf("special\":")+10, all.indexOf(",\"price_category") - 1);
-			String comment = all.substring(all.indexOf("comment\":")+10, all.indexOf(",\"clues") - 1);
-			String ancv = all.substring(all.indexOf("ancv\":")+7, all.indexOf(",\"publication") - 1);
-			String amount = all.substring(all.indexOf("amount\":")+9, all.indexOf(",\"victory") - 1);
-			String payment_type = all.substring(all.indexOf("payment_type\":")+15, all.indexOf(",\"fk_payment") - 1);
+			String firstname = jsonAll.getString("firstname");
+			String lastname = jsonAll.getString("lastname");
+			String phone = jsonAll.getString("phone");
+			String players = jsonAll.getString("players");
+			String running = jsonAll.getString("running");
+			String price_category = jsonAll.getString("price_category");
+			String special = jsonAll.getString("special");
+			String comment = jsonAll.getString("comment");
+			String ancv = jsonAll.getString("ancv");
+			String amount = jsonAll.getString("amount");
+			String payment_type = jsonAll.getString("payment_type");
+			
 			sessionMap.put("firstname", firstname);
 			sessionMap.put("lastname", lastname);
 			sessionMap.put("phone", phone);
@@ -638,7 +644,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			
 			this.players = Integer.parseInt(players);
 			
-			boolean unpaid = (! "0".equals(amount) && "".equals(payment_type));
+			boolean unpaid = (!"0".equals(amount) && "null".equals(payment_type));
 			
 			if (unpaid) {
 				sessionMap.put("unpaid", "1");				
@@ -698,7 +704,10 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 		e.printStackTrace();
 
-	  }
+	  } catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 
 	}
 
