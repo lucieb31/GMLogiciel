@@ -2,6 +2,7 @@ package fr.toulousescape.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,11 +28,11 @@ public class Player {
 
 	private String _currentOut;
 	
-	private boolean _stop;
-	
 	private boolean _pause;
 	
 	private byte[] _currentRead;
+	
+	private ArrayList<SourceDataLine> lines;
 
 	public Player() {
 		Info[] audioOut = AudioSystem.getMixerInfo();
@@ -44,6 +45,7 @@ public class Player {
 				_audioOut.put(audioInfo.getName(), audioInfo);
 			}
 		}
+		lines = new ArrayList();
 	}
 
 	public Map<String,Info> getAudioOutList() {
@@ -104,6 +106,8 @@ public class Player {
 			
 			line.open(audioFormat);
 			line.start();
+			
+			lines.add(line);
 
 			byte bytes[] = new byte[1024];
 			
@@ -114,17 +118,13 @@ public class Player {
 //			}
 			
 			if (!_pause) {
-				_stop = false;
 				int bytesRead = 0;
-				while (((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) && !_stop) 
+				while ((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) 
 				{
-					if (!_stop){
 						line.write(bytes, 0, bytesRead);
-					}
 				}
 			}
 
-			_stop = false;
 			_pause = false;
 			
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException | IllegalArgumentException e1) {
@@ -135,7 +135,11 @@ public class Player {
 	
 	public void stop()
 	{
-		_stop = true;
+		for (SourceDataLine line : lines) {
+			line.stop();
+			line.flush();
+		}
+		lines.clear();
 	}
 
 	public FloatControl getMasterGainControl() {
