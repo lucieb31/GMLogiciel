@@ -179,7 +179,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 		addIndicePanel.add(label);
 
 		txtField = new JTextField();
-		txtField.setPreferredSize(new Dimension(200, 27));
+		txtField.setPreferredSize(new Dimension(500, 27));
 		addIndicePanel.add(txtField);
 		JButton valid = new JButton("Valider");
 		valid.addActionListener(new ActionListener() {
@@ -485,6 +485,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 		else
 		{
 			indiceLabel.setIcon(null);
+			txtField.setText(indice.getTexte());
 			indiceLabel.setText(indice.getTexte());
 			indiceThread = null;
 		}
