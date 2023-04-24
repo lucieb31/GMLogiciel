@@ -1,0 +1,62 @@
+28-05-2022 18:56:05,839 INFO  Main:31 - Start application
+28-05-2022 18:56:06,215 INFO  Main:62 - Set output to Speakers (Realtek(R) Audio)
+28-05-2022 18:57:45,933 INFO  Main:37 - Start application
+28-05-2022 18:57:46,301 INFO  Main:68 - Set output to Speakers (Realtek(R) Audio)
+28-05-2022 18:58:38,246 INFO  Main:37 - Start application
+28-05-2022 18:58:38,607 INFO  Main:68 - Set output to Speakers (Realtek(R) Audio)
+28-05-2022 18:58:54,595 INFO  Main:37 - Start application
+28-05-2022 18:58:54,981 INFO  Main:68 - Set output to Speakers (Realtek(R) Audio)
+28-05-2022 18:59:16,322 DEBUG Player:70 - Play tools\DING.mp3
+28-05-2022 18:59:16,327 DEBUG Player:73 - Play 1
+28-05-2022 18:59:16,340 DEBUG Player:76 - Play 2
+28-05-2022 18:59:16,340 DEBUG Player:78 - Play 2
+28-05-2022 18:59:16,354 DEBUG Player:84 - Play 3
+28-05-2022 18:59:16,354 DEBUG Player:86 - Play 4
+28-05-2022 18:59:16,355 DEBUG Player:88 - Play 5
+28-05-2022 18:59:16,357 DEBUG Player:90 - Play 6
+28-05-2022 18:59:16,895 DEBUG Player:119 - Play 7
+28-05-2022 18:59:16,898 DEBUG Player:121 - Started
+28-05-2022 18:59:41,799 DEBUG Player:70 - Play tools\DING.mp3
+28-05-2022 18:59:41,801 DEBUG Player:73 - Play 1
+28-05-2022 18:59:41,803 DEBUG Player:76 - Play 2
+28-05-2022 18:59:41,804 DEBUG Player:78 - Play 2
+28-05-2022 18:59:41,805 DEBUG Player:84 - Play 3
+28-05-2022 18:59:41,805 DEBUG Player:86 - Play 4
+28-05-2022 18:59:41,805 DEBUG Player:88 - Play 5
+28-05-2022 18:59:41,806 DEBUG Player:90 - Play 6
+28-05-2022 18:59:41,806 DEBUG Player:119 - Play 7
+28-05-2022 18:59:41,806 DEBUG Player:121 - Started
+28-05-2022 18:59:44,647 DEBUG Player:70 - Play tools\DING.mp3
+28-05-2022 18:59:44,648 DEBUG Player:73 - Play 1
+28-05-2022 18:59:44,650 DEBUG Player:76 - Play 2
+28-05-2022 18:59:44,651 DEBUG Player:78 - Play 2
+28-05-2022 18:59:44,652 DEBUG Player:84 - Play 3
+28-05-2022 18:59:44,652 DEBUG Player:86 - Play 4
+28-05-2022 18:59:44,652 DEBUG Player:88 - Play 5
+28-05-2022 18:59:44,652 DEBUG Player:90 - Play 6
+28-05-2022 18:59:44,653 DEBUG Player:119 - Play 7
+28-05-2022 18:59:44,653 DEBUG Player:121 - Started
+28-05-2022 19:00:01,034 DEBUG IndicesPanel:346 - On clique sur l'indice
+28-05-2022 19:00:01,036 DEBUG IndicesPanel:490 - Play indice
+28-05-2022 19:00:01,037 DEBUG Player:70 - Play RT\mpthreetest.mp3
+28-05-2022 19:00:01,039 DEBUG Player:73 - Play 1
+28-05-2022 19:00:01,041 DEBUG Player:76 - Play 2
+28-05-2022 19:00:01,041 DEBUG Player:78 - Play 2
+28-05-2022 19:00:01,042 DEBUG Player:84 - Play 3
+28-05-2022 19:00:01,043 DEBUG Player:86 - Play 4
+28-05-2022 19:00:01,043 DEBUG Player:88 - Play 5
+28-05-2022 19:00:01,043 DEBUG Player:90 - Play 6
+28-05-2022 19:00:01,043 DEBUG Player:119 - Play 7
+28-05-2022 19:00:01,044 DEBUG Player:121 - Started
+28-05-2022 19:01:24,977 INFO  Main:37 - Start application
+28-05-2022 19:01:25,357 INFO  Main:68 - Set output to Speakers (Realtek(R) Audio)
+28-05-2022 19:01:30,781 DEBUG Player:70 - Play tools\DING.mp3
+28-05-2022 19:01:30,784 DEBUG Player:73 - Play 1
+28-05-2022 19:01:30,794 DEBUG Player:76 - Play 2
+28-05-2022 19:01:30,794 DEBUG Player:78 - Play 2
+28-05-2022 19:01:30,804 DEBUG Player:84 - Play 3
+28-05-2022 19:01:30,805 DEBUG Player:86 - Play 4
+28-05-2022 19:01:30,805 DEBUG Player:88 - Play 5
+28-05-2022 19:01:30,806 DEBUG Player:90 - Play 6
+28-05-2022 19:01:31,020 DEBUG Player:119 - Play 7
+28-05-2022 19:01:31,023 DEBUG Player:121 - Started
