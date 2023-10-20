@@ -31,13 +31,15 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import fr.toulousescape.util.Session;
+
 public class IncidentDialog extends JDialog {
 
 	private JTextArea alertField;
 	private JTextField discountField;
-	private ChronoPanel chronoPanel;
-	public IncidentDialog(Component parent, ChronoPanel chronoPanel) {
-		this.chronoPanel = chronoPanel;		
+	private Session session;
+	public IncidentDialog(Component parent, Session session) {
+		this.session = session;		
 		setLocationRelativeTo(getRootPane());
 		setModal(true);
 		setTitle("Enregistrer un incident");
@@ -55,14 +57,14 @@ public class IncidentDialog extends JDialog {
 		
 		JLabel alertLabel = new JLabel("Incident :");
 		alertField = new JTextArea(2,30);
-		alertField.setText(chronoPanel.discount);
+		alertField.setText(session.getIncident());
 		JPanel alertPanel = new JPanel();
 		alertPanel.add(alertLabel);
 		alertPanel.add(alertField);
 		mainPanel.add(alertPanel);
 		JLabel discountLabel = new JLabel("Code cadeau donné (si pas de code, laisser vide)");
 		discountField = new JTextField(10);
-		discountField.setText(chronoPanel.discount);
+		discountField.setText(session.getDiscount());
 		JPanel discountPanel = new JPanel();
 		discountPanel.add(discountLabel);
 		discountPanel.add(discountField);
@@ -79,6 +81,7 @@ public class IncidentDialog extends JDialog {
 				saveIncident();
 			}
 		});
+		System.out.println("Alerte: " + session.getIncident() + " discount: " + session.getDiscount());
 		add(mainPanel);
 		pack();
 		setLocationRelativeTo(null);
@@ -87,8 +90,9 @@ public class IncidentDialog extends JDialog {
 	}
 	
 	public void saveIncident() {
-		chronoPanel.incident = this.alertField.getText();
-		chronoPanel.discount = this.discountField.getText();
+		session.setIncident(this.alertField.getText());
+		session.setDiscount(this.discountField.getText());
+		System.out.println("Alerte: " + session.getIncident() + " discount: " + session.getDiscount());
 		dispose();
 	}
 	

@@ -94,10 +94,6 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	private boolean isPaused = false;
 
 	private boolean firstLaunch = true;
-
-	public String incident = "";
-	
-	public String discount = "";
 	
 	private Map<Integer, String> elementsMusic = null;
 	
@@ -133,6 +129,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				showPaymentDialog(chronoPanel);
 			}
 		});
+		updateInfosButton.setEnabled(false);
+		
 		incidentButton = new JButton("Incident");
 		incidentButton.addActionListener(new ActionListener() {
 			
@@ -307,10 +305,6 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				sessionField.setText("");
 				chrono.stop();
 				
-				session.setIncident(incident);
-				session.setDiscount(discount);
-				incident = "";
-				discount = "";
 				StopSessionDialog dialog = new StopSessionDialog(getParent(), session);
 				dialog.openDialog();
 //				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -320,14 +314,13 @@ public class ChronoPanel extends JPanel implements TimerListener {
 //								+ " Nombre d'indice : " + session.getIndiceCount() + " \n" + session.getAllIndices());
 
 				// Reset all
-				session.clearAllIndices();
-				session.setIndiceCount(0);
+				session.resetSession();
 				parent.iPanel.nbIndiceLabel.setText("0");
-				session.setDate(null);
 				timeSpent = 0;
 				isPaused = false;
 				firstLaunch = true;
 				preambuleMusicIsRunning = false;
+				updateInfosButton.setEnabled(false);
 			}
 		});
 		chronoButtonsPanel.add(stopButton);
@@ -746,6 +739,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				paymentDialogFirstTime = false;
 				showPaymentDialog(this);
 			}
+			updateInfosButton.setEnabled(true);
 			//parent.pack();
 		}
 
@@ -785,6 +779,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	public void setPlayable(boolean enabled) {
 		this.soundButton.setEnabled(enabled);
 		this.startButton.setEnabled(enabled);
+		updateInfosButton.setEnabled(false);
 	}
 	public void deactivateBeginMusic() {
 		this.firstLaunch = false;
@@ -794,7 +789,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		dialog.openDialog();
 	}
 	public void showIncidentDialog(ChronoPanel chronoPanel) {
-		IncidentDialog dialog = new IncidentDialog(getParent(), chronoPanel);
+		IncidentDialog dialog = new IncidentDialog(getParent(), session);
 		dialog.openDialog();
 	}
 

@@ -5,8 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -16,9 +14,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -28,21 +24,18 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import fr.toulousescape.util.Session;
-import fr.toulousescape.util.ViewUtils;
 
 public class StopSessionDialog extends JDialog {
 
 	private Session finishedSession;
 	private JTextField bonusField;
 	private JTextField timeField;
-	private JTextArea alertField;
-	private JTextField discountField;
+	private JTextArea commentField;
 	private JRadioButton perduButton;
 	private JRadioButton gagneButton;
 	private JTextField JrealIndicesField;
@@ -113,16 +106,21 @@ public class StopSessionDialog extends JDialog {
 
 		
 		JPanel alertPanel = new JPanel(new FlowLayout());
-		JLabel alertLabel = new JLabel("Incidents :");
-		JLabel discountLabel = new JLabel("Code");
-		alertField = new JTextArea(2,30);
-		alertField.setText(finishedSession.getIncident());
-		discountField = new JTextField(10);
-		discountField.setText(finishedSession.getDiscount());
+		
+		JLabel alertLabel = new JLabel("Commentaire :");
+		commentField = new JTextArea(2,30);
 		alertPanel.add(alertLabel);
-		alertPanel.add(alertField);
-		alertPanel.add(discountLabel);
-		alertPanel.add(discountField);
+		alertPanel.add(commentField);
+		JButton incidentButton = new JButton("Incident");
+		incidentButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				IncidentDialog dialog = new IncidentDialog(getParent(), finishedSession);
+				dialog.openDialog();
+			}
+		});
+		alertPanel.add(incidentButton);
 		mainPanel.add(alertPanel);
 		JButton okButton;
 		if (finishedSession.getId() != 0) {
@@ -241,8 +239,9 @@ public class StopSessionDialog extends JDialog {
 				postParams.put("remaining", timeField.getText());
 				postParams.put("bonus", bonusField.getText());
 				postParams.put("flow", finishedSession.getAllIndicesAsHTML());
-				postParams.put("alert", alertField.getText());
-				postParams.put("discount", discountField.getText());
+				postParams.put("alert", finishedSession.getIncident());
+				postParams.put("discount", finishedSession.getDiscount());
+				postParams.put("comment", commentField.getText());
 				byte[] postDataBytes = generatePostData(postParams);
 		        
 			    conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));

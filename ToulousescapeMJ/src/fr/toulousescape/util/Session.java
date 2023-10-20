@@ -171,4 +171,12 @@ public class Session {
 	public void setGm(String gm) {
 		this.gm = gm;
 	}
+	
+	public void resetSession() {
+		clearAllIndices();
+		setIndiceCount(0);
+		setDate(null);
+		incident = "";
+		discount = "";
+	}
 }
