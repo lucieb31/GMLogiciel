@@ -39,7 +39,6 @@ public class PaymentDialog extends JDialog {
 	private float unpaidAmount = 0;
 	private float morePlayersAmount = 0;
 	private float ancvAmount = 0;
-	private int price_category = 0;
 	private JRadioButton discountButton;
 	private JRadioButton noDiscountButton;
 	private JTextField cbF;
@@ -110,8 +109,8 @@ public class PaymentDialog extends JDialog {
 		mainPanel.add(lessPlayersPanel);
 		lessPlayersPanel.setVisible(false);
 		
-		JLabel morePlayerLabel = new JLabel("Chaque joueur supplémentaire doit régler : "+("0".equals(sessionMap.get("price_category")) ? "20€" : "25€"));
-		price_category = new Integer(sessionMap.get("price_category"));
+		JLabel morePlayerLabel = new JLabel("Chaque joueur supplémentaire doit régler : 30");
+		new Integer(sessionMap.get("price_category"));
 		morePlayerLabel.setForeground(Color.RED);
 		morePlayersPanel.add(morePlayerLabel);
 		mainPanel.add(morePlayersPanel);
@@ -192,11 +191,7 @@ public class PaymentDialog extends JDialog {
 		} else if (newPlayers > currentPlayers) {
 			lessPlayersPanel.setVisible(false);
 			morePlayersPanel.setVisible(true);
-			if (price_category == 0) {
-				morePlayersAmount = 20 * (newPlayers - currentPlayers);
-			} else {
-				morePlayersAmount = 25 * (newPlayers - currentPlayers);
-			}
+			morePlayersAmount = 30 * (newPlayers - currentPlayers);
 		} else {
 			lessPlayersPanel.setVisible(false);
 			morePlayersPanel.setVisible(false);
