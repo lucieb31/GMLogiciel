@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -60,7 +61,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	Timer autoStartTimer;
 	boolean autoStartTimerRunning = false;
 	private int musicNumber = 0;
-	private static final String NO_SESSION_TEXT = "Récupérer une session pour pouvoir lancer le chrono.";
+	private static final String NO_SESSION_TEXT = "RÃ©cupÃ©rer une session pour pouvoir lancer le chrono.";
 	boolean paymentDialogFirstTime = true;
 	int players = 0;
 	JTextField sessionField;
@@ -106,8 +107,11 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	Thread preambuleMusicThread = null;
 	Thread currentMusicThread = null;
 
-	public ChronoPanel(Chrono c, Session s, Salle salle, MainView parent) {
+	Logger chronoPanelLogger;
+
+	public ChronoPanel(Chrono c, Session s, Salle salle, MainView parent, Logger mainLogger) {
 		this.parent = parent;
+		chronoPanelLogger = mainLogger;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		chrono = c;
@@ -161,10 +165,11 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		
 		JLabel currentMusicLabel = new JLabel("");
 		JLabel nextMusicLabel = new JLabel("");
+		chronoPanelLogger.info(String.format("PREAMBULE : %s", hasPreambuleMusic));
 		System.out.println("PREAMBULE : "+hasPreambuleMusic);
 		if (hasPreambuleMusic) {
 			soundButton.setEnabled(false);
-			soundButton.setToolTipText("Veuillez récupérer la session avant de lancer la musique d'ambiance");
+			soundButton.setToolTipText("Veuillez rÃ©cupÃ©rer la session avant de lancer la musique d'ambiance");
 			soundButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -176,6 +181,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 						@Override
 						public void run() {
 							//threadsList.add(preambuleMusicThread);
+							chronoPanelLogger.info("Preambule have been started");
 							System.out.println("PLAY!!! " + musicToPlay);
 							player.play(salle.getPseudo() + "\\" + musicToPlay);
 							
@@ -191,7 +197,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		}
 		
 		startButton.setEnabled(false);
-		startButton.setToolTipText("Veuillez récupérer la session avant de lancer le chrono");
+		startButton.setToolTipText("Veuillez rÃ©cupÃ©rer la session avant de lancer le chrono");
 		startButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -214,7 +220,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 				
 				session.setDate(new Date());
-				System.out.println(hasAmbianceMusic + " " + isPaused);
+				System.out.println("ambiance music: " + hasAmbianceMusic + " paused " + isPaused);
 				if (hasAmbianceMusic && !isPaused)
 				{
 
@@ -235,7 +241,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 						@Override
 						public void run() {
 							threadsList.add(currentMusicThread);
-							System.out.println("PLAY!!! " + musicToPlay);
+							System.out.println("PLAY!!! ambiance musique " + musicToPlay);
+							chronoPanelLogger.info("Start ambiance music " + musicToPlay);
 							player.play(salle.getPseudo() + "\\" + musicToPlay);
 						}
 					});
@@ -250,6 +257,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 						@Override
 						public void run() {
 							System.out.println("PLAY!!! " + musicToPlay);
+							chronoPanelLogger.info("Start begin music " + musicToPlay);
 							player.play(salle.getPseudo() + "\\" + musicToPlay);
 						}
 					}).start();
@@ -310,7 +318,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 //				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 //				JOptionPane.showMessageDialog(stopButton.getParent(),
 //						"Date : " + dateFormat.format(session.getDate()) + " Temps restant : "
-//								+ session.getRemainingTime() + "s Temps passé : " + formatTime(session.getTimeSpent())
+//								+ session.getRemainingTime() + "s Temps passÃ© : " + formatTime(session.getTimeSpent())
 //								+ " Nombre d'indice : " + session.getIndiceCount() + " \n" + session.getAllIndices());
 
 				// Reset all
@@ -449,7 +457,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		timerSetterPanel.add(sessionField);
 		timerSetterPanel.add(sessionSearch);
 	
-		JLabel label = new JLabel("Durée du chrono : ");
+		JLabel label = new JLabel("DurÃ©e du chrono : ");
 		timerSetterPanel.add(label);
 
 		JTextField txtField = new JTextField();
@@ -472,7 +480,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 		
 		JPanel penalityPanel = new JPanel(new FlowLayout());
 
-		JLabel label2 = new JLabel("Pénalité : ");
+		JLabel label2 = new JLabel("PÃ©nalitÃ© : ");
 		penalityPanel.add(label2);
 
 		JTextField txtField2 = new JTextField();
@@ -528,7 +536,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	private void initChangeTimePanel() {
 		JPanel penalityPanel = new JPanel(new FlowLayout());
 
-		JLabel label = new JLabel("Pénalité : ");
+		JLabel label = new JLabel("PÃ©nalitÃ© : ");
 		penalityPanel.add(label);
 
 		JTextField txtField = new JTextField();
@@ -700,11 +708,11 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			
 			String specialText = "";
 			if ("D".equals(special)) {
-				specialText = "Découverte - ";
+				specialText = "DÃ©couverte - ";
 			} else if ("A".equals(special)) {
 				specialText = "Version anglaise - ";
 			} else if ("B".equals(special)) {
-				specialText = "Découverte version anglaise - ";
+				specialText = "DÃ©couverte version anglaise - ";
 			}
 			String sessionInfos = (specialText +firstname+ " "+ lastname + " ("+phone+") "+players+" joueurs");
 			if (! "".equals(comment)) {
@@ -716,7 +724,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				if (!paymentRegistered) {
 					sessionInfoLabel.setForeground(Color.RED);
 				}
-				alertText += "<br>"+ancv+" € de chèques vacances à récupérer";
+				alertText += "<br>"+ancv+" â‚¬ de chÃ¨ques vacances Ã  rÃ©cupÃ©rer";
 				somethingToPay = true;
 			}
 			if (unpaid) {
@@ -726,7 +734,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				if (! "".equals(alertText)) {
 					alertText += "<br>";
 				}
-				alertText += "Session non payée ("+amount+" €).";
+				alertText += "Session non payÃ©e ("+amount+" â‚¬).";
 				somethingToPay = true;
 			}
 			sessionInfoLabel.setText("<html>"+sessionInfos+alertText+"<html>");
@@ -794,7 +802,9 @@ public class ChronoPanel extends JPanel implements TimerListener {
 	}
 
 	private void interruptPreambuleMusic() {
+		chronoPanelLogger.info("Stop preambule");
 		System.out.println("Interruption de "+preambuleMusicThread);
-		preambuleMusicThread.stop();
+		player.stop();
+		preambuleMusicThread.interrupt();
 	}
 }

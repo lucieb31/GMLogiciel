@@ -69,7 +69,7 @@ public class AdminIndicesDialog extends JDialog {
 		repaint();
 	}
 /*TODO :
-	- faire la récupération des indices par énigme / interaction / orphelins
+	- faire la rÃ©cupÃ©ration des indices par Ã©nigme / interaction / orphelins
 	*/
 	private void initDialog() {
 		JPanel mainPanel = new JPanel();
@@ -77,7 +77,7 @@ public class AdminIndicesDialog extends JDialog {
 		this.setTitle("Administration des indices");
 		//this.setPreferredSize(new Dimension(800,600));
 		listPanel = new JPanel();
-		JLabel title = new JLabel("Énigmes");
+		JLabel title = new JLabel("Ã‰nigmes");
 		mainPanel.add(title);
 		listPanel.setLayout(new FlowLayout());
 		indicesPanel = new JPanel();
@@ -93,7 +93,7 @@ public class AdminIndicesDialog extends JDialog {
 		});
 		detailsPanel.add(new JLabel("Nom"));
 		detailsPanel.add(nameField);
-		detailsPanel.add(new JLabel("Placer après :"));
+		detailsPanel.add(new JLabel("Placer aprÃ¨s :"));
 		detailsPanel.add(emplacementBox);
 		detailsPanel.add(new JLabel("Couleur :"));
 		colorBox = new JComboBox<String>();
@@ -160,13 +160,13 @@ public class AdminIndicesDialog extends JDialog {
 		subDetailsPanel.setVisible(false);
 		selectedEnigme = null;
 		int i = 0;
-		String labelTitle  = "Nouvelle énigme";
+		String labelTitle  = "Nouvelle Ã©nigme";
 		selectedEnigme = null;
 		indicesPanel.removeAll();
 		for (Enigme e : enigmeList) {
 			if (e.getId() == id) {
 				selectedEnigme = e;
-				labelTitle = "Indices de l'énigme "+selectedEnigme.getName();
+				labelTitle = "Indices de l'Ã©nigme "+selectedEnigme.getName();
 			}
 		}
 		if (selectedEnigme == null) {
@@ -356,7 +356,7 @@ public class AdminIndicesDialog extends JDialog {
 		int determinedJustBefore = 0;
 		String labelTitle  = "Nouvel indice";
 		String indiceDesc = "Nouvel indice";
-		String text = "Entrez ici le texte qui sera affiché sur les écrans";
+		String text = "Entrez ici le texte qui sera affichÃ© sur les Ã©crans";
 		int indiceIndex = 0;
 		int indiceId = 0;
 		int greatestId = 0;

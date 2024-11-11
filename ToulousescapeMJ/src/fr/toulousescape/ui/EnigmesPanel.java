@@ -44,7 +44,7 @@ public class EnigmesPanel extends JPanel {
 	}
 
 	private void initTitle() {
-		JLabel title = new JLabel("Énigmes");
+		JLabel title = new JLabel("Ã‰nigmes");
 		this.add(title);
 	}
 

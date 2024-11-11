@@ -1,7 +1,5 @@
 package fr.toulousescape;
 
-import java.util.Properties;
-
 import fr.toulousescape.ui.AudioOutputUI;
 import fr.toulousescape.ui.EnigmesPanel;
 import fr.toulousescape.ui.IndicesPanel;
@@ -16,15 +14,43 @@ import fr.toulousescape.util.IndiceManager;
 import fr.toulousescape.util.Salle;
 import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.Session;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Properties;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class Main {
 
 	public static void main(String[] args) {
 
-		//TODO créer une session à chaque démarrage du chrono
+		//TODO crÃ©er une session Ã  chaque dÃ©marrage du chrono
 		Session session = new Session();
 		
 		LoadConfig config = new LoadConfig();
+
+		Logger logger = Logger.getLogger("MyLog");
+
+		FileHandler fh;  
+
+		try {  
+
+			// This block configure the logger with handler and formatter  
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");  
+			LocalDateTime now = LocalDateTime.now();  
+			fh = new FileHandler("resources/LogicielGM_"+dtf.format(now)+".log");  
+			logger.addHandler(fh);
+			SimpleFormatter formatter = new SimpleFormatter();  
+			fh.setFormatter(formatter);  
+
+			// the following statement is used to log any messages  
+			logger.info("My first log");  
+
+		} catch (Exception e) {  
+			e.printStackTrace();  
+		}
+
 		
 		Salle salle;
 		if (config.isFirstStart() && config.getSelectedSalle() == null)
@@ -44,7 +70,7 @@ public class Main {
 		
 		Properties p = salle.getProperties();
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
-		Chrono chrono = new Chrono(new Integer(p.getProperty(SallesProperties.EXTRA_TIME,"0")));
+		Chrono chrono = new Chrono(Integer.parseInt(p.getProperty(SallesProperties.EXTRA_TIME,"0")));
 		String outputMusic = p.getProperty(SallesProperties.MUSIC_OUTPUT);
 		if (outputMusic == null) {
 			new AudioOutputUI(salle);
@@ -65,9 +91,9 @@ public class Main {
 		chrono.addTimerListener(indicePanel);
 		enigmePanel.addListeners(indicePanel);
 
-		new MainView(chrono, panel1, panel2, enigmePanel, indicePanel, session, salle);
+		new MainView(chrono, panel1, panel2, enigmePanel, indicePanel, session, salle, logger);
 		
-		//TODO: Gérer plus de 2 ecrans
+		//TODO: GÃ©rer plus de 2 ecrans
 		int nbRoomView = Integer.parseInt(p.getProperty(SallesProperties.NB_ECRAN));
 		if (nbRoomView == 1)
 		{

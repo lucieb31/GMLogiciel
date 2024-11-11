@@ -2,8 +2,11 @@ package fr.toulousescape.ui;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -42,11 +45,14 @@ public class MainView extends JFrame {
 	private IndiceManager indiceManager;
 	
 	public IndicesPanel iPanel;
+
+	public Logger mainLogger;
 	
-	public MainView(Chrono c, RoomPanel p1, RoomPanel p2, EnigmesPanel ePanel, IndicesPanel iPanel, Session s, Salle sa) {
+	public MainView(Chrono c, RoomPanel p1, RoomPanel p2, EnigmesPanel ePanel, IndicesPanel iPanel, Session s, Salle sa, Logger logger) {
 		super();
 		setName("ToulousescapeMJ");
 		this.iPanel = iPanel ;
+		mainLogger = logger;
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(800, 800));
@@ -58,10 +64,12 @@ public class MainView extends JFrame {
 		init(p1, p2, iPanel, ePanel);
 		pack();
 		setLocationRelativeTo(null);
+		mainLogger.info("Start main view");
 	}
 
 	private void init(RoomPanel p1, RoomPanel p2, IndicesPanel iPanel, EnigmesPanel ePanel) {
 		JPanel mainPanel = new JPanel();
+//		mainPanel.setLayout(new GridLayout(4,1));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 		add(mainPanel);
 		// Logo
@@ -121,7 +129,7 @@ public class MainView extends JFrame {
 	}
 
 	private JPanel getChronoPanel() {
-		chronoPanel = new ChronoPanel(chrono, session, salle,this);
+		chronoPanel = new ChronoPanel(chrono, session, salle,this, mainLogger);
 		chronoPanel.setPreferredSize(new Dimension(200, 50));
 		return chronoPanel;
 	}

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -124,7 +126,6 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 	private void initListPanel() {
 		listPanel = new JPanel();
 		listPanel.setLayout(new FlowLayout());
-		
 //		ImageIcon refreshIcon = new ImageIcon(Images.REFRESH_IMG);
 //		JButton refresh = new JButton(refreshIcon);
 		
@@ -197,7 +198,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 		});
 		addIndicePanel.add(valid);
 		JButton see = new JButton(new ImageIcon(Images.SEE_IMG));
-		see.setToolTipText("Voir les indices dÈj‡ envoyÈs");
+		see.setToolTipText("Voir les indices d√©j√† envoy√©s");
 		see.addActionListener(new ActionListener() {
 
 			@Override
@@ -501,7 +502,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 
 						@Override
 						public void run() {
-							System.out.println("PLAY!!! " + musicToPlay);
+							System.out.println("PLAY indice!!! " + musicToPlay);
 							musicPlayer.play(roomPseudo +"\\" + musicToPlay);
 						}
 					}).start();

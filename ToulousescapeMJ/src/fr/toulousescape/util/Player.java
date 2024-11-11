@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class Player {
 	private byte[] _currentRead;
 	
 	private ArrayList<SourceDataLine> lines;
-
+	
 	public Player() {
 		Info[] audioOut = AudioSystem.getMixerInfo();
 		_audioOut = new HashMap<>();
@@ -85,22 +84,22 @@ public class Player {
 //	            muteControl = (BooleanControl) line
 //	                    .getControl(BooleanControl.Type.MUTE);
 				System.out.println("MUTE");
-	        }
-	        if (line.isControlSupported(FloatControl.Type.VOLUME)) {
+			}
+			if (line.isControlSupported(FloatControl.Type.VOLUME)) {
 //	            masterGainControl = (FloatControl) line
 //	                    .getControl(FloatControl.Type.MASTER_GAIN);
-	        	System.out.println("GAIN");
-	        }
-	        if (line.isControlSupported(FloatControl.Type.PAN)) {
+				System.out.println("GAIN");
+			}
+			if (line.isControlSupported(FloatControl.Type.PAN)) {
 //	            panControl = (FloatControl) line.getControl(FloatControl.Type.PAN);
-	        	System.out.println("PAN");
-	        }
-	        if (line.isControlSupported(FloatControl.Type.SAMPLE_RATE)) {
+				System.out.println("PAN");
+			}
+			if (line.isControlSupported(FloatControl.Type.SAMPLE_RATE)) {
 //	            sampleRateControl = (FloatControl) line
 //	                    .getControl(FloatControl.Type.SAMPLE_RATE);
-	        	System.out.println("RATE");
+				System.out.println("RATE");
 
-	        }
+			}
 			
 //			System.out.println(control.getValue());
 			
@@ -111,18 +110,11 @@ public class Player {
 
 			byte bytes[] = new byte[1024];
 			
-//			if (_pause)
-//			{
-//				bytes = _currentRead;
-//				_pause = false;
-//			}
 			
-			if (!_pause) {
-				int bytesRead = 0;
+			int bytesRead = 0;
 				while ((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) 
-				{
-						line.write(bytes, 0, bytesRead);
-				}
+			{
+				line.write(bytes, 0, bytesRead);
 			}
 
 			_pause = false;
@@ -149,6 +141,7 @@ public class Player {
 	
 	public void pause()
 	{
+		System.out.println("Pause the music");
 		_pause = true;
 	}
 }
