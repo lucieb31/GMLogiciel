@@ -37,7 +37,7 @@ public class LoadProperties extends JDialog {
 		try {
 			loadAllPropertiesFiles(fileName);
 			
-			//Recherche d'uns salle dÈj‡ chargÈ une premiËre fois
+			//Recherche d'uns salle d√©j√† charg√© une premi√®re fois
 			for (File file : allFiles.values())
 			{
 				Properties props = new Properties();

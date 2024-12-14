@@ -105,7 +105,7 @@ public class AdminEnigmesDialog extends JDialog {
 			if (e.getId() == id) {
 				selected = e;
 				modifiedPosition = i;
-				labelTitle = "Énigme "+selected.getName();
+				labelTitle = "énigme "+selected.getName();
 				enigmeName = selected.getName();
 				enigmeIndex = selected.getIndex();
 				enigmeId = selected.getId ();

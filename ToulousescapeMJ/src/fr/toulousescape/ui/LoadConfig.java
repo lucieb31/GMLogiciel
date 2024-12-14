@@ -1,13 +1,12 @@
 package fr.toulousescape.ui;
 
+import fr.toulousescape.util.SallesProperties;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-
-import fr.toulousescape.util.SallesProperties;
 
 public class LoadConfig {
 
@@ -24,14 +23,14 @@ public class LoadConfig {
 	public LoadConfig()
 	{
 		try {
-			configFile = new File("src\\resources\\config.properties");
+			configFile = new File("src/resources/config.properties");
 			FileReader reader = new FileReader(configFile);
 			props = new Properties();
 			props.load(reader);
 			
 			firstStart = Boolean.parseBoolean(props.getProperty(SallesProperties.FIRST_START));
 			
-			//TODO sera peut être nécessaire si on veut gérer plusieurs salles dans un seul logiciel
+			//TODO sera peut Ãªtre nÃ©cessaire si on veut gÃ©rer plusieurs salles dans un seul logiciel
 //			int nbSalle = Integer.parseInt(props.getProperty(SallesProperties.NB_SALLE));
 //
 //			salles = new ArrayList<>();

@@ -198,7 +198,7 @@ public class IndicesPanel extends JPanel implements EnigmeListener, TimerListene
 		});
 		addIndicePanel.add(valid);
 		JButton see = new JButton(new ImageIcon(Images.SEE_IMG));
-		see.setToolTipText("Voir les indices d√©j√† envoy√©s");
+		see.setToolTipText("Voir les indices dÈj‡† envoyÈs");
 		see.addActionListener(new ActionListener() {
 
 			@Override

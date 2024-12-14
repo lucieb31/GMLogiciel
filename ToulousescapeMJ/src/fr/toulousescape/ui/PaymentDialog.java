@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -50,11 +51,14 @@ public class PaymentDialog extends JDialog {
 	private boolean alreadyTried = false;
 	private ChronoPanel chronoPanel;
 	
-	private boolean unpaid;
+	public Logger logger;
 	
-	public PaymentDialog(Component parent, Map<String, String> sessionMap, ChronoPanel chronoPanel) {
+	static private String PAYMENT_DIALOG_SUFFIX_LOG = "[PaymentDialog]";
+	
+	public PaymentDialog(Component parent, Map<String, String> sessionMap, ChronoPanel chronoPanel, Logger logger) {
 		this.sessionMap = sessionMap;
 		this.chronoPanel = chronoPanel;
+		this.logger = logger;
 		
 //		setLocationRelativeTo(null);
 		setLocationRelativeTo(getRootPane());
@@ -64,6 +68,7 @@ public class PaymentDialog extends JDialog {
 	
 	public void openDialog()
 	{
+		logger.info(PAYMENT_DIALOG_SUFFIX_LOG + " Open Payment Dialog");
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		Border border = mainPanel.getBorder();
@@ -113,22 +118,26 @@ public class PaymentDialog extends JDialog {
 		lessPlayersPanel.setVisible(false);
 		
 		JLabel morePlayerLabel = new JLabel("Chaque joueur supplémentaire doit régler : 30");
-		new Integer(sessionMap.get("price_category"));
+		logger.info(PAYMENT_DIALOG_SUFFIX_LOG + " Price category " + sessionMap.get("price_category"));
+//		new Integer(sessionMap.get("price_category"));
 		morePlayerLabel.setForeground(Color.RED);
 		morePlayersPanel.add(morePlayerLabel);
 		mainPanel.add(morePlayersPanel);
 		morePlayersPanel.setVisible(false);
 		
 		if(! "0".equals(sessionMap.get("ancv"))) {
+			logger.info(PAYMENT_DIALOG_SUFFIX_LOG + " Y a "+ sessionMap.get("ancv") + " ANCV à récupérer");
 			JLabel ancvLabel = new JLabel(sessionMap.get("ancv")+" € en chèques vacances à récupérer");
 			ancvLabel.setForeground(Color.RED);
 			ancvAmount = new Integer(sessionMap.get("ancv"));
 			mainPanel.add(ancvLabel);
 		}
+		logger.info(PAYMENT_DIALOG_SUFFIX_LOG + " unpaid ? " + sessionMap.get("unpaid"));
 		if("1".equals(sessionMap.get("unpaid"))) {
+			logger.info(PAYMENT_DIALOG_SUFFIX_LOG + " Il reste " + sessionMap.get("amount") + " à payer");
 			JLabel toPayLabel = new JLabel(sessionMap.get("amount")+" € à régler sur place (et / ou facture à envoyer)");
 			toPayLabel.setForeground(Color.RED);
-			unpaidAmount= new Integer(sessionMap.get("amount"));
+			unpaidAmount = Integer.valueOf(sessionMap.get("amount"));
 			mainPanel.add(toPayLabel);
 		}
 		JLabel payments = new JLabel("Paiements complémentaires sur place");
