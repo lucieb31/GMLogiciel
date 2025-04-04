@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.gson.Gson;
+
 public class LoadConfig {
 
 	private boolean firstStart;
@@ -22,27 +24,31 @@ public class LoadConfig {
 	
 	public LoadConfig()
 	{
-		try {
-			configFile = new File("src/resources/config.properties");
+		this(true);
+	}
+	
+	public LoadConfig(boolean loadJson)
+	{
+		if (loadJson)
+		{
+			configFile = new File("src/resources/configuration.json");
 			FileReader reader = new FileReader(configFile);
-			props = new Properties();
-			props.load(reader);
-			
-			firstStart = Boolean.parseBoolean(props.getProperty(SallesProperties.FIRST_START));
-			
-			//TODO sera peut être nécessaire si on veut gérer plusieurs salles dans un seul logiciel
-//			int nbSalle = Integer.parseInt(props.getProperty(SallesProperties.NB_SALLE));
-//
-//			salles = new ArrayList<>();
-//			for (int i = 1; i <= nbSalle + 1; i++)
-//			{
-//				String sName = props.getProperty("salle."+i);
-//				salles.add(sName);
-//			}
-			selectedSalle = props.getProperty("salle.selected");
-			reader.close();
-		} catch (NumberFormatException | IOException e) {
-			e.printStackTrace();
+			Gson gson = new Gson();
+//			gson.fromJson(reader, )
+		}else {
+			try {
+				configFile = new File("src/resources/config.properties");
+				FileReader reader = new FileReader(configFile);
+				props = new Properties();
+				props.load(reader);
+				
+				firstStart = Boolean.parseBoolean(props.getProperty(SallesProperties.FIRST_START));
+				
+				selectedSalle = props.getProperty("salle.selected");
+				reader.close();
+			} catch (NumberFormatException | IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

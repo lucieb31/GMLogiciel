@@ -14,6 +14,9 @@ import fr.toulousescape.util.IndiceManager;
 import fr.toulousescape.util.Salle;
 import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.Session;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
@@ -25,11 +28,6 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		//TODO créer une session à chaque démarrage du chrono
-		Session session = new Session();
-		
-		LoadConfig config = new LoadConfig();
-
 		Logger logger = Logger.getLogger("MyLog");
 
 		FileHandler fh;  
@@ -39,7 +37,7 @@ public class Main {
 			// This block configure the logger with handler and formatter  
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");  
 			LocalDateTime now = LocalDateTime.now();  
-			fh = new FileHandler("resources/LogicielGM_"+dtf.format(now)+".log");  
+			fh = new FileHandler("src/resources/LogicielGM_"+dtf.format(now)+".log");  
 			logger.addHandler(fh);
 			SimpleFormatter formatter = new SimpleFormatter();  
 			fh.setFormatter(formatter);  
@@ -50,24 +48,32 @@ public class Main {
 		} catch (Exception e) {  
 			e.printStackTrace();  
 		}
+		
+		//TODO créer une session à chaque démarrage du chrono
+		Session session = new Session();
+		
+		Salle salle = null;
+		if (Files.exists(Paths.get("configuration.json")))
+		{
+			
+		} else {		
+			LoadConfig config = new LoadConfig();
+			if (config.isFirstStart() && config.getSelectedSalle() == null)
+			{
+				ManageSalleDialog createSalle = new ManageSalleDialog();
+				createSalle.setModal(true);
+				createSalle.openAsCreate();
+				salle = createSalle.getCreatedSalle();
+				config.setSelectedSalle(salle.getPseudo());
+				config.setFirstStart(false);
+			}
+			else
+			{
+				LoadProperties properties = new LoadProperties(config.getSelectedSalle());
+				salle = properties.getSalle();
+			}
+		}
 
-		
-		Salle salle;
-		if (config.isFirstStart() && config.getSelectedSalle() == null)
-		{
-			ManageSalleDialog createSalle = new ManageSalleDialog();
-			createSalle.setModal(true);
-			createSalle.openAsCreate();
-			salle = createSalle.getCreatedSalle();
-			config.setSelectedSalle(salle.getPseudo());
-			config.setFirstStart(false);
-		}
-		else
-		{
-			LoadProperties properties = new LoadProperties(config.getSelectedSalle());
-			salle = properties.getSalle();
-		}
-		
 		Properties p = salle.getProperties();
 		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
 		Chrono chrono = new Chrono(Integer.parseInt(p.getProperty(SallesProperties.EXTRA_TIME,"0")));

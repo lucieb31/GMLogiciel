@@ -1,0 +1,31 @@
+{
+	"ecran": {
+		"nombre": 2,
+		"decalage": [1920, 3840],
+		"couleur": {
+			"fond": {
+				"normal": [22,56,112],
+				"fin": [255,251,215]
+			},
+			"texte": {
+				"normal": [255,201,41],
+				"fin": [200,0,0]
+			}
+		}
+	},
+	"musique":{
+		"output": "Sortie son interne (Realtek High Definition Audio)",
+		"debut": [{"nb_joueur": 2, "fichier": "cri2.mp3"}, {"nb_joueur": 0, "fichier": "cri4.mp3"}],
+		"ambiance": ["sampleA.mp3","sampleB.mp3","sampleA.mp3"],
+		"elements": [{"time": 600, "fichier": "Glas5.mp3"}, {"time": 1200, "fichier": "Glas4.mp3"}, {"time": 1800, "fichier": "Glas3.mp3"}, {"time": 2400, "fichier": "Glas2.mp3"}, {"time": 3000, "fichier": "Glas1.mp3"}],
+		"fin": "PERDU.mp3",
+		"preambule": "preambule.mp3"
+	},
+	"salle":{
+		"name": "Le mystère de la Dame rouge",
+		"image": "affiche.jpg"
+	}
+	"extra_time": 10,
+	"indice_color": [ {"type": "POS", "couleur": [124, 252, 0]}, {"type": "INFO", "couleur": [133, 193, 233]}]
+
+}
