@@ -57,7 +57,7 @@ public class Main {
 		{
 			
 		} else {		
-			LoadConfig config = new LoadConfig();
+			LoadConfig config = new LoadConfig(true);
 			if (config.isFirstStart() && config.getSelectedSalle() == null)
 			{
 				ManageSalleDialog createSalle = new ManageSalleDialog();

@@ -1,7 +1,9 @@
 package fr.toulousescape.ui;
 
+import fr.toulousescape.MainConfiguration;
 import fr.toulousescape.util.SallesProperties;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,11 +33,18 @@ public class LoadConfig {
 	{
 		if (loadJson)
 		{
-			configFile = new File("src/resources/configuration.json");
-			FileReader reader = new FileReader(configFile);
-			Gson gson = new Gson();
-//			gson.fromJson(reader, )
-		}else {
+			try {
+				configFile = new File("src/resources/configuration.json");
+				FileReader reader = new FileReader(configFile);
+				Gson gson = new Gson();
+				final MainConfiguration conf = gson.fromJson(reader, MainConfiguration.class);
+				System.out.println(conf);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			
 			try {
 				configFile = new File("src/resources/config.properties");
 				FileReader reader = new FileReader(configFile);
