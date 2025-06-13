@@ -49,7 +49,7 @@ public class MusicUI extends JDialog {
 		JPanel threadPanel = new JPanel(new FlowLayout());
 		JLabel musicLabel = new JLabel("Musique "+idx);
 		musicLabel.setPreferredSize(new Dimension(80, 30));
-		JLabel nameLabel = new JLabel(salle.getAmbianceMusique().split(";")[idx]);
+		JLabel nameLabel = new JLabel(salle.getAmbianceMusique().get(idx));
 		nameLabel.setPreferredSize(new Dimension(200, 30));
 		JButton stopButton;
 		if (threadsList.get(idx).isAlive()) {

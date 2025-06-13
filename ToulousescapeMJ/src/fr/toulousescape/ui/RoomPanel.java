@@ -5,16 +5,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Properties;
-
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import fr.toulousescape.ui.conf.EcranInfo;
 import fr.toulousescape.util.Chrono;
 import fr.toulousescape.util.Indice;
-import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.listeners.IndiceListener;
 import fr.toulousescape.util.listeners.TimerListener;
 
@@ -33,11 +31,33 @@ public class RoomPanel extends JPanel implements TimerListener, IndiceListener{
 	private Font classic = new Font("Arial", Font.BOLD, 90);
 	private Font little = new Font("Arial", Font.BOLD, 70);
 	private Font verylittle = new Font("Arial", Font.BOLD, 50);
-	public RoomPanel(Chrono chrono, Properties p) {
-		normalBackgroundColor = getPropertyColor(p,SallesProperties.BACKGROUND_COLOR_NORMAL);
-		endBackgroundColor = getPropertyColor(p,SallesProperties.BACKGROUND_COLOR_END);
-		normalForegroundColor = getPropertyColor(p,SallesProperties.FOREGROUND_COLOR_NORMAL);
-		endForegroundColor = getPropertyColor(p,SallesProperties.FOREGROUND_COLOR_END);
+	
+	
+	public RoomPanel(Chrono chrono, EcranInfo ecran) {
+		if (ecran.getCouleur_fond().getNormal().isEmpty())
+		{
+			normalBackgroundColor = Color.WHITE;
+		} else {
+			normalBackgroundColor = new Color(ecran.getCouleur_fond().getNormal().get(0),ecran.getCouleur_fond().getNormal().get(1), ecran.getCouleur_fond().getNormal().get(2));
+		}
+		if (ecran.getCouleur_fond().getFin().isEmpty())
+		{
+			endBackgroundColor = Color.WHITE;
+		} else {
+			endBackgroundColor = new Color(ecran.getCouleur_fond().getFin().get(0),ecran.getCouleur_fond().getFin().get(1), ecran.getCouleur_fond().getFin().get(2));
+		}
+		if (ecran.getCouleur_texte().getNormal().isEmpty()) {
+			normalForegroundColor = Color.BLACK;
+		}else 
+		{
+			normalForegroundColor = new Color(ecran.getCouleur_texte().getNormal().get(0),ecran.getCouleur_texte().getNormal().get(1), ecran.getCouleur_texte().getNormal().get(2));
+		}
+		if (ecran.getCouleur_texte().getNormal().isEmpty()) {
+			endForegroundColor = Color.RED;
+		}else 
+		{
+			endForegroundColor = new Color(ecran.getCouleur_texte().getFin().get(0),ecran.getCouleur_texte().getFin().get(1), ecran.getCouleur_texte().getFin().get(2));
+		}
 		
 		this.setBackground(normalBackgroundColor);
 		this.repaint();
@@ -75,26 +95,6 @@ public class RoomPanel extends JPanel implements TimerListener, IndiceListener{
 		labelPanel.add(clueText, constraints);
 		
 		chrono.addTimerListener(this);
-	}
-
-	private Color getPropertyColor(Properties p, String colorType) {
-		String data = p.getProperty(colorType);
-		System.out.println("Raw color : "+data);
-		if (data != null) {
-			String[] elements = data.split(",");
-			if (elements != null && elements.length == 3) {
-				System.out.println("Color is ok");
-				return new Color(new Integer(elements[0]),new Integer(elements[1]), new Integer(elements[2]));
-			}
-		}
-		if (colorType.equals(SallesProperties.BACKGROUND_COLOR_NORMAL) || colorType.equals(SallesProperties.BACKGROUND_COLOR_END)) {
-			return Color.WHITE;
-		} else if (colorType.equals(SallesProperties.FOREGROUND_COLOR_NORMAL)) {
-			return Color.BLACK;
-		} else if (colorType.equals(SallesProperties.FOREGROUND_COLOR_END)) {
-			return Color.RED;
-		}
-		return Color.BLACK;
 	}
 
 	@Override

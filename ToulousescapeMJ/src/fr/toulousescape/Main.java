@@ -16,9 +16,11 @@ import fr.toulousescape.util.SallesProperties;
 import fr.toulousescape.util.Session;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -53,11 +55,16 @@ public class Main {
 		Session session = new Session();
 		
 		Salle salle = null;
-		if (Files.exists(Paths.get("configuration.json")))
+		Path config_path = Paths.get("src/resources/configuration.json");
+		LoadConfig config;
+		if (Files.exists(config_path))
 		{
+			config = new LoadConfig(true);
+			System.out.println("Json conf " + config.conf);
+			salle = new Salle(config.conf.musique);
 			
 		} else {		
-			LoadConfig config = new LoadConfig(true);
+			config = new LoadConfig(true);
 			if (config.isFirstStart() && config.getSelectedSalle() == null)
 			{
 				ManageSalleDialog createSalle = new ManageSalleDialog();
@@ -72,20 +79,23 @@ public class Main {
 				LoadProperties properties = new LoadProperties(config.getSelectedSalle());
 				salle = properties.getSalle();
 			}
+			Properties p = salle.getProperties();
+			System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
+			config.conf.extra_time = Integer.parseInt(p.getProperty(SallesProperties.EXTRA_TIME,"0"));
+			config.conf.musique.setOutput(p.getProperty(SallesProperties.MUSIC_OUTPUT));
+			//TODO: loading info ecran
 		}
 
-		Properties p = salle.getProperties();
-		System.out.println(salle.getName() + " " + p.getProperty(SallesProperties.FIRST_START));
-		Chrono chrono = new Chrono(Integer.parseInt(p.getProperty(SallesProperties.EXTRA_TIME,"0")));
-		String outputMusic = p.getProperty(SallesProperties.MUSIC_OUTPUT);
+		Chrono chrono = new Chrono(config.conf.extra_time);
+		String outputMusic = config.conf.musique.getOutput();
 		if (outputMusic == null) {
 			new AudioOutputUI(salle);
 		} else {
 			salle.getMusicPlayer().setCurrentOut(String.valueOf(outputMusic));
 			salle.getIndicePlayer().setCurrentOut(String.valueOf(outputMusic));
 		}
-		RoomPanel panel1 = new RoomPanel(chrono,p);
-		RoomPanel panel2 = new RoomPanel(chrono,p);
+		RoomPanel panel1 = new RoomPanel(chrono, config.conf.ecran);
+		RoomPanel panel2 = new RoomPanel(chrono, config.conf.ecran);
 
 		IndiceManager manager = new IndiceManager(salle);
 		manager.loadIndices();
@@ -100,19 +110,34 @@ public class Main {
 		new MainView(chrono, panel1, panel2, enigmePanel, indicePanel, session, salle, logger);
 		
 		//TODO: Gérer plus de 2 ecrans
-		int nbRoomView = Integer.parseInt(p.getProperty(SallesProperties.NB_ECRAN));
+		int nbRoomView = config.conf.ecran.getNombre();
 		if (nbRoomView == 1)
 		{
-			int resolution = Integer.parseInt(p.getProperty(SallesProperties.ECRAN_RESOLUTION + ".1"));
+			int resolution = config.conf.ecran.getDecalage().get(0);
 			new RoomView("Ecran 1", panel1, resolution);
 		}
 		else if (nbRoomView == 2)
 		{
-			int resolution = Integer.parseInt(p.getProperty(SallesProperties.ECRAN_RESOLUTION + ".1"));
+			int resolution = config.conf.ecran.getDecalage().get(0);
 			new RoomView("Ecran 1", panel1, resolution);
-			resolution = Integer.parseInt(p.getProperty(SallesProperties.ECRAN_RESOLUTION + ".2"));
+			resolution = config.conf.ecran.getDecalage().get(1);
 			new RoomView("Ecran 2", panel2, resolution);
 		}
 	}
 
+	
+	static public String printStringList(ArrayList musicList) {
+		String str = "";
+		int i = 1;
+		for (Object music : musicList)
+		{
+			str = str + music.toString();
+			
+			if (i != musicList.size())
+			{
+				str = str + ";";
+			}
+		}
+		return str;
+	}
 }

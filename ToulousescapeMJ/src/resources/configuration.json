@@ -20,6 +20,7 @@
 		"preambule": "preambule.mp3"
 	},
 	"salle":{
+		"surnom": "MDR",
 		"name": "Le mystère de la Dame rouge",
 		"image": "affiche.jpg"
 	},

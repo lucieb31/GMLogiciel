@@ -24,6 +24,8 @@ public class LoadConfig {
 
 	private Properties props;
 	
+	public MainConfiguration conf;
+	
 	public LoadConfig()
 	{
 		this(true);
@@ -37,8 +39,12 @@ public class LoadConfig {
 				configFile = new File("src/resources/configuration.json");
 				FileReader reader = new FileReader(configFile);
 				Gson gson = new Gson();
-				final MainConfiguration conf = gson.fromJson(reader, MainConfiguration.class);
-				System.out.println(conf);
+				conf = gson.fromJson(reader, MainConfiguration.class);
+				
+				firstStart = false;
+				
+				selectedSalle = conf.salle.getSurnom();
+				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import fr.toulousescape.Main;
+import fr.toulousescape.ui.conf.Debut;
+import fr.toulousescape.ui.conf.Musique;
 
 /**
  * @author Toulousescape
@@ -25,15 +28,17 @@ public class Salle {
 	
 	private File propertyFile;
 	
-	private String preambuleMusic;
-
-	private String ambianceMusic;
-
-	private Map<Integer,String> beginMusic;
-
-	private String elementsMusic;
+	private Musique musique;
 	
-	private String finalMusic;
+//	private String preambuleMusic;
+
+//	private String ambianceMusic;
+
+//	private Map<Integer,String> beginMusic;
+
+//	private String elementsMusic;
+	
+//	private String finalMusic;
 	
 	private int nbEcran;
 	
@@ -70,6 +75,12 @@ public class Salle {
 		musicPlayer = new Player();
 		indicePlayer = new Player();
 	}
+	
+
+	public Salle(Musique musique) {
+		super();
+		this.musique = musique;
+	}
 
 	public String getName() {
 		return name;
@@ -99,28 +110,16 @@ public class Salle {
 		nbEcran = ecran;
 	}
 
-	public String getAmbianceMusique() {
-		return ambianceMusic;
-	}
-
-	public void setAmbianceMusique(String ambianceMusique) {
-		this.ambianceMusic = ambianceMusique;
+	public ArrayList<String> getAmbianceMusique() {
+		return musique.getAmbiance();
 	}
 
 	public String getPreambuleMusic() {
-		return preambuleMusic;
-	}
-
-	public void setPreambuleMusic(String preambuleMusic) {
-		this.preambuleMusic = preambuleMusic;
+		return musique.getPreambule();
 	}
 
 	public String getFinalMusic() {
-		return finalMusic;
-	}
-
-	public void setFinalMusic(String finalMusic) {
-		this.finalMusic = finalMusic;
+		return musique.getFin();
 	}
 
 	public int getNbEcran() {
@@ -143,15 +142,15 @@ public class Salle {
 					props.setProperty(SallesProperties.ECRAN_RESOLUTION + "." + (i+1), ""+resolutionEcrans.get(i));
 				}
 			}
-			props.setProperty(SallesProperties.MUSIC_END, finalMusic);
-			System.out.println("PROPERTIES : "+SallesProperties.MUSIC_TO_PLAY_BEFORE+" : "+preambuleMusic);
-			props.setProperty(SallesProperties.MUSIC_TO_PLAY_BEFORE, preambuleMusic);
-			props.setProperty(SallesProperties.MUSIC_TO_PLAY, ambianceMusic);
-			props.setProperty(SallesProperties.MUSIC_BEGIN, beginMusic.get(0));
+			props.setProperty(SallesProperties.MUSIC_END, musique.getFin());
+			System.out.println("PROPERTIES : "+SallesProperties.MUSIC_TO_PLAY_BEFORE+" : "+musique.getPreambule());
+			props.setProperty(SallesProperties.MUSIC_TO_PLAY_BEFORE, musique.getPreambule());
+			props.setProperty(SallesProperties.MUSIC_TO_PLAY, Main.printStringList(musique.getAmbiance()));
+			props.setProperty(SallesProperties.MUSIC_BEGIN, musique.getDebut().get(0));
 			for (int i = 2; i < 7 ; i++) {
-				props.setProperty(SallesProperties.MUSIC_BEGIN+"."+i, beginMusic.get(i));	
+				props.setProperty(SallesProperties.MUSIC_BEGIN+"."+i, musique.getDebut().get(i));	
 			}
-			props.setProperty(SallesProperties.MUSIC_ELEMENTS, elementsMusic);
+			props.setProperty(SallesProperties.MUSIC_ELEMENTS, Main.printStringList(musique.elements));
 			FileWriter writer = new FileWriter(propertyFile);
 			props.store(writer, "Create salle");
 			writer.close();
@@ -162,16 +161,19 @@ public class Salle {
 	
 	public void loadPropFile()
 	{
-		beginMusic = new HashMap<Integer,String>();
 		name = props.getProperty(SallesProperties.NAME);
-		finalMusic = props.getProperty(SallesProperties.MUSIC_END);
-		beginMusic.put(0, props.getProperty(SallesProperties.MUSIC_BEGIN));
+		musique.setFin(props.getProperty(SallesProperties.MUSIC_END));
+		ArrayList<Debut> beginList = new ArrayList<>();
+		Debut defaultDebut = new Debut(0, props.getProperty(SallesProperties.MUSIC_BEGIN));
+		beginList.add(defaultDebut);
 		for (int i = 2 ; i < 7 ; i++) {
-			beginMusic.put(i, props.getProperty(SallesProperties.MUSIC_BEGIN+"."+i));
+			Debut nextDebut = new Debut(i, props.getProperty(SallesProperties.MUSIC_BEGIN+"."+i));
+			beginList.add(nextDebut);
 		}
-		elementsMusic = props.getProperty(SallesProperties.MUSIC_ELEMENTS);
-		preambuleMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY_BEFORE);
-		ambianceMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY);
+		// TODO: à modifier;
+//		elementsMusic = props.getProperty(SallesProperties.MUSIC_ELEMENTS);
+		musique.setPreambule(props.getProperty(SallesProperties.MUSIC_TO_PLAY_BEFORE));
+//		ambianceMusic = props.getProperty(SallesProperties.MUSIC_TO_PLAY);
 		nbEcran = Integer.parseInt(props.getProperty(SallesProperties.NB_ECRAN));
 		if (nbEcran != 0)
 		{
@@ -188,27 +190,13 @@ public class Salle {
 	}
 
 	public String getBeginMusic(int players) {
-		if (beginMusic.get(players) == null) {
-			return beginMusic.get(4);
+		if (musique.getDebut().containsKey(players)) {
+			return musique.getDebut().get(players);
 		}
-		return beginMusic.get(players);
+		return musique.getDebut().get(4);
 	}
 
 	public Map<Integer,String> getElementsMusic() {
-		if (elementsMusic != null) {
-			HashMap<Integer,String> map = new HashMap<Integer,String>();
-			String[] split = elementsMusic.split(";");
-			for (String s : split) {
-				String[] infos = s.split(",");
-				map.put(new Integer(infos[0]), infos[1]);
-			}
-			return map;
-		} else {
-			return null;
-		}
+		return musique.getElements();
 	}
-
-	public void setElementsMusic(String elementsMusic) {
-		this.elementsMusic = elementsMusic;
-	}	
 }

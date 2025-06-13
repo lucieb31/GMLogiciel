@@ -100,8 +100,8 @@ public class ManageSalleDialog extends JDialog{
 				
 				s.setNbEcran(nbEcran);
 				
-				s.setAmbianceMusique(ambianceMusicField.getText());
-				s.setFinalMusic(finalMusicField.getText());
+//				s.setAmbianceMusique(ambianceMusicField.getText());
+//				s.setFinalMusic(finalMusicField.getText());
 				
 				s.computePropFile();
 				createdSalle = s;

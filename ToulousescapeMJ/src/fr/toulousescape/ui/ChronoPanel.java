@@ -187,7 +187,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 							System.out.println("PLAY!!! " + musicToPlay);
 							player.play(salle.getPseudo() + "\\" + musicToPlay);
 							
-							String nextMusicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+							String nextMusicToPlay = salle.getAmbianceMusique().get(musicNumber);
 							nextMusicLabel.setText("Prochaine Musique : " + nextMusicToPlay);
 						}
 					});
@@ -226,15 +226,15 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				if (hasAmbianceMusic && !isPaused)
 				{
 
-					String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+					String musicToPlay = salle.getAmbianceMusique().get(musicNumber);
 					currentMusicLabel.setText("Musique en cours : " + musicToPlay);
 					musicNumber++;
-					if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
+					if(musicNumber >= salle.getAmbianceMusique().size()) {
 						nextMusicButton.setEnabled(false);
 						nextMusicButton.setToolTipText("");
 						nextMusicLabel.setText("");
 					} else {
-						String nextMusicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+						String nextMusicToPlay = salle.getAmbianceMusique().get(musicNumber);
 						nextMusicButton.setToolTipText(nextMusicToPlay);
 						nextMusicLabel.setText("Prochaine Musique : " + nextMusicToPlay);
 					}
@@ -344,29 +344,22 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				player.stop();
 				currentMusicThread.interrupt();
 				
-//				musicNumber++;
-//				if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
-//					nextMusicButton.setEnabled(false);
-//				}
-//				
-//				player.play(salle.getPseudo() + "\\" + musicToPlay);
-				
 				currentMusicThread = new Thread(new Runnable() {
 
 					@Override
 					public void run() {
-						String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+						String musicToPlay = salle.getAmbianceMusique().get(musicNumber);
 						
 						currentMusicLabel.setText("Musique en cours : " + musicToPlay);
 						threadsList.add(currentMusicThread);
 
 						musicNumber++;
-						if(musicNumber >= salle.getAmbianceMusique().split(";").length) {
+						if(musicNumber >= salle.getAmbianceMusique().size()) {
 							nextMusicButton.setEnabled(false);
 							nextMusicButton.setToolTipText("");
 							nextMusicLabel.setText("");
 						} else {
-							String nextMusicToPlay = salle.getAmbianceMusique().split(";")[musicNumber];
+							String nextMusicToPlay = salle.getAmbianceMusique().get(musicNumber);
 							nextMusicButton.setToolTipText(nextMusicToPlay);
 							nextMusicLabel.setText("Prochaine Musique : " + nextMusicToPlay);
 						}
@@ -387,8 +380,8 @@ public class ChronoPanel extends JPanel implements TimerListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Musique to play " + musicNumber);
-				if ((musicNumber - 1) < salle.getAmbianceMusique().split(";").length) {
-					String musicToPlay = salle.getAmbianceMusique().split(";")[musicNumber - 1];
+				if ((musicNumber - 1) < salle.getAmbianceMusique().size()) {
+					String musicToPlay = salle.getAmbianceMusique().get(musicNumber - 1);
 					player.stop();
 					if (currentMusicThread != null)
 						currentMusicThread.interrupt();

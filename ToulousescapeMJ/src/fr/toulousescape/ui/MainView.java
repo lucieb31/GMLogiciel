@@ -200,17 +200,18 @@ public class MainView extends JFrame {
 		
 		final JFrame parent = this;
 		
-		JMenu salleMenu = new JMenu("Salle");
-		JMenuItem createItem = new JMenuItem("Créer une salle");
-		createItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ManageSalleDialog dialog = new ManageSalleDialog(parent, null);
-				dialog.openAsCreate();
-			}
-		});
-		salleMenu.add(createItem);
+		// TODO: voir si c'est vraiment intéressant de garder cette possibilité
+//		JMenu salleMenu = new JMenu("Salle");
+//		JMenuItem createItem = new JMenuItem("Créer une salle");
+//		createItem.addActionListener(new ActionListener() {
+//			
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				ManageSalleDialog dialog = new ManageSalleDialog(parent, null);
+//				dialog.openAsCreate();
+//			}
+//		});
+//		salleMenu.add(createItem);
 		
 		JMenu indicesMenu = new JMenu("Administration");
 		JMenuItem changeEnigmes = new JMenuItem("Énigmes");
