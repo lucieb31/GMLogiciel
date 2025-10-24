@@ -39,7 +39,7 @@ public class Main {
 			// This block configure the logger with handler and formatter  
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");  
 			LocalDateTime now = LocalDateTime.now();  
-			fh = new FileHandler("resources/LogicielGM_"+dtf.format(now)+".log");  
+			fh = new FileHandler("src/resources/LogicielGM_"+dtf.format(now)+".log");  
 			logger.addHandler(fh);
 			SimpleFormatter formatter = new SimpleFormatter();  
 			fh.setFormatter(formatter);  

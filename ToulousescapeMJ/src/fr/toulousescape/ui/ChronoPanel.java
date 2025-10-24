@@ -222,6 +222,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 
 				
 				session.setDate(new Date());
+				chronoPanelLogger.info(CHRONO_PANEL_SUFFIX_LOG + " ambiance music: " + hasAmbianceMusic + " paused " + isPaused);
 				System.out.println("ambiance music: " + hasAmbianceMusic + " paused " + isPaused);
 				if (hasAmbianceMusic && !isPaused)
 				{
@@ -281,7 +282,6 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				pauseButton.setEnabled(false);
 				startButton.setEnabled(true);
 				stopButton.setEnabled(true);
-				player.pause();
 				chrono.pause();
 				isPaused = true;
 			}

@@ -117,7 +117,7 @@ public class PaymentDialog extends JDialog {
 		mainPanel.add(lessPlayersPanel);
 		lessPlayersPanel.setVisible(false);
 		
-		JLabel morePlayerLabel = new JLabel("Chaque joueur supplémentaire doit régler : 30");
+		JLabel morePlayerLabel = new JLabel("Chaque joueur supplémentaire doit régler : 28");
 		logger.info(PAYMENT_DIALOG_SUFFIX_LOG + " Price category " + sessionMap.get("price_category"));
 //		new Integer(sessionMap.get("price_category"));
 		morePlayerLabel.setForeground(Color.RED);
@@ -203,7 +203,7 @@ public class PaymentDialog extends JDialog {
 		} else if (newPlayers > currentPlayers) {
 			lessPlayersPanel.setVisible(false);
 			morePlayersPanel.setVisible(true);
-			morePlayersAmount = 30 * (newPlayers - currentPlayers);
+			morePlayersAmount = 28 * (newPlayers - currentPlayers);
 		} else {
 			lessPlayersPanel.setVisible(false);
 			morePlayersPanel.setVisible(false);

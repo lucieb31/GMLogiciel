@@ -27,8 +27,6 @@ public class Player {
 
 	private String _currentOut;
 	
-	private boolean _pause;
-	
 	private byte[] _currentRead;
 	
 	private ArrayList<SourceDataLine> lines;
@@ -112,13 +110,11 @@ public class Player {
 			
 			
 			int bytesRead = 0;
-				while ((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) 
+			while ((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) 
 			{
 				line.write(bytes, 0, bytesRead);
 			}
 
-			_pause = false;
-			
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException | IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -139,9 +135,4 @@ public class Player {
 		return getMasterGainControl();
 	}
 	
-	public void pause()
-	{
-		System.out.println("Pause the music");
-		_pause = true;
-	}
 }
