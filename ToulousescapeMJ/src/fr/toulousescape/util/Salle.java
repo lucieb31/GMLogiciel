@@ -75,12 +75,6 @@ public class Salle {
 		musicPlayer = new Player();
 		indicePlayer = new Player();
 	}
-	
-
-	public Salle(Musique musique) {
-		super();
-		this.musique = musique;
-	}
 
 	public String getName() {
 		return name;

@@ -27,5 +27,6 @@
 	<classpathentry kind="lib" path="libs/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="libs/vlcj-3.7.0.jar"/>
 	<classpathentry kind="lib" path="libs/org.json.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.12.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import fr.toulousescape.util.Images;
 import fr.toulousescape.util.Player;
 import fr.toulousescape.util.Salle;
-import fr.toulousescape.util.SallesProperties;
 
 public class AudioOutputUI extends JDialog {
 
