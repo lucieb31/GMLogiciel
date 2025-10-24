@@ -315,7 +315,7 @@ public class ChronoPanel extends JPanel implements TimerListener {
 				sessionField.setText("");
 				chrono.stop();
 				
-				StopSessionDialog dialog = new StopSessionDialog(getParent(), session);
+				StopSessionDialog dialog = new StopSessionDialog(getParent(), session, sessionMap);
 				dialog.openDialog();
 //				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 //				JOptionPane.showMessageDialog(stopButton.getParent(),

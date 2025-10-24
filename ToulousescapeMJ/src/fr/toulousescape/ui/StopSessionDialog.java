@@ -38,12 +38,16 @@ public class StopSessionDialog extends JDialog {
 	private JTextArea commentField;
 	private JRadioButton perduButton;
 	private JRadioButton gagneButton;
+	private JRadioButton decouverteButton;
 	private JTextField JrealIndicesField;
 	private JTextField realIndicesField;
 	
+	private Map<String, String> sessionInfos;
 	
-	public StopSessionDialog(Component parent, Session session) {
+	
+	public StopSessionDialog(Component parent, Session session, Map<String, String> sessionMap) {
 		finishedSession = session;
+		sessionInfos = sessionMap;
 		
 		setModal(true);
 		setTitle("Fin de la session");
@@ -60,7 +64,7 @@ public class StopSessionDialog extends JDialog {
 		+ " - "+"Temps restant : " + finishedSession.getRemainingTime() + "s"
 		+ " - "+"Temps passé : " + formatTime(finishedSession.getTimeSpent()));
 		mainPanel.add(infos);
-				
+		
 		JLabel indices = new JLabel(finishedSession.getAllIndicesAsHTML());
 		JScrollPane jsp = new JScrollPane(indices);
 		mainPanel.add(jsp);
@@ -72,7 +76,28 @@ public class StopSessionDialog extends JDialog {
 		indicesPanel.add(realIndicesLabel);
 		indicesPanel.add(realIndicesField);
 		mainPanel.add(indicesPanel);
-
+		
+		if (sessionInfos.containsKey("special")) {
+			String special = sessionInfos.get("special");
+			JPanel sessionTypePanel = new JPanel(new FlowLayout());
+			JLabel sessionType = new JLabel("Type de session:");
+			sessionTypePanel.add(sessionType);
+			ButtonGroup typeGroup = new ButtonGroup();
+			JRadioButton normalButton = new JRadioButton("Normal");
+			decouverteButton = new JRadioButton("Decouverte");
+			typeGroup.add(normalButton);
+			typeGroup.add(decouverteButton);
+			sessionTypePanel.add(normalButton);
+			sessionTypePanel.add(decouverteButton);
+			
+			if ("D".equals(special) || "B".equals(special)) {
+				decouverteButton.setEnabled(true);
+			} else if ("A".equals(special)) {
+				normalButton.setEnabled(true);
+			}
+			mainPanel.add(sessionTypePanel);
+		}
+		
 		JPanel victoryPanel = new JPanel(new FlowLayout());
 		ButtonGroup victoryGroup = new ButtonGroup();
 		perduButton = new JRadioButton("Perdu");
@@ -242,6 +267,7 @@ public class StopSessionDialog extends JDialog {
 				postParams.put("alert", finishedSession.getIncident());
 				postParams.put("discount", finishedSession.getDiscount());
 				postParams.put("comment", commentField.getText());
+				postParams.put("special", decouverteButton.isSelected()?"1":"0");
 				byte[] postDataBytes = generatePostData(postParams);
 		        
 			    conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
